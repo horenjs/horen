@@ -11,6 +11,7 @@ import random from './icons/random.svg';
 import randomLight from './icons/random-light.svg';
 import close from './icons/close.svg';
 
+
 function App() {
   const coverImg = `
     https://mintforge-1252473272.cos.ap-nanjing.myqcloud.com/image/img22.jpg
@@ -61,7 +62,7 @@ function App() {
 
   return (
     <div className="App">
-      <div className="top title-bar">
+      <div className="top title-bar to-drag">
         <img
           src={close}
           alt="close-window"

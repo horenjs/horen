@@ -9,11 +9,11 @@ function createWindow() {
     height: 200,
     resizable: false,
     // titleBarStyle: 'hidden',
-    // frame: false,
+    frame: false,
     webPreferences: {
       nodeIntegration: true,
       webSecurity: false,
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, './public/preload.js'),
     },
   });
   

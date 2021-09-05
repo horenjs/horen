@@ -1,34 +1,118 @@
 .App {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.App .top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 100%;
+  z-index: 999;
+}
+
+.App .top .close-window {
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+}
+/**************** left ******************/
+.App .left {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.App .left .cover img {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 80px;
+  animation: cover-spin infinite 20s linear;
+}
+/*************** right *******************/
+.App .right {
+  width: 248px;
+  height: 180px;
+  padding: 20px 0 0 0;
+}
+
+.App .right .song-info {
+  width: 176px;
+  height: 60px;
+  margin: 0 32px;
+}
+
+.App .right .song-info .song-item {
+  width: 100%;
+  margin: 8px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.App .right .song-info .song-title {
+  font-size: 18px;
+}
+
+.App .right .song-info .song-author {
+  font-size: 14px;
+}
+
+.App .right .song-operate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 240px;
+  height: 60px;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.App .right .song-operate .prev,.pause,.next,.play-order {
+  margin: 0 8px;
+  cursor: pointer;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.App .right .song-progress {
+  position: relative;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  width: 200px;
+  height: 4px;
+  margin: 16px 20px;
+  transition: all .3s ease;
 }
 
-.App-link {
-  color: #61dafb;
+.App .right .song-progress:hover {
+  transform: scale3d(1.05, 1.05, 1);
 }
 
-@keyframes App-logo-spin {
+.App .right .song-progress .played,.toplay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin-left: 4px; /* 将进度条向右移动4px 使得看起来更加居中*/
+  cursor: pointer;
+}
+
+.App .right .song-progress .played {
+  width: 150px;
+  background-color: #28B463;
+}
+
+.App .right .song-progress .toplay {
+  background-color: #82E0AA;
+}
+
+@keyframes cover-spin {
   from {
     transform: rotate(0deg);
   }

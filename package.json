@@ -2,6 +2,7 @@
   "name": "minsic",
   "version": "0.1.0",
   "private": true,
+  "main": "main.js",
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -12,10 +13,14 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "react:start": "cross-env NODE_ENV=dev react-scripts start",
+    "react:build": "cross-env NODE_ENV=prod react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "dev": "cross-env NODE_ENV=dev concurrently -k \"yarn react:start\" \"yarn electron:start\"",
+    "electron:dev": "cross-env NODE_ENV=dev electron .",
+    "electron:start": "wait-on tcp:3000 && electron .",
+    "electron:build": "electron-builder --win --x64"
   },
   "eslintConfig": {
     "extends": [
@@ -34,5 +39,27 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "concurrently": "^6.2.1",
+    "cross-env": "^7.0.3",
+    "electron": "^14.0.0",
+    "electron-builder": "^22.11.7",
+    "wait-on": "^6.0.0"
+  },
+  "build": {
+    "appId": "com.kevinjobs.minsic",
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "zip"
+      ]
+    }
   }
 }

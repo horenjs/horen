@@ -2,6 +2,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  background-color: #f1f1f1;
 }
 
 .app-container {
@@ -11,9 +12,20 @@ body {
   justify-content: center;
   flex-wrap: nowrap;
   overflow: hidden;
-  margin: 20px auto;
+  margin: 20px auto 0 auto;
   position: relative;
-  border: 1px solid #555555;
+  background-color: #fff;
+}
+
+.app-container .bg-cover {
+  position: absolute;
+  width: 448px;
+  height: 208px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  opacity: 0.3;
+  z-index: 1;
 }
 
 .app-container .top {
@@ -22,10 +34,10 @@ body {
   left: 0;
   height: 24px;
   width: 448px;
-  z-index: 999;
+  z-index: 3;
 }
 
-.app-container .top .close-window {
+.app-container .top .toggle-lyric,.close-window,.min-window {
   position: absolute;
   top: 0;
   right: 0;
@@ -34,8 +46,24 @@ body {
   height: 28px;
 }
 
+.app-container .top .toggle-lyric {
+  right: 56px;
+}
+
+.app-container .top .toggle-lyric:hover {
+  background-color: #82E0AA;
+}
+
 .app-container .top .close-window:hover {
   background-color: crimson;
+}
+
+.app-container .top .min-window {
+  right: 28px;
+}
+
+.app-container .top .min-window:hover {
+  background-color: #82E0AA;
 }
 
 /**************** left ******************/
@@ -45,20 +73,39 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 2;
+}
+
+.app-container .left .cover {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  animation: cover-spin infinite 20s linear;
+  cursor: pointer;
 }
 
 .app-container .left .cover img {
-  width: 140px;
-  height: 140px;
+  position: absolute;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 80px;
-  animation: cover-spin infinite 20s linear;
+  border-radius: 50%;
 }
+
+.app-container .left .cover img.cover-around {
+  transform: scale(1.2, 1.2);
+}
+
+.app-container .left .cover img.cover-image {
+  transform: scale(0.8, 0.8);
+}
+
 /*************** right *******************/
 .app-container .right {
   width: 248px;
   height: 180px;
-  padding: 20px 0 0 0;
+  padding: 28px 0 0 0;
+  z-index: 2;
 }
 
 .app-container .right .song-info {
@@ -94,6 +141,9 @@ body {
 }
 
 .app-container .right .song-operate .operate-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin: 0 8px;
   cursor: pointer;
 }

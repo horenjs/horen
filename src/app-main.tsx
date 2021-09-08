@@ -1,4 +1,5 @@
 import React from "react";
+import { ipcRenderer } from 'electron';
 
 import SVG from "./svg-icon";
 import CoverAround from './static/image/singlecover.png';
@@ -15,6 +16,13 @@ function App() :React.ReactElement {
   const [isLyricVisible, setIsLyricVisible] = React.useState(false);
   const [isPaused, setIsPaused] = React.useState(false);
 
+  React.useEffect(() => {
+    ipcRenderer.on('msg-test-reply', (event, arg) => {
+      console.log(event);
+      console.log(arg);
+    });
+  }, []);
+
   return (
     <>
       <div className="app-container">
@@ -23,7 +31,11 @@ function App() :React.ReactElement {
           style={{backgroundImage:`url(${coverImg})`}}
         ></div>
         <div className="top title-bar to-drag">
-          <div className="toggle-lyric" onClick={e => setIsLyricVisible(!isLyricVisible)}>
+          <div className="toggle-lyric" onClick={e => {
+            e.preventDefault();
+            // setIsLyricVisible(!isLyricVisible);
+            ipcRenderer.send('msg-test', 'ping');
+          }}>
             <SVG name="lyric" />
           </div>
           <div className="min-window">

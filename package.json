@@ -1,0 +1,57 @@
+{
+  "name": "react-template",
+  "version": "1.0.0",
+  "description": "react template with webpack & typescript",
+  "author": "Kevin Jobs",
+  "license": "ISC",
+  "homepage": "https://kevinjobs.github.io/",
+  "main": "main/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevinjobs/react-template-webpack"
+  },
+  "keywords": [
+    "react",
+    "webpack",
+    "typescript"
+  ],
+  "scripts": {
+    "electron:dev": "concurrently \"yarn serve\" \"wait-on http://localhost:8080 && electron .\"",
+    "serve": "webpack serve --config ./webpack/dev.config.js",
+    "build": "webpack --config ./webpack/prod.config.js"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^5.2.0",
+    "styled-components": "^5.3.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.5",
+    "@babel/preset-env": "^7.15.6",
+    "@babel/preset-react": "^7.14.5",
+    "@babel/preset-typescript": "^7.15.0",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
+    "@types/node": "^16.9.1",
+    "@types/react": "^17.0.11",
+    "@types/react-dom": "^17.0.8",
+    "@types/react-router-dom": "^5.1.7",
+    "@types/styled-components": "^5.1.14",
+    "@types/webpack-env": "^1.16.2",
+    "babel-loader": "^8.2.2",
+    "concurrently": "^6.2.1",
+    "copy-webpack-plugin": "5.0.1",
+    "css-loader": "^6.2.0",
+    "electron": "^14.0.0",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.3.2",
+    "react-refresh": "^0.10.0",
+    "style-loader": "^3.2.1",
+    "typescript": "^4.3.4",
+    "wait-on": "^6.0.0",
+    "webpack": "^5.40.0",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2",
+    "webpack-merge": "^5.8.0"
+  }
+}

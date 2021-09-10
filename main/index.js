@@ -1,12 +1,16 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
+const { openFiles } = require("./ipc");
+
+let mainWindow;
 
 function createWindow () {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
+      webSecurity: false,
     }
   })
 
@@ -29,7 +33,6 @@ app.on("window-all-closed", function () {
   }
 })
 
-ipcMain.on('test-msg', (event, arg) => {
-  console.log(arg);
-  event.reply('test-msg-reply', 'pong');
-})
+ipcMain.on('quit', () => app.quit());
+ipcMain.on('minimize', () => mainWindow.minimize());
+ipcMain.on('setting-open-files', openFiles);

@@ -1,6 +1,9 @@
 import { ISong } from "@/types";
 import React from "react";
 import styled from 'styled-components';
+// electron
+const electron = window.require('electron');
+const { ipcRenderer } = electron;
 
 import Cover from './cover';
 import Operate from "./operate";
@@ -70,6 +73,7 @@ const Right = styled.div`
 
 function App () :React.ReactElement {
   const [isCoverRunning, setIsCoverRunning] = React.useState(true);
+  const [fileList, setFileList] = React.useState([]);
 
   const coverImg = `
     https://mintforge-1252473272.cos.ap-nanjing.myqcloud.com/image/img22.jpg
@@ -80,19 +84,40 @@ function App () :React.ReactElement {
     setIsCoverRunning(!isCoverRunning);
   }
 
+  const handleSetting = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    ipcRenderer.send('setting-open-files');
+  }
+
+  const handleMinimize = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    ipcRenderer.send('minimize');
+  }
+
+  const handleClose = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    ipcRenderer.send('quit');
+  }
+
   const song: ISong = {
     title: "Thousands Miles Away",
     singer: "Kiki Louis",
     path: './sdfa.mp3',
   }
 
+  React.useEffect(() => {
+    ipcRenderer.on('setting-open-files-reply', (event: any, arg: any) => {
+      setFileList(arg);
+    })
+  }, [])
+
   return (
     <Container className="home">
       <Top>
-        <div className="minus item">
+        <div className="minus item" onClick={handleMinimize}>
           <img src={MinusIcon} alt="minus" />
         </div>
-        <div className="close item">
+        <div className="close item" onClick={handleClose}>
           <img src={CloseIcon} alt="close" />
         </div>
       </Top>
@@ -108,9 +133,11 @@ function App () :React.ReactElement {
         <Operate
           {...song}
           onPause={handlePlay}
+          onSetting={handleSetting}
           isPaused={!isCoverRunning}
         />
       </Right>
+      <audio src={fileList[0]} autoPlay></audio>
     </Container>
   );
 }

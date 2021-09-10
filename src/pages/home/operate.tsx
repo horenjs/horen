@@ -7,6 +7,7 @@ import Pause from '@/assets/icons/pause.svg';
 import Play from '@/assets/icons/play.svg';
 import Next from '@/assets/icons/next.svg';
 import Random from '@/assets/icons/random.svg';
+import Setting from '@/assets/icons/setting.svg';
 
 
 const Operate = styled.div`
@@ -36,6 +37,9 @@ const Operate = styled.div`
       height: 22px;
       margin-left: 4px;
     }
+    .setting {
+      margin-left: 4px;
+    }
   }
   .progress {
     position: relative;
@@ -55,6 +59,7 @@ const Operate = styled.div`
 
 type IProps = {
   onPause?: React.MouseEventHandler<HTMLElement>,
+  onSetting?: React.MouseEventHandler<HTMLElement>,
   isPaused?: boolean,
 } & ISong;
 
@@ -64,6 +69,7 @@ export default function (props: IProps) :React.ReactElement {
     singer,
     path,
     onPause,
+    onSetting,
     isPaused = false,
   } = props;
 
@@ -83,6 +89,12 @@ export default function (props: IProps) :React.ReactElement {
         />
         <img src={Next} alt="next" className="item" />
         <img src={Random} alt="random" className="random item" />
+        <img
+          src={Setting}
+          alt="setting"
+          className="setting item"
+          onClick={onSetting}
+        />
       </div>
       <div className="progress">
         <div className="back item"></div>

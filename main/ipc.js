@@ -1,13 +1,25 @@
 const { dialog } = require("electron");
 const mm = require("music-metadata");
 
+const musicExtensions = [
+  'mp3',
+  'mp4',
+  'm4a',
+  'm4b',
+  'aac',
+  'flac',
+  'ape',
+  'wav',
+  'ogg',
+]
+
 function openFiles(event) {
   dialog.showOpenDialog({
     title: '选择歌曲',
     filters: [
       {
-        name: "All Files",
-        extensions: ['*']
+        name: "音乐文件 Musics",
+        extensions: musicExtensions,
       }
     ],
     properties: ['openFiles', 'multiSelections'],

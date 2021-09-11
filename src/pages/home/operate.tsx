@@ -7,7 +7,7 @@ import Pause from '@/assets/icons/pause.svg';
 import Play from '@/assets/icons/play.svg';
 import Next from '@/assets/icons/next.svg';
 import Random from '@/assets/icons/random.svg';
-import Setting from '@/assets/icons/setting.svg';
+import Setting from '@/assets/icons/setting-tri-line.svg';
 
 
 const Operate = styled.div`
@@ -58,6 +58,31 @@ const Operate = styled.div`
   }
 `;
 
+const Popover = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  .setting-options {
+    position: absolute;
+    bottom: 32px;
+    width: 84px;
+    font-size: 12px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    .option-item {
+      box-sizing: border-box;
+      padding: 4px 8px;
+      -webkit-app-region: no-drag;
+      &:hover {
+        background-color: #f1f1f1;
+      }
+    }
+  }
+`;
+
 type IProps = {
   onPause?: React.MouseEventHandler<HTMLElement>,
   onPrev?: React.MouseEventHandler<HTMLElement>,
@@ -77,6 +102,13 @@ export default function (props: IProps) :React.ReactElement {
     isPaused = false,
     progress = 0,
   } = props;
+
+  const [isPopoverVisible, setIsPopoverVisible] = React.useState(false);
+
+  const handleClickSetting = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    setIsPopoverVisible(!isPopoverVisible);
+  }
 
   return (
     <Operate>
@@ -104,12 +136,24 @@ export default function (props: IProps) :React.ReactElement {
           onClick={onNext}
         />
         <img src={Random} alt="random" className="random item" />
-        <img
-          src={Setting}
-          alt="setting"
-          className="setting item no-drag"
-          onClick={onSetting}
-        />
+        <Popover
+          className="setting item"
+          onClick={handleClickSetting}
+        >
+          <img
+            src={Setting}
+            alt="setting"
+          />
+          <div
+            className="setting-options"
+            style={{display: isPopoverVisible ? 'block' : 'none'}}
+          >
+            <div className="option-item">关于</div>
+            <div className="option-item">设置</div>
+            <div className="option-item">打开目录..</div>
+            <div className="option-item" onClick={onSetting}>打开文件...</div>
+          </div>
+        </Popover>
       </div>
       <div className="progress">
         <div className="back item"></div>

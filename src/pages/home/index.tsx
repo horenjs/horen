@@ -12,13 +12,16 @@ import Operate from "./operate";
 
 import CloseIcon from '@/assets/icons/close.svg';
 import MinusIcon from '@/assets/icons/minus.svg';
+import DefaultCover from '@/assets/image/defaultCover.png';
 
 const Container = styled.div`
   position: relative;
   width: 600px;
   height: 300px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   display: flex;
-  background-color: #fff;
+  background-color: rgba(255,255,255,0.95);
   user-select: none;
   -webkit-app-region: drag;
 `;
@@ -54,6 +57,7 @@ const Top = styled.div`
   }
   .close {
     right: 0;
+    border-radius: 0 4px 0 0;
     &:hover {
       background-color: red;
     }
@@ -76,7 +80,7 @@ const Right = styled.div`
 `;
 
 function App () :React.ReactElement {
-  const [isPaused, setIsPaused] = React.useState(false);
+  const [isPaused, setIsPaused] = React.useState(true);
   const [songList, setSongList] = React.useState<ISong[]>();
   const [progress, setProgress] = React.useState(0);
   const [currentIndex, setCurrentIndex] = React.useState(0);
@@ -85,10 +89,8 @@ function App () :React.ReactElement {
   /**
    * default cover image
    */
-  let coverImg = `
-    https://mintforge-1252473272.cos.ap-nanjing.myqcloud.com/image/img22.jpg
-  `;
-
+  let coverImg = DefaultCover;
+  
   const handlePrev = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     if (currentIndex > 0) {
@@ -98,13 +100,17 @@ function App () :React.ReactElement {
 
   const handlePause = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    setIsPaused(!isPaused);
+    if (songList) {
+      setIsPaused(!isPaused);
+    }
   }
 
   const handleNext = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    if (currentIndex < songList.length - 1) {
-      setCurrentIndex(currentIndex + 1)
+    if (songList) {
+      if (currentIndex < songList.length - 1) {
+        setCurrentIndex(currentIndex + 1)
+      }
     }
   }
 
@@ -146,9 +152,13 @@ function App () :React.ReactElement {
       /**
        * create a new Howl
        */
+      // 先将进度条设为 0
+      // 看起来跳转的速度好像快一点
+      setProgress(0);
       const song = songList[currentIndex];
       const src = song.path;
       const s = new Howl({src, autoplay: true});
+      setIsPaused(false);
 
       setSound(s);
 
@@ -158,6 +168,9 @@ function App () :React.ReactElement {
       let _duration = 0;
       s.once('load', () => {
         _duration = s.duration();
+        // set the main window title
+        const title = song.common.title + ' - ' + song.common.artist;
+        ipcRenderer.send('title', title);
         console.log('_duration: ', _duration);
       })
 
@@ -167,6 +180,7 @@ function App () :React.ReactElement {
       timer = setInterval(() => {
         let _seek = s.seek();
         const _progress = (_seek / _duration) * 100;
+        ipcRenderer.send('progress', _progress);
         setProgress(_progress);
       }, 500);
 

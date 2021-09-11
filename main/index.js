@@ -5,10 +5,11 @@ let mainWindow;
 
 function createWindow () {
   mainWindow = new BrowserWindow({
-    width: 600,
-    height: 300,
+    width: 602,
+    height: 302,
     frame: false,
     // resizable: false,
+    transparent: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -38,3 +39,5 @@ app.on("window-all-closed", function () {
 ipcMain.on('quit', () => app.quit());
 ipcMain.on('minimize', () => mainWindow.minimize());
 ipcMain.on('setting-open-files', openFiles);
+ipcMain.on('progress', (event, arg) => mainWindow.setProgressBar(arg / 100));
+ipcMain.on('title', (event, arg) => mainWindow.setTitle(arg));

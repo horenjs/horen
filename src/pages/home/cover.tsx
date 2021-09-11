@@ -60,13 +60,13 @@ export default function (props: IProps) :React.ReactElement {
       <img
         src={SongCover}
         alt="song-around"
-        className="around"
+        className="around no-drag"
         style={{animationPlayState:running ? 'running' : 'paused'}}
       />
       <img
         src={source}
         alt={title}
-        className="cover"
+        className="cover no-drag"
         style={{animationPlayState:running ? 'running' : 'paused'}}
         onClick={onClick}
       />

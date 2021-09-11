@@ -18,7 +18,8 @@ const Operate = styled.div`
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      margin: 8px 0;
+      margin: 0;
+      line-height: 2;
     }
     h4 {
       color: #777;
@@ -59,46 +60,60 @@ const Operate = styled.div`
 
 type IProps = {
   onPause?: React.MouseEventHandler<HTMLElement>,
+  onPrev?: React.MouseEventHandler<HTMLElement>,
+  onNext?: React.MouseEventHandler<HTMLElement>,
   onSetting?: React.MouseEventHandler<HTMLElement>,
   isPaused?: boolean,
+  progress?: number,
 } & ISong;
 
 export default function (props: IProps) :React.ReactElement {
   const {
-    title,
-    singer,
-    path,
+    common = { title: 'No Title', artist: 'No Artist'},
     onPause,
     onSetting,
+    onPrev,
+    onNext,
     isPaused = false,
+    progress = 0,
   } = props;
 
   return (
     <Operate>
       <div className="header">
-        <h3>{ title }</h3>
-        <h4>{ singer }</h4>
+        <h3>{ common.title }</h3>
+        <h4>{ common.artist }</h4>
       </div>
-      <div className="operator">
-        <img src={Prev} alt="prev" className="item" />
+      <div className="operator no-drag">
+        <img
+          src={Prev}
+          alt="prev"
+          className="item"
+          onClick={onPrev}
+        />
         <img
           src={isPaused ? Play : Pause}
           alt="pause"
           className="item"
           onClick={onPause}
         />
-        <img src={Next} alt="next" className="item" />
+        <img
+          src={Next}
+          alt="next"
+          className="item"
+          onClick={onNext}
+        />
         <img src={Random} alt="random" className="random item" />
         <img
           src={Setting}
           alt="setting"
-          className="setting item"
+          className="setting item no-drag"
           onClick={onSetting}
         />
       </div>
       <div className="progress">
         <div className="back item"></div>
-        <div className="front item"></div>
+        <div className="front item" style={{width:`${progress}%`}}></div>
       </div>
     </Operate>
   );

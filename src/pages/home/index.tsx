@@ -5,6 +5,8 @@ import styled from 'styled-components';
 const electron = window.require('electron');
 const { ipcRenderer } = electron;
 
+import { Howl, Howler } from 'howler';
+
 import Cover from './cover';
 import Operate from "./operate";
 
@@ -17,6 +19,8 @@ const Container = styled.div`
   height: 300px;
   display: flex;
   background-color: #fff;
+  user-select: none;
+  -webkit-app-region: drag;
 `;
 
 const Top = styled.div`
@@ -36,6 +40,7 @@ const Top = styled.div`
     top: 0;
     height: 24px;
     cursor: pointer;
+    z-index: 2;
     img {
       width: 100%;
       height: 100%;
@@ -70,18 +75,37 @@ const Right = styled.div`
   align-items: center;
 `;
 
-
 function App () :React.ReactElement {
-  const [isCoverRunning, setIsCoverRunning] = React.useState(true);
-  const [fileList, setFileList] = React.useState([]);
+  const [isPaused, setIsPaused] = React.useState(false);
+  const [songList, setSongList] = React.useState<ISong[]>();
+  const [progress, setProgress] = React.useState(0);
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [sound, setSound] = React.useState<any>();
 
-  const coverImg = `
+  /**
+   * default cover image
+   */
+  let coverImg = `
     https://mintforge-1252473272.cos.ap-nanjing.myqcloud.com/image/img22.jpg
   `;
 
-  const handlePlay = (e: React.MouseEvent<HTMLElement>) => {
+  const handlePrev = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    setIsCoverRunning(!isCoverRunning);
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
+  }
+
+  const handlePause = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    setIsPaused(!isPaused);
+  }
+
+  const handleNext = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    if (currentIndex < songList.length - 1) {
+      setCurrentIndex(currentIndex + 1)
+    }
   }
 
   const handleSetting = (e: React.MouseEvent<HTMLElement>) => {
@@ -99,25 +123,101 @@ function App () :React.ReactElement {
     ipcRenderer.send('quit');
   }
 
-  const song: ISong = {
-    title: "Thousands Miles Away",
-    singer: "Kiki Louis",
-    path: './sdfa.mp3',
-  }
-
   React.useEffect(() => {
-    ipcRenderer.on('setting-open-files-reply', (event: any, arg: any) => {
-      setFileList(arg);
-    })
+    ipcRenderer.on('setting-open-files-reply', (event: any, arg: any[]) => {
+      if (arg.length !== 0) setSongList(arg);
+    });
   }, [])
 
+  React.useEffect(() => {
+    let timer: any;
+
+    if (songList) {
+      /**
+       * if sound is existed, remove it.
+       */
+      if (sound) {
+        console.log('sound exists');
+        sound.unload();
+        setSound(undefined);
+        console.log('clear the sound.');
+      }
+
+      /**
+       * create a new Howl
+       */
+      const song = songList[currentIndex];
+      const src = song.path;
+      const s = new Howl({src, autoplay: true});
+
+      setSound(s);
+
+      /**
+       * get the duration of song after loaded.
+       */
+      let _duration = 0;
+      s.once('load', () => {
+        _duration = s.duration();
+        console.log('_duration: ', _duration);
+      })
+
+      /**
+       * update progess per second.
+       */
+      timer = setInterval(() => {
+        let _seek = s.seek();
+        const _progress = (_seek / _duration) * 100;
+        setProgress(_progress);
+      }, 500);
+
+      /**
+       * when sound is end, go to the next
+       */
+      s.once('end', () => {
+        if (currentIndex < songList.length - 1) {
+          setCurrentIndex(currentIndex + 1);
+        }
+      });
+    }
+
+    /**
+     * clear the interval timer.
+     */
+    return () => clearInterval(timer);
+
+  }, [songList, currentIndex])
+
+  React.useEffect(() => {
+    if (sound) {
+      if (isPaused) {
+        sound.pause();
+      } else {
+        sound.play();
+      }
+    }
+  }, [isPaused])
+
+  /**
+   * convert the uint8arry to the base64 image for cover
+   */
+  if (songList && songList[currentIndex].common) {
+    if ("picture" in songList[currentIndex].common) {
+      const picture = songList[currentIndex].common.picture[0];
+      const { format, data } = picture;
+
+      coverImg = `
+        data:${format};base64,${uint8arrayToBase64(data)}
+      `;
+    } 
+  }
+
   return (
-    <Container className="home">
+    <Container className="home" id="home-container">
       <Top>
-        <div className="minus item" onClick={handleMinimize}>
+        <div className="minus item no-drag" onClick={handleMinimize}>
           <img src={MinusIcon} alt="minus" />
         </div>
-        <div className="close item" onClick={handleClose}>
+        <div className="close item no-drag" onClick={handleClose}>
           <img src={CloseIcon} alt="close" />
         </div>
       </Top>
@@ -125,21 +225,38 @@ function App () :React.ReactElement {
         <Cover
           source={coverImg}
           title="test"
-          running={isCoverRunning}
-          onClick={handlePlay}
+          running={!isPaused}
+          onClick={handlePause}
         />
       </Left>
       <Right>
         <Operate
-          {...song}
-          onPause={handlePlay}
+          common={songList && songList[currentIndex].common}
+          onPrev={handlePrev}
+          onPause={handlePause}
+          onNext={handleNext}
           onSetting={handleSetting}
-          isPaused={!isCoverRunning}
+          isPaused={isPaused}
+          progress={progress}
         />
       </Right>
-      <audio src={fileList[0]} autoPlay></audio>
     </Container>
   );
+}
+
+function uint8arrayToBase64(u8arr: Uint8Array) {
+  let ChunkSize = 0x8000;
+  let index = 0;
+  let length = u8arr.length;
+  let result = '';
+  let slice: any;
+  while (index < length) {
+    slice = u8arr.subarray(index, Math.min(index + ChunkSize, length));
+    result += String.fromCharCode.apply(null, slice);
+    index += ChunkSize;
+  }
+
+  return btoa(result);
 }
 
 export default App;

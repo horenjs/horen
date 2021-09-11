@@ -1,4 +1,5 @@
 const { dialog } = require("electron");
+const mm = require("music-metadata");
 
 function openFiles(event) {
   dialog.showOpenDialog({
@@ -10,9 +11,23 @@ function openFiles(event) {
       }
     ],
     properties: ['openFiles', 'multiSelections'],
-  }).then(result => {
-    event.reply('setting-open-files-reply', result.filePaths)
+  }).then(async result => {
+    const fileList = [];
+    for (let file of result.filePaths) {
+      const metadata = await musicMeta(file);
+      fileList.push({path:file, ...metadata});
+    }
+    event.reply("setting-open-files-reply", fileList);
   }).catch(console.error)
+}
+
+async function musicMeta(fileName) {
+  try {
+    const metadata = await mm.parseFile(fileName);
+    return metadata;
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 module.exports = {

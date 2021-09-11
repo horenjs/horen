@@ -4,3 +4,7 @@ body {
   box-sizing: border-box;
   font-family: -apple-system,"BlinkMacSystemFont","Helvetica Neue","PingFang SC","Microsoft YaHei","Source Han Sans SC","Noto Sans CJK SC","WenQuanYi Micro Hei",sans-serif;
 }
+
+.no-drag {
+  -webkit-app-region: no-drag;
+}

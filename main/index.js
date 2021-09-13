@@ -27,7 +27,7 @@ app.whenReady().then(() => {
   /**
    * set system tray icon
    */
-  setTray();
+  // setTray();
 
   app.on("activate", function () {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -51,7 +51,7 @@ const setTray = () => {
     },
     {
       label: '显示主界面',
-      click: () => mainWindow.maximize()
+      click: () => mainWindow.maximize(),
     }
   ];
 

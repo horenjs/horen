@@ -81,6 +81,7 @@ const Right = styled.div`
 
 function App () :React.ReactElement {
   const [isPaused, setIsPaused] = React.useState(true);
+  const [isLyric, setIsLyric] = React.useState(false);
   const [songList, setSongList] = React.useState<ISong[]>();
   const [progress, setProgress] = React.useState(0);
   const [currentIndex, setCurrentIndex] = React.useState(0);

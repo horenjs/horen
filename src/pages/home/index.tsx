@@ -1,11 +1,12 @@
 import { ISong } from "@/types";
 import React from "react";
 import styled from 'styled-components';
+import _ from 'lodash';
 // electron
 const electron = window.require('electron');
 const { ipcRenderer } = electron;
 
-import { Howl, Howler } from 'howler';
+import { Howl } from 'howler';
 
 import Cover from './cover';
 import Operate from "./operate";
@@ -151,6 +152,7 @@ function App () :React.ReactElement {
 
   React.useEffect(() => {
     ipcRenderer.on('setting-open-files-reply', (event: any, arg: any[]) => {
+      console.log(arg);
       if (arg.length !== 0) setSongList(arg);
     });
   }, [])
@@ -232,6 +234,16 @@ function App () :React.ReactElement {
   }, [isPaused])
 
   /**
+   * read config from config.json
+   */
+  React.useEffect(() => {
+    ipcRenderer.on('config', (event: any, arg: any) => {
+      console.log(arg);
+      setSongList(arg.songList);
+    })
+  }, [])
+
+  /**
    * convert the uint8arry to the base64 image for cover
    */
   if (songList && songList[currentIndex].common) {
@@ -239,9 +251,13 @@ function App () :React.ReactElement {
       const picture = songList[currentIndex].common.picture[0];
       const { format, data } = picture;
 
-      coverImg = `
-        data:${format};base64,${uint8arrayToBase64(data)}
-      `;
+      if (_.isTypedArray(data)) {
+        coverImg = `
+          data:${format};base64,${uint8arrayToBase64(data)}
+        `;
+      } else {
+        coverImg = `data:${format};base64,${data}`;
+      }
     } 
   }
 

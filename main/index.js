@@ -1,7 +1,12 @@
 const { app, BrowserWindow, ipcMain, Tray, Menu } = require("electron");
 const { openFiles } = require("./ipc");
 const path = require('path');
+const fs = require('fs');
+const _ = require('lodash');
 
+// app configuration
+let config;
+// main window
 let mainWindow;
 // let lyricWindow;
 let listWindow;
@@ -26,6 +31,7 @@ function createWindow () {
   return w;
 }
 
+/*
 function createListWindow (position) {
   const w = new BrowserWindow({
     width: 300,
@@ -46,7 +52,7 @@ function createListWindow (position) {
   w.hide();
 
   return w;
-}
+} */
 
 app.whenReady().then(() => {
   mainWindow = createWindow();
@@ -61,6 +67,25 @@ app.whenReady().then(() => {
       createWindow();
     }
   })
+
+  mainWindow.on('ready-to-show', () => {
+    fs.readFile(path.resolve(__dirname, '../public/config.json'), (err, data) => {
+      if (err) {
+        console.log(err);
+      } else {
+        const defaultConfig = JSON.parse(data);
+        // console.log(config);
+        
+        fs.readFile(path.resolve(__dirname, '../public/config.user.json'), (e, d) => {
+          if (!e) {
+            config = _.merge(defaultConfig, JSON.parse(d));
+
+            mainWindow.webContents.send('config', config);
+          }
+        })
+      }
+    })
+  });
 
   // list window follows the main window
   /* mainWindow.on('moved', () => {

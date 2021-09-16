@@ -21,7 +21,9 @@
     "build": "webpack --config ./webpack/prod.config.js"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.173",
     "howler": "^2.2.3",
+    "lodash": "^4.17.21",
     "music-metadata": "^7.11.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

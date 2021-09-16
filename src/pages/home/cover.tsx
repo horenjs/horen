@@ -8,7 +8,7 @@ interface IProps {
   title: string,
   width?: number,
   height?: number,
-  running?: boolean,
+  isPaused?: boolean,
   onClick?: React.MouseEventHandler<HTMLElement>,
 }
 
@@ -51,7 +51,7 @@ export default function (props: IProps) :React.ReactElement {
     title,
     width = 200,
     height = 200,
-    running = true,
+    isPaused = true,
     onClick,
   } = props;
 
@@ -61,13 +61,13 @@ export default function (props: IProps) :React.ReactElement {
         src={SongCover}
         alt="song-around"
         className="around no-drag"
-        style={{animationPlayState:running ? 'running' : 'paused'}}
+        style={{animationPlayState:isPaused ? 'paused' : 'running'}}
       />
       <img
         src={source}
         alt={title}
         className="cover no-drag"
-        style={{animationPlayState:running ? 'running' : 'paused'}}
+        style={{animationPlayState:isPaused ? 'paused' : 'running'}}
         onClick={onClick}
       />
     </Cover>

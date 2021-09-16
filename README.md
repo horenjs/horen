@@ -1,11 +1,15 @@
-### 简单说明
+# Minsic
 
-这是一个 React 脚手架
+Minsic 是一个用 React 和 electron 打造的本地播放器
 
-[x] babel 转译（@babel/preset-typescript）
+暂时没有计划加入网络歌曲功能
 
-[x] import '.css' 方式导入
+功能进度
 
-[x] React 组件热重载
+[x] 主体界面
 
-[x] webpack 打包（开发&生产环境） 
+[ ] 当前播放
+
+[ ] 播放列表
+
+[ ] 歌词显示

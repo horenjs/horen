@@ -16,7 +16,7 @@
     "typescript"
   ],
   "scripts": {
-    "electron:dev": "concurrently \"yarn serve\" \"wait-on http://localhost:8080 && electron .\"",
+    "electron:dev": "concurrently \"yarn serve\" \"wait-on http://localhost:8080/#/home && electron .\"",
     "serve": "webpack serve --config ./webpack/dev.config.js",
     "build": "webpack --config ./webpack/prod.config.js"
   },

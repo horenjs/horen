@@ -3,13 +3,16 @@ const { openFiles } = require("./ipc");
 const path = require('path');
 
 let mainWindow;
+// let lyricWindow;
+let listWindow;
 
 function createWindow () {
-  mainWindow = new BrowserWindow({
+  const w = new BrowserWindow({
     width: 602,
     height: 302,
     frame: false,
     // resizable: false,
+    // movable: true,
     transparent: true,
     webPreferences: {
       nodeIntegration: true,
@@ -18,22 +21,52 @@ function createWindow () {
     }
   })
 
-  mainWindow.loadURL("http://localhost:8080");
+  w.loadURL("http://localhost:8080/#/home");
+
+  return w;
+}
+
+function createListWindow (position) {
+  const w = new BrowserWindow({
+    width: 300,
+    height: 302,
+    frame: false,
+    transparent: true,
+    x: position[0] + 605,
+    y: position[1],
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false, // this config make react use electron.
+      webSecurity: false,
+    }
+  });
+
+  w.loadURL("http://localhost:8080/#/list");
+  w.setMovable(true);
+  w.hide();
+
+  return w;
 }
 
 app.whenReady().then(() => {
-  createWindow();
-
+  mainWindow = createWindow();
   /**
    * set system tray icon
    */
   // setTray();
 
+  // only in macOS
   app.on("activate", function () {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
     }
   })
+
+  // list window follows the main window
+  /* mainWindow.on('moved', () => {
+    listWindow.setPosition(mainWindow.getPosition()[0] + 605, mainWindow.getPosition()[1]);
+    // console.log(listWindow.getPosition());
+  }) */
 })
 
 app.on("window-all-closed", function () {
@@ -42,7 +75,10 @@ app.on("window-all-closed", function () {
   }
 })
 
-const setTray = () => {
+/**
+ * 系统托盘
+ */
+/* const setTray = () => {
   let appTray = null;
   let trayMenuTemplate = [
     {
@@ -64,7 +100,8 @@ const setTray = () => {
   appTray.setToolTip('A Pure Player');
 
   appTray.setContextMenu(contextMenu);
-}
+} */
+
 
 ipcMain.on('quit', () => app.quit());
 ipcMain.on('minimize', () => mainWindow.minimize());

@@ -19,7 +19,7 @@ export default function Routes () :React.ReactElement {
     <Wrapper>
       <Router>
         <Switch>
-          <Route exact path="/"><Home /></Route>
+          <Route exact path="/home"><Home /></Route>
         </Switch>
       </Router>
     </Wrapper>

@@ -9,6 +9,7 @@ import { Howl, Howler } from 'howler';
 
 import Cover from './cover';
 import Operate from "./operate";
+import List from './list';
 
 import CloseIcon from '@/assets/icons/close.svg';
 import MinusIcon from '@/assets/icons/minus.svg';
@@ -21,7 +22,7 @@ const Container = styled.div`
   border: 1px solid #ccc;
   border-radius: 4px;
   display: flex;
-  background-color: rgba(255,255,255,0.95);
+  background-color: rgba(255,255,255,0.99);
   user-select: none;
   -webkit-app-region: drag;
 `;
@@ -80,12 +81,17 @@ const Right = styled.div`
 `;
 
 function App () :React.ReactElement {
-  const [isPaused, setIsPaused] = React.useState(true);
-  const [isLyric, setIsLyric] = React.useState(false);
-  const [songList, setSongList] = React.useState<ISong[]>();
-  const [progress, setProgress] = React.useState(0);
-  const [currentIndex, setCurrentIndex] = React.useState(0);
+  // sound player
   const [sound, setSound] = React.useState<any>();
+  // song player status
+  const [isPaused, setIsPaused] = React.useState(true);
+  const [progress, setProgress] = React.useState(0);
+  // 
+  const [songList, setSongList] = React.useState<ISong[]>();
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  // lyric & list panel
+  const [isLyricVisible, setIsLyricVisible] = React.useState(false);
+  const [isListVisible, setIsListVisible] = React.useState(false);
 
   /**
    * default cover image
@@ -128,6 +134,19 @@ function App () :React.ReactElement {
   const handleClose = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     ipcRenderer.send('quit');
+  }
+
+  const handleList = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    setIsListVisible(!isListVisible);
+  }
+
+  const handleSelect = (e: React.MouseEvent<HTMLElement>, s: ISong) => {
+    e.preventDefault();
+    console.log(s);
+    console.log('index: ', songList.indexOf(s));
+    const selectIndex = songList.indexOf(s);
+    setCurrentIndex(selectIndex);
   }
 
   React.useEffect(() => {
@@ -240,20 +259,31 @@ function App () :React.ReactElement {
         <Cover
           source={coverImg}
           title="test"
-          running={!isPaused}
+          isPaused={isPaused}
           onClick={handlePause}
         />
       </Left>
       <Right>
-        <Operate
-          common={songList && songList[currentIndex].common}
-          onPrev={handlePrev}
-          onPause={handlePause}
-          onNext={handleNext}
-          onSetting={handleSetting}
-          isPaused={isPaused}
-          progress={progress}
-        />
+        {
+          isListVisible
+            ?
+            <List
+              songs={songList}
+              onClose={handleList}
+              onSelect={handleSelect}
+            />
+            :
+            <Operate
+              song={songList && songList[currentIndex]}
+              onPrev={handlePrev}
+              onPause={handlePause}
+              onNext={handleNext}
+              onSetting={handleSetting}
+              onList={handleList}
+              isPaused={isPaused}
+              progress={progress}
+            />
+        }
       </Right>
     </Container>
   );

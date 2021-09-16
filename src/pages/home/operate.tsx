@@ -2,12 +2,22 @@ import React from 'react';
 import styled from 'styled-components';
 import { ISong } from '@/types';
 
+// prev song
 import Prev from '@/assets/icons/prev.svg';
+import PrevLight from '@/assets/icons/prev-light.svg';
+// pause
 import Pause from '@/assets/icons/pause.svg';
 import Play from '@/assets/icons/play.svg';
+// next song
 import Next from '@/assets/icons/next.svg';
+import NextLight from '@/assets/icons/next-light.svg';
+// play order
 import Random from '@/assets/icons/random.svg';
+// music settings
 import Setting from '@/assets/icons/setting-tri-line.svg';
+// music playing list
+import MusicPlaying from '@/assets/icons/music-playing.svg';
+import MusicPlayingGreen from '@/assets/icons/music-playing-green.svg';
 
 
 const Operate = styled.div`
@@ -83,45 +93,64 @@ const Popover = styled.div`
   }
 `;
 
-type IProps = {
+interface IProps {
   onPause?: React.MouseEventHandler<HTMLElement>,
   onPrev?: React.MouseEventHandler<HTMLElement>,
   onNext?: React.MouseEventHandler<HTMLElement>,
   onSetting?: React.MouseEventHandler<HTMLElement>,
+  onList?: React.MouseEventHandler<HTMLElement>,
   isPaused?: boolean,
   progress?: number,
-} & ISong;
+  song?: ISong,
+};
 
 export default function (props: IProps) :React.ReactElement {
   const {
-    common = { title: 'No Title', artist: 'No Artist'},
+    song,
     onPause,
     onSetting,
     onPrev,
     onNext,
+    onList,
     isPaused = false,
     progress = 0,
   } = props;
 
   const [isPopoverVisible, setIsPopoverVisible] = React.useState(false);
+  // operator icon color
+  const [isNextHover, setIsNextHover] = React.useState(false);
+  const [isPrevHover, setIsPrevHover] = React.useState(false);
+  const [isPauseHover, setIsPauseHover] = React.useState(false);
+  const [isMusicPlayHover, setIsMusicPlayHover] = React.useState(false);
 
   const handleClickSetting = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     setIsPopoverVisible(!isPopoverVisible);
   }
 
+  const handleMouseHover = (
+    e: React.MouseEvent<HTMLElement>,
+    setter: React.Dispatch<React.SetStateAction<boolean>>,
+    flag: boolean
+  ) => {
+    e.preventDefault();
+    setter(flag);
+  }
+
   return (
     <Operate>
       <div className="header">
-        <h3>{ common.title }</h3>
-        <h4>{ common.artist }</h4>
+        <h3>{ song ? song.common.title : 'No Song'}</h3>
+        <h4>{ song ? song.common.artist : 'No Singer'}</h4>
       </div>
       <div className="operator no-drag">
         <img
-          src={Prev}
+          src={isPrevHover ? PrevLight : Prev}
           alt="prev"
           className="item"
           onClick={onPrev}
+          onMouseEnter={e => handleMouseHover(e, setIsPrevHover, true)}
+          onMouseLeave={e => handleMouseHover(e, setIsPrevHover, false)}
         />
         <img
           src={isPaused ? Play : Pause}
@@ -130,20 +159,16 @@ export default function (props: IProps) :React.ReactElement {
           onClick={onPause}
         />
         <img
-          src={Next}
+          src={isNextHover ? NextLight : Next}
           alt="next"
           className="item"
           onClick={onNext}
+          onMouseEnter={e => handleMouseHover(e, setIsNextHover, true)}
+          onMouseLeave={e => handleMouseHover(e, setIsNextHover, false)}
         />
         <img src={Random} alt="random" className="random item" />
-        <Popover
-          className="setting item"
-          onClick={handleClickSetting}
-        >
-          <img
-            src={Setting}
-            alt="setting"
-          />
+        <Popover className="setting item" onClick={handleClickSetting}>
+          <img src={Setting} alt="setting" />
           <div
             className="setting-options"
             style={{display: isPopoverVisible ? 'block' : 'none'}}
@@ -154,6 +179,14 @@ export default function (props: IProps) :React.ReactElement {
             <div className="option-item" onClick={onSetting}>打开文件...</div>
           </div>
         </Popover>
+        <img
+          src={isMusicPlayHover ? MusicPlayingGreen : MusicPlaying}
+          alt="music-playing"
+          className="music-playing item"
+          onClick={onList}
+          onMouseEnter={e => handleMouseHover(e, setIsMusicPlayHover, true)}
+          onMouseLeave={e => handleMouseHover(e, setIsMusicPlayHover, false)}
+        />
       </div>
       <div className="progress">
         <div className="back item"></div>

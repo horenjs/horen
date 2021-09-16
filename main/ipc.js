@@ -27,36 +27,47 @@ function openFiles(event) {
     properties: ['openFiles', 'multiSelections'],
   }).then(async result => {
     const fileList = [];
+
     for (let file of result.filePaths) {
       const metadata = await musicMeta(file);
       fileList.push({path:file, ...metadata});
     }
 
-    const configPath = path.resolve(__dirname, '../public/config.user.json');
-
-    let defaultConfig;
-    fs.readFile(path.resolve(__dirname, '../public/config.json'), (err, data) => {
-      if (!err) {
-        defaultConfig = JSON.parse(data);
-        defaultConfig["songList"] = fileList.map(f => {
-          f.common.picture[0].data = arrayBufferToBase64(f.common.picture[0].data);
-          return f;
-        });
-        fs.writeFile(configPath, JSON.stringify(defaultConfig), (e, d) => {
-          if (!e) {
-            console.log('write config success');
-          }
-        })
-      }
-    })
-
     event.reply("setting-open-files-reply", fileList);
+
+    // save app config
+    saveConfig(fileList);
   }).catch(console.error)
 }
 
 async function musicMeta(fileName) {
-  const metadata = mm.parseFile(fileName);
+  const metadata = await mm.parseFile(fileName);
   return metadata;
+}
+
+function saveConfig(fileList) {
+  const userConfigPath = path.resolve(__dirname, '../public/config.user.json');
+  const defaultConfigPath = path.resolve(__dirname, '../public/config.json');
+
+  let defaultConfig;
+
+  fs.readFile(defaultConfigPath, (err, data) => {
+    if (!err) {
+      defaultConfig = JSON.parse(data);
+
+      // 转化 封面的 unit8array 为 base64 格式的字符串
+      defaultConfig["songList"] = fileList.map(f => { return {path: f.path} });
+
+      // 写入配置文件
+      fs.writeFile(userConfigPath, JSON.stringify(defaultConfig), (e, d) => {
+        if (!e) {
+          console.log('write config success');
+        } else {
+          console.log(e);
+        }
+      })
+    }
+  })
 }
 
 function arrayBufferToBase64(array) {
@@ -97,5 +108,6 @@ function arrayBufferToBase64(array) {
 
 module.exports = {
   openFiles,
-  arrayBufferToBase64
+  arrayBufferToBase64,
+  musicMeta
 }

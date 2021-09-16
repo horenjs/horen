@@ -239,7 +239,9 @@ function App () :React.ReactElement {
   React.useEffect(() => {
     ipcRenderer.on('config', (event: any, arg: any) => {
       console.log(arg);
-      setSongList(arg.songList);
+      if (arg.songList.length) {
+        setSongList(arg.songList)
+      };
     })
   }, [])
 

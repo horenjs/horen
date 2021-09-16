@@ -8,7 +8,7 @@ const Container = styled.div`
   width: 100%;
   height: 300px;
   display: flex;
-  background-color: #f8f8f8;
+  background-color: #f4f4f4;
   .close-list {
     width: 24px;
     height: 100%;
@@ -76,6 +76,7 @@ export default function (props: IProps) :React.ReactElement {
       </div>
       <div className="item-line more-info">
         <span>{ s.common.album }</span>
+        <span> | </span>
         <span>
           { s.common.track.no + '/' + s.common.track.of }
         </span>

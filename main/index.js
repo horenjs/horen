@@ -3,9 +3,10 @@ const { openFiles } = require("./ipc");
 const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
+const { musicMeta } = require('./ipc');
 
 // app configuration
-let config;
+let appConfig;
 // main window
 let mainWindow;
 // let lyricWindow;
@@ -31,36 +32,9 @@ function createWindow () {
   return w;
 }
 
-/*
-function createListWindow (position) {
-  const w = new BrowserWindow({
-    width: 300,
-    height: 302,
-    frame: false,
-    transparent: true,
-    x: position[0] + 605,
-    y: position[1],
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false, // this config make react use electron.
-      webSecurity: false,
-    }
-  });
-
-  w.loadURL("http://localhost:8080/#/list");
-  w.setMovable(true);
-  w.hide();
-
-  return w;
-} */
-
 app.whenReady().then(() => {
+  // create main window
   mainWindow = createWindow();
-  /**
-   * set system tray icon
-   */
-  // setTray();
-
   // only in macOS
   app.on("activate", function () {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -69,29 +43,36 @@ app.whenReady().then(() => {
   })
 
   mainWindow.on('ready-to-show', () => {
-    fs.readFile(path.resolve(__dirname, '../public/config.json'), (err, data) => {
-      if (err) {
-        console.log(err);
-      } else {
-        const defaultConfig = JSON.parse(data);
-        // console.log(config);
-        
-        fs.readFile(path.resolve(__dirname, '../public/config.user.json'), (e, d) => {
-          if (!e) {
-            config = _.merge(defaultConfig, JSON.parse(d));
+    const defaultConfigPath = path.resolve(__dirname, '../public/config.json');
+    const userConfigPath = path.resolve(__dirname, '../public/config.user.json');
 
-            mainWindow.webContents.send('config', config);
+    fs.readFile(defaultConfigPath, (err, data) => {
+      if (!err) {
+        fs.readFile(userConfigPath, async (e, d) => {
+          if (!e) {
+            const defaultConfig = JSON.parse(data);
+            const userConfig = JSON.parse(d);
+
+            appConfig = _.merge(defaultConfig, userConfig);
+
+            const songList = appConfig.songList;
+            const finalSongList = [];
+
+            for (let i = 0; i < songList.length; i ++) {
+              const p = songList[i].path;
+              const metaData = await musicMeta(p);
+              finalSongList.push({path: p, ...metaData});
+            }
+
+            appConfig.songList = finalSongList;
+
+            // send app config while app is ready.
+            mainWindow.webContents.send('config', appConfig);
           }
         })
       }
     })
   });
-
-  // list window follows the main window
-  /* mainWindow.on('moved', () => {
-    listWindow.setPosition(mainWindow.getPosition()[0] + 605, mainWindow.getPosition()[1]);
-    // console.log(listWindow.getPosition());
-  }) */
 })
 
 app.on("window-all-closed", function () {

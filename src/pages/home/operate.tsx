@@ -97,7 +97,7 @@ interface IProps {
   onPause?: React.MouseEventHandler<HTMLElement>,
   onPrev?: React.MouseEventHandler<HTMLElement>,
   onNext?: React.MouseEventHandler<HTMLElement>,
-  onSetting?: React.MouseEventHandler<HTMLElement>,
+  onSetting?: (e: React.MouseEvent<HTMLElement>, flag: string) => void,
   onList?: React.MouseEventHandler<HTMLElement>,
   isPaused?: boolean,
   progress?: number,
@@ -173,10 +173,10 @@ export default function (props: IProps) :React.ReactElement {
             className="setting-options"
             style={{display: isPopoverVisible ? 'block' : 'none'}}
           >
-            <div className="option-item">关于</div>
-            <div className="option-item">设置</div>
-            <div className="option-item">打开目录..</div>
-            <div className="option-item" onClick={onSetting}>打开文件...</div>
+            <div className="option-item" onClick={e => onSetting(e, 'open-about')}>关于</div>
+            <div className="option-item" onClick={e => onSetting(e, 'open-config')}>设置</div>
+            <div className="option-item" onClick={e => onSetting(e, 'open-dirs')}>打开目录..</div>
+            <div className="option-item" onClick={e => onSetting(e, 'open-files')}>打开文件...</div>
           </div>
         </Popover>
         <img

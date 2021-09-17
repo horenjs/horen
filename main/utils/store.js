@@ -4,30 +4,6 @@ const { getMusicMeta } = require('./util');
 const { USER_CONFIG_PATH, DEFAULT_CONFIG_PATH } = require('../config');
 
 /**
- * save play state to config
- * @param {Array<song>} songList song list
- */
-function saveConfig(songList) {
-  fs.readFile(DEFAULT_CONFIG_PATH, (err, data) => {
-    if (!err) {
-      let defaultConfig = JSON.parse(data);
-
-      // 转化 封面的 unit8array 为 base64 格式的字符串
-      defaultConfig["songList"] = songList.map(f => ({path: f.path}));
-
-      // 写入配置文件
-      fs.writeFile(USER_CONFIG_PATH, JSON.stringify(defaultConfig), (e, d) => {
-        if (!e) {
-          console.log('write config success');
-        } else {
-          console.log(e);
-        }
-      })
-    }
-  })
-}
-
-/**
  * read the app config
  * @returns app config
  */
@@ -61,6 +37,32 @@ async function readConfig() {
       }
     }) 
   });
+}
+
+/**
+ * save play state to config
+ * @param {Array<song>} songList song list
+ */
+async function saveConfig(currentStatus) {
+  // console.log(currentStatus);
+
+  const appConfig = await readConfig();
+
+  if ('songList' in appConfig) {
+    appConfig.songList = appConfig.songList.map(s => ({path: s.path}));
+  }
+
+  const finalConfig = _.merge(appConfig, currentStatus);
+
+  // console.log(finalConfig);
+  // 写入配置文件
+  fs.writeFile(USER_CONFIG_PATH, JSON.stringify(finalConfig), (e) => {
+    if (!e) {
+      console.log('write config success');
+    } else {
+      console.log(e);
+    }
+  })
 }
 
 module.exports = {

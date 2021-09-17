@@ -88,7 +88,7 @@ function App () :React.ReactElement {
   const [sound, setSound] = React.useState<any>();
   // song player status
   const [playOrder, setPlayOrder] = React.useState('random');
-  const [isPaused, setIsPaused] = React.useState(true);
+  const [isPaused, setIsPaused] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
   // 
   const [songList, setSongList] = React.useState<ISong[]>();
@@ -110,6 +110,7 @@ function App () :React.ReactElement {
       console.log('prev index: ', prevIndex);
       setCurrentIndex(prevIndex);
       // console.log(playHistory);
+      createNewSound(prevIndex);
     }
   }
 
@@ -126,13 +127,18 @@ function App () :React.ReactElement {
       if (currentIndex < songList.length - 1) {
         const nextIndex = getNextIndex(currentIndex, playOrder);
         setCurrentIndex(nextIndex);
+        createNewSound(nextIndex);
       }
     }
   }
 
-  const handleSetting = (e: React.MouseEvent<HTMLElement>) => {
+  const handleSetting = (e: React.MouseEvent<HTMLElement>, flag: string) => {
     e.preventDefault();
-    ipcRenderer.send('setting-open-files');
+    switch (flag) {
+      case 'open-files':
+        ipcRenderer.send('setting:open-files', {flag});
+        break;
+    }
   }
 
   const handleMinimize = (e: React.MouseEvent<HTMLElement>) => {
@@ -142,7 +148,18 @@ function App () :React.ReactElement {
 
   const handleClose = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    ipcRenderer.send('quit');
+    const status = {
+      progress,
+      playOrder,
+      isPaused,
+      songList,
+      currentIndex,
+      playHistory,
+      isListVisible,
+      isLyricVisible,
+    }
+
+    ipcRenderer.send('quit', {status});
   }
 
   const handleList = (e: React.MouseEvent<HTMLElement>) => {
@@ -159,101 +176,122 @@ function App () :React.ReactElement {
   }
 
   const getNextIndex = (cIndex: number, order: string) => {
+    let i;
+
     switch (order) {
       case 'asc':
-        return cIndex + 1;
+        i = cIndex + 1;
         break;
       case 'random':
         const plus = randomInteger(0, songList.length)
         const nextIndex = Math.abs(cIndex - plus);
         console.log('next song: ', nextIndex);
-        return nextIndex;
+        i = nextIndex;
         break;
     }
+
+    return i;
   }
 
+  const createSound = (song: ISong) => {
+    const src = song.path;
+    const s = new Howl({src, autoplay: true});
+    return s;
+  }
+
+  const createNewSound = (i: number) => {
+    if (sound) {
+      sound.unload();
+      setSound(undefined);
+    }
+
+    const song = songList[i];
+    const newSound = createSound(song);
+    setSound(newSound);
+  }
+
+  // 监听：读取多个文件
   React.useEffect(() => {
-    ipcRenderer.on('setting-open-files-reply', (event: any, arg: any[]) => {
-      console.log(arg);
-      if (arg.length !== 0) setSongList(arg);
+    ipcRenderer.on('setting-reply:open-files', (event: any, songs: ISong[]) => {
+      console.log(songs);
+      if (songs.length !== 0) {
+        setSongList(songs);
+
+        if (!sound) {
+          const song = songs[currentIndex];
+          const newSound = createSound(song);
+          setSound(newSound);
+        }
+      }
     });
   }, [])
 
+  // listening: init the app 
+  React.useEffect(() => {
+    ipcRenderer.on('config', (event: any, args: any) => {
+      args.progess && setProgress(args.progress);
+      args.playOrder && setPlayOrder(args.playOrder);
+      args.isPaused !== undefined && setIsPaused(args.isPaused);
+      args.songList && setSongList(args.songList);
+      args.currentIndex && setCurrentIndex(args.currentIndex);
+      args.playHistory && setPlayHistory(args.playHistory);
+      args.isListVisible !== undefined && setIsListVisible(args.isListVisible);
+      args.isLyricVisible !== undefined && setIsLyricVisible(args.isLyricVisible);
+
+      if (args.songList && args.currentIndex) {
+        const song = args.songList[args.currentIndex];
+        const newSound = createSound(song);
+
+        // 恢复上次播放的时间
+        if (args.progress) {
+          newSound.seek(args.progress);
+        }
+
+        setSound(newSound);
+      }
+    })
+  }, [])
+
+  // listen: sound
   React.useEffect(() => {
     let timer: any;
 
-    if (songList) {
-      /**
-       * if sound is existed, remove it.
-       */
-      if (sound) {
-        console.log('sound exists');
-        sound.unload();
-        setSound(undefined);
-        console.log('clear the sound.');
-      }
-
-      /**
-       * create a new Howl
-       */
-      // 先将进度条设为 0
-      // 看起来跳转的速度好像快一点
-      setProgress(0);
-      const song = songList[currentIndex];
-      const src = song.path;
-      const s = new Howl({src, autoplay: true});
-      setIsPaused(false);
-
-      setSound(s);
-
-      /**
-       * get the duration of song after loaded.
-       */
+    if (sound && songList) {
+      // get the duration of song after loaded.
       let _duration = 0;
-      s.once('load', () => {
-        _duration = s.duration();
+      const song = songList[currentIndex];
+
+      sound.once('load', () => {
+        _duration = sound.duration();
+
         // set the main window title
         const title = song.common.title + ' - ' + song.common.artist;
         ipcRenderer.send('title', title);
         console.log('_duration: ', _duration);
       })
 
-      /**
-       * update progess per second.
-       */
-      timer = setInterval(() => {
-        let _seek = s.seek();
-        const _progress = (_seek / _duration) * 100;
-        ipcRenderer.send('progress', _progress);
-        setProgress(_progress);
-      }, 500);
-
-      /**
-       * when sound is end, go to the next
-       */
-      s.once('end', () => {
+      // when sound is end, go to the next
+      sound.once('end', () => {
         if (currentIndex < songList.length - 1) {
           const nextIndex = getNextIndex(currentIndex, playOrder);
           setCurrentIndex(nextIndex);
         }
       });
 
-      // record play history
-      const ph = [...playHistory];
-      ph[ph.length] = currentIndex;
-
-      console.log('play history: ', ph);
-
-      setPlayHistory(ph);
+      // update progess per second.
+      timer = setInterval(() => {
+        let _seek = sound.seek();
+        const _progress = (_seek / _duration) * 100;
+        ipcRenderer.send('progress', _progress);
+        setProgress(_progress);
+      }, 500);
     }
 
-    /**
-     * clear the interval timer.
-     */
+    // clear the interval timer.
     return () => clearInterval(timer);
+  }, [sound]);
 
-  }, [songList, currentIndex])
-
+  // listen: paused
   React.useEffect(() => {
     if (sound) {
       if (isPaused) {
@@ -265,18 +303,6 @@ function App () :React.ReactElement {
   }, [isPaused])
 
   /**
-   * read config from config.json
-   */
-  React.useEffect(() => {
-    ipcRenderer.on('config', (event: any, arg: any) => {
-      console.log(arg);
-      if (arg.songList.length) {
-        setSongList(arg.songList)
-      };
-    })
-  }, [])
-
-  /**
    * convert the uint8arry to the base64 image for cover
    */
   if (songList && songList[currentIndex].common) {
@@ -285,9 +311,7 @@ function App () :React.ReactElement {
       const { format, data } = picture;
 
       if (_.isTypedArray(data)) {
-        coverImg = `
-          data:${format};base64,${uint8arrayToBase64(data)}
-        `;
+        coverImg = `data:${format};base64,${uint8arrayToBase64(data)}`;
       } else {
         coverImg = `data:${format};base64,${data}`;
       }

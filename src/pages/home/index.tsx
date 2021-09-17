@@ -8,6 +8,8 @@ const { ipcRenderer } = electron;
 
 import { Howl } from 'howler';
 
+import { randomInteger } from '@/utils';
+
 import Cover from './cover';
 import Operate from "./operate";
 import List from './list';
@@ -85,11 +87,13 @@ function App () :React.ReactElement {
   // sound player
   const [sound, setSound] = React.useState<any>();
   // song player status
+  const [playOrder, setPlayOrder] = React.useState('random');
   const [isPaused, setIsPaused] = React.useState(true);
   const [progress, setProgress] = React.useState(0);
   // 
   const [songList, setSongList] = React.useState<ISong[]>();
   const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [playHistory, setPlayHistory] = React.useState([0]);
   // lyric & list panel
   const [isLyricVisible, setIsLyricVisible] = React.useState(false);
   const [isListVisible, setIsListVisible] = React.useState(false);
@@ -101,8 +105,11 @@ function App () :React.ReactElement {
   
   const handlePrev = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
+    if (currentIndex >= 0) {
+      const prevIndex = playHistory[playHistory.length - 2];
+      console.log('prev index: ', prevIndex);
+      setCurrentIndex(prevIndex);
+      // console.log(playHistory);
     }
   }
 
@@ -117,7 +124,8 @@ function App () :React.ReactElement {
     e.preventDefault();
     if (songList) {
       if (currentIndex < songList.length - 1) {
-        setCurrentIndex(currentIndex + 1)
+        const nextIndex = getNextIndex(currentIndex, playOrder);
+        setCurrentIndex(nextIndex);
       }
     }
   }
@@ -148,6 +156,20 @@ function App () :React.ReactElement {
     console.log('index: ', songList.indexOf(s));
     const selectIndex = songList.indexOf(s);
     setCurrentIndex(selectIndex);
+  }
+
+  const getNextIndex = (cIndex: number, order: string) => {
+    switch (order) {
+      case 'asc':
+        return cIndex + 1;
+        break;
+      case 'random':
+        const plus = randomInteger(0, songList.length)
+        const nextIndex = Math.abs(cIndex - plus);
+        console.log('next song: ', nextIndex);
+        return nextIndex;
+        break;
+    }
   }
 
   React.useEffect(() => {
@@ -211,9 +233,18 @@ function App () :React.ReactElement {
        */
       s.once('end', () => {
         if (currentIndex < songList.length - 1) {
-          setCurrentIndex(currentIndex + 1);
+          const nextIndex = getNextIndex(currentIndex, playOrder);
+          setCurrentIndex(nextIndex);
         }
       });
+
+      // record play history
+      const ph = [...playHistory];
+      ph[ph.length] = currentIndex;
+
+      console.log('play history: ', ph);
+
+      setPlayHistory(ph);
     }
 
     /**

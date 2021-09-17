@@ -1,16 +1,9 @@
-const { app, BrowserWindow, ipcMain, Tray, Menu } = require("electron");
-const { openFiles } = require("./ipc");
-const path = require('path');
-const fs = require('fs');
-const _ = require('lodash');
-const { musicMeta } = require('./ipc');
+const { app, BrowserWindow } = require("electron");
+const ipcs = require('./ipcs');
+const { readConfig } = require('./utils/store');
 
-// app configuration
-let appConfig;
 // main window
 let mainWindow;
-// let lyricWindow;
-let listWindow;
 
 function createWindow () {
   const w = new BrowserWindow({
@@ -42,37 +35,15 @@ app.whenReady().then(() => {
     }
   })
 
-  mainWindow.on('ready-to-show', () => {
-    const defaultConfigPath = path.resolve(__dirname, '../public/config.json');
-    const userConfigPath = path.resolve(__dirname, '../public/config.user.json');
-
-    fs.readFile(defaultConfigPath, (err, data) => {
-      if (!err) {
-        fs.readFile(userConfigPath, async (e, d) => {
-          if (!e) {
-            const defaultConfig = JSON.parse(data);
-            const userConfig = JSON.parse(d);
-
-            appConfig = _.merge(defaultConfig, userConfig);
-
-            const songList = appConfig.songList;
-            const finalSongList = [];
-
-            for (let i = 0; i < songList.length; i ++) {
-              const p = songList[i].path;
-              const metaData = await musicMeta(p);
-              finalSongList.push({path: p, ...metaData});
-            }
-
-            appConfig.songList = finalSongList;
-
-            // send app config while app is ready.
-            mainWindow.webContents.send('config', appConfig);
-          }
-        })
-      }
-    })
+  // read the app config while main window is ready to show
+  mainWindow.on('ready-to-show', async () => {
+    const appConfig = await readConfig();
+    // console.log(appConfig);
+    mainWindow.webContents.send('config', appConfig);
   });
+
+  // ipc
+  ipcs(app, {mainWindow});
 })
 
 app.on("window-all-closed", function () {
@@ -107,10 +78,3 @@ app.on("window-all-closed", function () {
 
   appTray.setContextMenu(contextMenu);
 } */
-
-
-ipcMain.on('quit', () => app.quit());
-ipcMain.on('minimize', () => mainWindow.minimize());
-ipcMain.on('setting-open-files', openFiles);
-ipcMain.on('progress', (event, arg) => mainWindow.setProgressBar(arg / 100));
-ipcMain.on('title', (event, arg) => mainWindow.setTitle(arg));

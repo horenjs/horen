@@ -67,8 +67,8 @@ interface IProps {
 export default function (props: IProps) :React.ReactElement {
   const { songs, onClose, onSelect } = props;
 
-  const renderItem = (s: ISong) => (
-    <SongListItem onClick={e => onSelect(e, s)}>
+  const renderItem = (s: ISong, index: number) => (
+    <SongListItem onClick={e => onSelect(e, s)} key={index}>
       <div className="item-line">
         <span>{ s.common.artist }</span>
         <span> - </span>

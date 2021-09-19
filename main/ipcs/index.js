@@ -1,4 +1,5 @@
 const { ipcMain } = require("electron");
+const { readUserData, writeUserData } = require('./app-data');
 const { openFiles } = require('./file-and-dir');
 const {
   closeMainWindow,
@@ -13,6 +14,11 @@ const {
  */
 function ipcs (args) {
   const { app, mainWindow } = args;
+  /**
+   * userdata
+   */
+  ipcMain.on('userData:read', (event, args) => readUserData(event, args));
+  ipcMain.on('userData:write', (event, args) => writeUserData(event, args));
   /**
    * file and dir
    */

@@ -1,6 +1,5 @@
 const { app, BrowserWindow } = require("electron");
 const ipcs = require('./ipcs');
-const { readConfig } = require('./utils/store');
 
 // main window
 let mainWindow;
@@ -36,12 +35,12 @@ app.whenReady().then(() => {
     }
   })
 
-  // read the app config while main window is ready to show
+  /* read the app config while main window is ready to show
   mainWindow.on('ready-to-show', async () => {
-    // const appConfig = await readConfig();
+    const appConfig = await readConfig();
     // console.log(appConfig);
-    // mainWindow.webContents.send('config', appConfig);
-  });
+    mainWindow.webContents.send('config:read', appConfig);
+  }); */
 
   // ipc
   ipcs({app, mainWindow});

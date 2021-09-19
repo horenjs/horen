@@ -5,8 +5,6 @@
  * @param {object} mainWindow main window
  */
 async function closeMainWindow (event, args, mainWindow) {
-  const { recordStatus } = args;
-
   mainWindow.close();
   // event.reply('mainWindow:close=>reply', 'main window has been closed.');
 }

@@ -6,7 +6,7 @@ import _ from 'lodash';
 const electron = window.require('electron');
 const { ipcRenderer } = electron;
 
-import { Howl } from 'howler';
+import { Howl, Howler } from 'howler';
 
 import { randomInteger } from '@/utils';
 
@@ -84,20 +84,22 @@ const Right = styled.div`
 `;
 
 function App () :React.ReactElement {
-  // sound player
-  const [sound, setSound] = React.useState<any>();
+  const [currentSound, setCurrentSound] = React.useState<Howl>(null);
+  // lock, when sound is not initialized.
+  const [lock, setLock] = React.useState(true);
   // song player status
   const [playOrder, setPlayOrder] = React.useState('random');
-  const [playHistory, setPlayHistory] = React.useState<ISong[]>([]);
-  const [isPaused, setIsPaused] = React.useState(false);
-  const [progress, setProgress] = React.useState(0);
-  const [coverImgStr, setCoverImgStr] = React.useState(DefaultCover);
-  // 
+  const [playHistory, setPlayHistory] = React.useState<ISong[]>();
+  
   const [songList, setSongList] = React.useState<ISong[]>();
-  const [currentIndex, setCurrentIndex] = React.useState(0);
-  const [historyIndex, setHistoryIndex] = React.useState(0);
+  const [currentSong, setCurrentSong] = React.useState<ISong>();
+
+  const [progress, setProgress] = React.useState(0);
+  const [isPaused, setIsPaused] = React.useState(false);
+  const [isLoop, setIsLoop] = React.useState(false);
+  
   // lyric & list panel
-  const [isLyricVisible, setIsLyricVisible] = React.useState(false);
+  // const [isLyricVisible, setIsLyricVisible] = React.useState(false);
   const [isListVisible, setIsListVisible] = React.useState(false);
   
   /******************************************************************************/
@@ -107,42 +109,18 @@ function App () :React.ReactElement {
    */
   const handlePrev = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-
-    if (songList && playHistory.length >= 2) {
-      const prevSong = playHistory[historyIndex];
-      const prevIndex = _.indexOf(songList, prevSong);
-
-      console.log('prev song: ', prevSong);
-      console.log('prev song index: ', prevIndex);
-
-      setCurrentIndex(prevIndex);
-      destoryAndCreateSound(prevSong);
-      setHistoryIndex(historyIndex + 1);
-    }
   }
 
   const handlePause = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    if (songList) {
-      setIsPaused(!isPaused);
-    }
+    currentSound && setIsPaused(!isPaused);
   }
 
   const handleNext = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    if (songList) {
-      const nextIndex = getNextIndex();
-
-      const nextSong = songList[nextIndex];
-
-      setCurrentIndex(nextIndex);
-      destoryAndCreateSound(nextSong);
-
-      // 每次播放新的歌曲时，将其加入历史播放列表
-      setPlayHistory([nextSong, ...playHistory]);
-      setHistoryIndex(0);
-
-      console.log([nextSong, ...playHistory]);
+    if (currentSong && songList && !lock) {
+      const nextSong = getNextSong(currentSong, songList, playOrder);
+      setCurrentSong(nextSong);
     }
   }
   /*******************************************************************************/
@@ -168,182 +146,88 @@ function App () :React.ReactElement {
 
   const handleClose = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    const status = {
-      progress,
-      playOrder,
-      isPaused,
-      songList,
-      currentIndex,
-      playHistory,
-      isListVisible,
-      isLyricVisible,
-    }
-
-    ipcRenderer.send('mainWindow:close', {status});
+    ipcRenderer.send('mainWindow:close');
   }
   /******************************************************************************/
 
-  const handleList = (e: React.MouseEvent<HTMLElement>) => {
-    e.preventDefault();
-    setIsListVisible(!isListVisible);
-  }
-
   const handleSelect = (e: React.MouseEvent<HTMLElement>, s: ISong) => {
     e.preventDefault();
-    
-    const selectedIndex = songList.indexOf(s);
-
-    const selectedSong = songList[selectedIndex];
-
-    setCurrentIndex(selectedIndex);
-    destoryAndCreateSound(selectedSong);
-
-    setPlayHistory([selectedSong, ...playHistory]);
-    setHistoryIndex(0);
-  }
-
-  const getNextIndex = () => {
-    let i = 0;
-
-    switch (playOrder) {
-      case 'asc':
-        if (currentIndex < songList.length - 1) {
-          i = currentIndex + 1;
-        }
-        break;
-      case 'random':
-        const nextIndex = randomInteger(0, songList.length - 1);
-
-        console.log('next song index: ', nextIndex);
-
-        i = nextIndex;
-        break;
-    }
-
-    return i;
-  }
-
-  /**
-   * if song existed, destory it, then create new song.
-   * @param song ISong
-   * @returns new sound
-   */
-  const destoryAndCreateSound = (song: ISong) => {
-    if (sound) {
-      sound.unload();
-      setSound(undefined);
-    }
-
-    // set progress to 0, make song switch naturaly.
-    setProgress(0);
-
-    const src = song.path;
-    const newSound = new Howl({src, autoplay: true});
-
-    setSound(newSound);
-
-    return newSound;
+    setCurrentSong(s);
   }
 
   // 监听：读取多个文件
   React.useEffect(() => {
     ipcRenderer.on('file:open=>reply', (event: any, songs: ISong[]) => {
       console.log('read the songs: ', songs);
-
-      if (songs.length !== 0) {
+      if (songs) {
+        const song = songs[0];
+        setCurrentSong(song);
         setSongList(songs);
-
-        const newSong = songs[0];
-        destoryAndCreateSound(newSong);
-      }
-    });
-  }, [])
-
-  /* listening: init the app 
-  React.useEffect(() => {
-    ipcRenderer.on('config', (event: any, args: any) => {
-      args.progess && setProgress(args.progress);
-      args.playOrder && setPlayOrder(args.playOrder);
-      args.isPaused !== undefined && setIsPaused(args.isPaused);
-      args.songList && setSongList(args.songList);
-      args.currentIndex && setCurrentIndex(args.currentIndex);
-      args.playHistory && setPlayHistory(args.playHistory);
-      args.isListVisible !== undefined && setIsListVisible(args.isListVisible);
-      args.isLyricVisible !== undefined && setIsLyricVisible(args.isLyricVisible);
-
-      if (args.songList && args.currentIndex) {
-        const storedSong = args.songList[args.currentIndex];
-        const newSound = destoryAndCreateSound(storedSong);
-
-        // 恢复上次播放的时间
-        if (args.progress) {
-          newSound.seek(args.progress);
-        }
       }
     })
-  }, []) */
+  }, [])
 
-  // listen: sound
+  // listening: current song change
   React.useEffect(() => {
-    let timer: any;
+    if (currentSong) {
+      const sound = new Howl({src: [currentSong.path]});
 
-    if (sound && songList) {
-      // get the duration of song after loaded.
-      let _duration = 0;
+      if (currentSound) {
+        // 切换歌曲时，先锁定，避免频繁切换
+        setLock(true);
 
-      // when sound is loaded.
-      sound.once('load', () => {
-        _duration = sound.duration();
+        currentSound.unload();
 
-        // set the main window title
-        const song = songList[currentIndex];
-        const title = song.common.title + ' - ' + song.common.artist;
-        ipcRenderer.send('mainWindow:setTitle', title);
+        sound.once('load', () => {
+          if (currentSound.state() === 'unloaded') {
+            console.log('old sound unloaded.')
+            setCurrentSound(sound);
+            setLock(false);
+            sound.play();
+          }
+        });
+      } else {
+        sound.once('load', () => {
+          setCurrentSound(sound);
+          setLock(false);
+          sound.play();
+        })
+      }
 
-        // set the cover
-        setCoverImgStr(getCoverImgStr(song));
+      // set the main window title.
+      const { title, artist } = currentSong.common;
+      const t = _.join([title, artist], ' - ');
+      console.log(t);
+      ipcRenderer.send('mainWindow:setTitle', t);
+    }
+  }, [currentSong])
+
+  React.useEffect(() => {
+    if (currentSound && currentSong && songList) {
+      currentSound.on('end', () => {
+        const nextSong = getNextSong(currentSong, songList, playOrder);
+        console.log('current sound end, next: ', nextSong);
+        setCurrentSong(nextSong);
       })
-
-      // when sound is end, go to the next
-      sound.once('end', () => {
-        if (currentIndex < songList.length - 1) {
-          const nextIndex = getNextIndex();
-          const newSong = songList[currentIndex];
-
-          setCurrentIndex(nextIndex);
-          destoryAndCreateSound(newSong);
-
-          setPlayHistory([newSong, ...playHistory]);
-          setHistoryIndex(0);
-        }
-      });
-
-      // update progess per second.
-      timer = setInterval(() => {
-        let _seek = sound.seek();
-
-        const _progress = (_seek / _duration) * 100; // 0 - 100
-
-        // console.log('current progress: ', _progress);
-
-        ipcRenderer.send('mainWindow:setProgressBar', _progress);
-
-        setProgress(_progress);
-      }, 500);
     }
 
-    // clear the interval timer.
-    return () => clearInterval(timer);
-  }, [sound]);
+    if (currentSound) {
+      let timer = setInterval(() => {
+        const _seek = currentSound.seek();
+        const _duration = currentSound.duration();
+        const _progress = (_seek / _duration) * 100;
+        setProgress(_progress);
+        ipcRenderer.send('mainWindow:setProgressBar', _progress);
+      }, 500);
 
-  // listen: paused
+      return () => clearInterval(timer);
+    }
+  }, [currentSound])
+
+  // listening: pause or play
   React.useEffect(() => {
-    if (sound) {
-      if (isPaused) {
-        sound.pause();
-      } else {
-        sound.play();
-      }
+    if (currentSound) {
+      isPaused ? currentSound.pause() : currentSound.play();
     }
   }, [isPaused])
 
@@ -359,7 +243,7 @@ function App () :React.ReactElement {
       </Top>
       <Left>
         <Cover
-          source={coverImgStr}
+          source={currentSong ? getCoverImgStr(currentSong) : DefaultCover}
           title="song-cover"
           isPaused={isPaused}
           onClick={handlePause}
@@ -371,17 +255,17 @@ function App () :React.ReactElement {
             ?
             <List
               songs={songList}
-              onClose={handleList}
+              onClose={e => setIsListVisible(!isListVisible)}
               onSelect={handleSelect}
             />
             :
             <Operate
-              song={songList && songList[currentIndex]}
+              song={currentSong}
               onPrev={handlePrev}
               onPause={handlePause}
               onNext={handleNext}
               onSetting={handleSetting}
-              onList={handleList}
+              onList={e => setIsListVisible(!isListVisible)}
               isPaused={isPaused}
               progress={progress}
             />
@@ -404,6 +288,29 @@ function uint8arrayToBase64(u8arr: Uint8Array) {
   }
 
   return btoa(result);
+}
+
+const getNextSong = (current: ISong, songList: ISong[], order = 'asc') :ISong => {
+  let index = _.indexOf(songList, current);
+  let i = 0;
+
+  switch (order) {
+    case 'asc':
+      if (index < songList.length - 1) {
+        i = index + 1;
+      }
+      break;
+    case 'random':
+      i = randomInteger(0, songList.length - 1);
+      // 伪随机，最近的两首不能相同
+      break;
+  }
+
+  if (songList.length > 2 && i === index) {
+    return getNextSong(current, songList, order);
+  }
+
+  return songList[i];
 }
 
 function getCoverImgStr(song: ISong) {

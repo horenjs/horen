@@ -89,7 +89,7 @@ function App () :React.ReactElement {
   const [lock, setLock] = React.useState(true);
   // song player status
   const [playOrder, setPlayOrder] = React.useState('random');
-  const [playHistory, setPlayHistory] = React.useState<ISong[]>();
+  const [playHistory, setPlayHistory] = React.useState<ISong[]>([]);
   
   const [songList, setSongList] = React.useState<ISong[]>();
   const [currentSong, setCurrentSong] = React.useState<ISong>();
@@ -109,6 +109,9 @@ function App () :React.ReactElement {
    */
   const handlePrev = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
+    // todo: it's not the perfect way to play prev song.
+    const index = _.indexOf(playHistory, currentSong);
+    setCurrentSong(playHistory[index + 1]);
   }
 
   const handlePause = (e: React.MouseEvent<HTMLElement>) => {
@@ -121,6 +124,7 @@ function App () :React.ReactElement {
     if (currentSong && songList && !lock) {
       const nextSong = getNextSong(currentSong, songList, playOrder);
       setCurrentSong(nextSong);
+      setPlayHistory([nextSong, ...playHistory]);
     }
   }
   /*******************************************************************************/
@@ -153,6 +157,7 @@ function App () :React.ReactElement {
   const handleSelect = (e: React.MouseEvent<HTMLElement>, s: ISong) => {
     e.preventDefault();
     setCurrentSong(s);
+    setPlayHistory([s, ...playHistory]);
   }
 
   // 监听：读取多个文件
@@ -162,6 +167,7 @@ function App () :React.ReactElement {
       if (songs) {
         const song = songs[0];
         setCurrentSong(song);
+        setPlayHistory([song, ...playHistory]);
         setSongList(songs);
       }
     })
@@ -170,6 +176,8 @@ function App () :React.ReactElement {
   // listening: current song change
   React.useEffect(() => {
     if (currentSong) {
+      console.log('play history: ', ...playHistory);
+
       const sound = new Howl({src: [currentSong.path]});
 
       if (currentSound) {
@@ -208,6 +216,7 @@ function App () :React.ReactElement {
         const nextSong = getNextSong(currentSong, songList, playOrder);
         console.log('current sound end, next: ', nextSong);
         setCurrentSong(nextSong);
+        setPlayHistory([nextSong, ...playHistory]);
       })
     }
 
@@ -292,25 +301,26 @@ function uint8arrayToBase64(u8arr: Uint8Array) {
 
 const getNextSong = (current: ISong, songList: ISong[], order = 'asc') :ISong => {
   let index = _.indexOf(songList, current);
+
+  // 伪随机，最近的两首不能相同
+  let _songList = songList.map(s => {
+    if (s.path !== current.path) return s;
+  });
+
   let i = 0;
 
   switch (order) {
     case 'asc':
-      if (index < songList.length - 1) {
+      if (index < _songList.length - 1) {
         i = index + 1;
       }
       break;
     case 'random':
-      i = randomInteger(0, songList.length - 1);
-      // 伪随机，最近的两首不能相同
+      i = randomInteger(0, _songList.length - 1);
       break;
   }
 
-  if (songList.length > 2 && i === index) {
-    return getNextSong(current, songList, order);
-  }
-
-  return songList[i];
+  return _songList[i];
 }
 
 function getCoverImgStr(song: ISong) {

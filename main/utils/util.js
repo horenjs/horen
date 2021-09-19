@@ -1,5 +1,3 @@
-const fs = require('fs');
-
 /**
  * convert Buffer Array to base64str
  * @param {Array} array buffer array

@@ -19,7 +19,10 @@ async function readConfig() {
             let appConfig = _.merge(defaultConfig, userConfig);
 
             const songList = appConfig.songList;
+            const playHistory = appConfig.playHistory;
+
             const finalSongList = [];
+            const finalHistory = [];
 
             for (let i = 0; i < songList.length; i ++) {
               const p = songList[i].path;
@@ -27,7 +30,14 @@ async function readConfig() {
               finalSongList.push({path: p, ...metaData});
             }
 
+            for (let i = 0; i < playHistory.length; i ++) {
+              const p = playHistory[i].path;
+              const metaData = await getMusicMeta(p);
+              finalHistory.push({path: p, ...metaData});
+            }
+
             appConfig.songList = finalSongList;
+            appConfig.playHistory = finalHistory;
 
             resolve(appConfig);
           } else {
@@ -48,8 +58,9 @@ async function saveConfig(currentStatus) {
 
   const appConfig = await readConfig();
 
-  if ('songList' in appConfig) {
+  if ('songList' in appConfig && 'playHistory' in appConfig) {
     appConfig.songList = appConfig.songList.map(s => ({path: s.path}));
+    appConfig.playHistory = appConfig.playHistory.map(p => ({path: p.path}));
   }
 
   const finalConfig = _.merge(appConfig, currentStatus);

@@ -88,29 +88,36 @@ function App () :React.ReactElement {
   const [sound, setSound] = React.useState<any>();
   // song player status
   const [playOrder, setPlayOrder] = React.useState('random');
+  const [playHistory, setPlayHistory] = React.useState<ISong[]>([]);
   const [isPaused, setIsPaused] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
+  const [coverImgStr, setCoverImgStr] = React.useState(DefaultCover);
   // 
   const [songList, setSongList] = React.useState<ISong[]>();
   const [currentIndex, setCurrentIndex] = React.useState(0);
-  const [playHistory, setPlayHistory] = React.useState([0]);
+  const [historyIndex, setHistoryIndex] = React.useState(0);
   // lyric & list panel
   const [isLyricVisible, setIsLyricVisible] = React.useState(false);
   const [isListVisible, setIsListVisible] = React.useState(false);
-
-  /**
-   * default cover image
-   */
-  let coverImg = DefaultCover;
   
+  /******************************************************************************/
+  /**
+   * handle the song play
+   * @param e React.MouseEvent
+   */
   const handlePrev = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    if (currentIndex >= 0) {
-      const prevIndex = playHistory[playHistory.length - 2];
-      console.log('prev index: ', prevIndex);
+
+    if (songList && playHistory.length >= 2) {
+      const prevSong = playHistory[historyIndex];
+      const prevIndex = _.indexOf(songList, prevSong);
+
+      console.log('prev song: ', prevSong);
+      console.log('prev song index: ', prevIndex);
+
       setCurrentIndex(prevIndex);
-      // console.log(playHistory);
-      createNewSound(prevIndex);
+      destoryAndCreateSound(prevSong);
+      setHistoryIndex(historyIndex + 1);
     }
   }
 
@@ -124,26 +131,39 @@ function App () :React.ReactElement {
   const handleNext = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     if (songList) {
-      if (currentIndex < songList.length - 1) {
-        const nextIndex = getNextIndex(currentIndex, playOrder);
-        setCurrentIndex(nextIndex);
-        createNewSound(nextIndex);
-      }
+      const nextIndex = getNextIndex();
+
+      const nextSong = songList[nextIndex];
+
+      setCurrentIndex(nextIndex);
+      destoryAndCreateSound(nextSong);
+
+      // 每次播放新的歌曲时，将其加入历史播放列表
+      setPlayHistory([nextSong, ...playHistory]);
+      setHistoryIndex(0);
+
+      console.log([nextSong, ...playHistory]);
     }
   }
+  /*******************************************************************************/
 
   const handleSetting = (e: React.MouseEvent<HTMLElement>, flag: string) => {
     e.preventDefault();
     switch (flag) {
       case 'open-files':
-        ipcRenderer.send('setting:open-files', {flag});
+        ipcRenderer.send('file:open', {flag});
         break;
     }
   }
 
+  /******************************************************************************/
+  /**
+   * handle the main window CLOSE or MINIMIZE
+   * @param e React.MouseEvent
+   */
   const handleMinimize = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    ipcRenderer.send('minimize');
+    ipcRenderer.send('mainWindow:minimize');
   }
 
   const handleClose = (e: React.MouseEvent<HTMLElement>) => {
@@ -159,8 +179,9 @@ function App () :React.ReactElement {
       isLyricVisible,
     }
 
-    ipcRenderer.send('quit', {status});
+    ipcRenderer.send('mainWindow:close', {status});
   }
+  /******************************************************************************/
 
   const handleList = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -169,23 +190,32 @@ function App () :React.ReactElement {
 
   const handleSelect = (e: React.MouseEvent<HTMLElement>, s: ISong) => {
     e.preventDefault();
-    console.log(s);
-    console.log('index: ', songList.indexOf(s));
-    const selectIndex = songList.indexOf(s);
-    setCurrentIndex(selectIndex);
+    
+    const selectedIndex = songList.indexOf(s);
+
+    const selectedSong = songList[selectedIndex];
+
+    setCurrentIndex(selectedIndex);
+    destoryAndCreateSound(selectedSong);
+
+    setPlayHistory([selectedSong, ...playHistory]);
+    setHistoryIndex(0);
   }
 
-  const getNextIndex = (cIndex: number, order: string) => {
-    let i;
+  const getNextIndex = () => {
+    let i = 0;
 
-    switch (order) {
+    switch (playOrder) {
       case 'asc':
-        i = cIndex + 1;
+        if (currentIndex < songList.length - 1) {
+          i = currentIndex + 1;
+        }
         break;
       case 'random':
-        const plus = randomInteger(0, songList.length)
-        const nextIndex = Math.abs(cIndex - plus);
-        console.log('next song: ', nextIndex);
+        const nextIndex = randomInteger(0, songList.length - 1);
+
+        console.log('next song index: ', nextIndex);
+
         i = nextIndex;
         break;
     }
@@ -193,40 +223,43 @@ function App () :React.ReactElement {
     return i;
   }
 
-  const createSound = (song: ISong) => {
-    const src = song.path;
-    const s = new Howl({src, autoplay: true});
-    return s;
-  }
-
-  const createNewSound = (i: number) => {
+  /**
+   * if song existed, destory it, then create new song.
+   * @param song ISong
+   * @returns new sound
+   */
+  const destoryAndCreateSound = (song: ISong) => {
     if (sound) {
       sound.unload();
       setSound(undefined);
     }
 
-    const song = songList[i];
-    const newSound = createSound(song);
+    // set progress to 0, make song switch naturaly.
+    setProgress(0);
+
+    const src = song.path;
+    const newSound = new Howl({src, autoplay: true});
+
     setSound(newSound);
+
+    return newSound;
   }
 
   // 监听：读取多个文件
   React.useEffect(() => {
-    ipcRenderer.on('setting-reply:open-files', (event: any, songs: ISong[]) => {
-      console.log(songs);
+    ipcRenderer.on('file:open=>reply', (event: any, songs: ISong[]) => {
+      console.log('read the songs: ', songs);
+
       if (songs.length !== 0) {
         setSongList(songs);
 
-        if (!sound) {
-          const song = songs[currentIndex];
-          const newSound = createSound(song);
-          setSound(newSound);
-        }
+        const newSong = songs[0];
+        destoryAndCreateSound(newSong);
       }
     });
   }, [])
 
-  // listening: init the app 
+  /* listening: init the app 
   React.useEffect(() => {
     ipcRenderer.on('config', (event: any, args: any) => {
       args.progess && setProgress(args.progress);
@@ -239,18 +272,16 @@ function App () :React.ReactElement {
       args.isLyricVisible !== undefined && setIsLyricVisible(args.isLyricVisible);
 
       if (args.songList && args.currentIndex) {
-        const song = args.songList[args.currentIndex];
-        const newSound = createSound(song);
+        const storedSong = args.songList[args.currentIndex];
+        const newSound = destoryAndCreateSound(storedSong);
 
         // 恢复上次播放的时间
         if (args.progress) {
           newSound.seek(args.progress);
         }
-
-        setSound(newSound);
       }
     })
-  }, [])
+  }, []) */
 
   // listen: sound
   React.useEffect(() => {
@@ -259,30 +290,44 @@ function App () :React.ReactElement {
     if (sound && songList) {
       // get the duration of song after loaded.
       let _duration = 0;
-      const song = songList[currentIndex];
 
+      // when sound is loaded.
       sound.once('load', () => {
         _duration = sound.duration();
 
         // set the main window title
+        const song = songList[currentIndex];
         const title = song.common.title + ' - ' + song.common.artist;
-        ipcRenderer.send('title', title);
-        console.log('_duration: ', _duration);
+        ipcRenderer.send('mainWindow:setTitle', title);
+
+        // set the cover
+        setCoverImgStr(getCoverImgStr(song));
       })
 
       // when sound is end, go to the next
       sound.once('end', () => {
         if (currentIndex < songList.length - 1) {
-          const nextIndex = getNextIndex(currentIndex, playOrder);
+          const nextIndex = getNextIndex();
+          const newSong = songList[currentIndex];
+
           setCurrentIndex(nextIndex);
+          destoryAndCreateSound(newSong);
+
+          setPlayHistory([newSong, ...playHistory]);
+          setHistoryIndex(0);
         }
       });
 
       // update progess per second.
       timer = setInterval(() => {
         let _seek = sound.seek();
-        const _progress = (_seek / _duration) * 100;
-        ipcRenderer.send('progress', _progress);
+
+        const _progress = (_seek / _duration) * 100; // 0 - 100
+
+        // console.log('current progress: ', _progress);
+
+        ipcRenderer.send('mainWindow:setProgressBar', _progress);
+
         setProgress(_progress);
       }, 500);
     }
@@ -302,22 +347,6 @@ function App () :React.ReactElement {
     }
   }, [isPaused])
 
-  /**
-   * convert the uint8arry to the base64 image for cover
-   */
-  if (songList && songList[currentIndex].common) {
-    if ("picture" in songList[currentIndex].common) {
-      const picture = songList[currentIndex].common.picture[0];
-      const { format, data } = picture;
-
-      if (_.isTypedArray(data)) {
-        coverImg = `data:${format};base64,${uint8arrayToBase64(data)}`;
-      } else {
-        coverImg = `data:${format};base64,${data}`;
-      }
-    } 
-  }
-
   return (
     <Container className="home" id="home-container">
       <Top>
@@ -330,8 +359,8 @@ function App () :React.ReactElement {
       </Top>
       <Left>
         <Cover
-          source={coverImg}
-          title="test"
+          source={coverImgStr}
+          title="song-cover"
           isPaused={isPaused}
           onClick={handlePause}
         />
@@ -375,6 +404,25 @@ function uint8arrayToBase64(u8arr: Uint8Array) {
   }
 
   return btoa(result);
+}
+
+function getCoverImgStr(song: ISong) {
+  let cover = '';
+
+  const { common } = song;
+  const { picture } = common;
+
+  if (picture) {
+    const { format, data } = picture[0];
+
+    if (_.isTypedArray(data)) {
+      cover = `data:${format};base64,${uint8arrayToBase64(data)}`;
+    } else {
+      cover = `data:${format};base64,${data}`;
+    }
+  }
+
+  return cover;
 }
 
 export default App;

@@ -33,6 +33,11 @@ const SongListItem = styled.div`
   font-size: 14px;
   padding: 4px 16px;
   cursor: pointer;
+  border-radius: 4px;
+  &.current-song {
+    background-color: #D5F5E3;
+    color: #777;
+  }
   &:after {
     position: absolute;
     bottom: -2px;
@@ -46,7 +51,7 @@ const SongListItem = styled.div`
   }
   &:hover {
     background-color: #ABEBC6;
-    color: #999;
+    color: #777;
   }
   .item-line {
     margin: 4px 0;
@@ -59,33 +64,43 @@ const SongListItem = styled.div`
 
 interface IProps {
   songs: ISong[],
+  currentSong: ISong,
   onClose: React.MouseEventHandler<HTMLElement>,
   onSelect: (e: React.MouseEvent<HTMLElement>, s: ISong) => void,
   onDoubleSelect: (e: React.MouseEvent<HTMLElement>, s: ISong) => void,
 }
 
 export default function (props: IProps) :React.ReactElement {
-  const { songs, onClose, onSelect, onDoubleSelect } = props;
+  const { songs, currentSong, onClose, onSelect, onDoubleSelect } = props;
 
-  const renderItem = (s: ISong, index: number) => (
-    <SongListItem
-      onClick={e => onSelect(e, s)}
-      onDoubleClick={e => onDoubleSelect(e, s)}
-      key={index}
-    >
-      <div className="item-line">
-        <span>{ s.common.artist }</span>
-        <span> - </span>
-        <span>{ s.common.title }</span>
-      </div>
-      <div className="item-line more-info">
-        <span>{ s.common.album }</span>
-        <span style={{marginLeft: 8}}>
-          { s.common.track.no + ' / ' + s.common.track.of }
-        </span>
-      </div>
-    </SongListItem>
-  )
+  const renderItem = (s: ISong, index: number) => {
+    let classname = '';
+    
+    if (s.path === currentSong.path) {
+      classname = 'current-song';
+    }
+
+    return (
+      <SongListItem
+        onClick={e => onSelect(e, s)}
+        onDoubleClick={e => onDoubleSelect(e, s)}
+        key={index}
+        className={classname}
+      >
+        <div className="item-line">
+          <span>{ s.common.artist }</span>
+          <span> - </span>
+          <span>{ s.common.title }</span>
+        </div>
+        <div className="item-line more-info">
+          <span>{ s.common.album }</span>
+          <span style={{marginLeft: 8}}>
+            { s.common.track.no + ' / ' + s.common.track.of }
+          </span>
+        </div>
+      </SongListItem>
+    )
+  }
 
   return (
     <Container className="list no-drag">

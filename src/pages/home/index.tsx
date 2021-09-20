@@ -298,6 +298,7 @@ function App () :React.ReactElement {
             <div className={classname(isListVisibleRightnow)} style={{width: '100%'}}>
               <List
                 songs={songList}
+                currentSong={currentSong}
                 onClose={e => {
                   setIsListVisibleRightnow(false);
                   setTimeout(() => setIsListVisible(false), 260);

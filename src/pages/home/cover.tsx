@@ -62,6 +62,7 @@ export default function (props: IProps) :React.ReactElement {
         alt="song-around"
         className="around no-drag"
         style={{animationPlayState:isPaused ? 'paused' : 'running'}}
+        draggable="false"
       />
       <img
         src={source}
@@ -69,6 +70,7 @@ export default function (props: IProps) :React.ReactElement {
         className="cover no-drag"
         style={{animationPlayState:isPaused ? 'paused' : 'running'}}
         onClick={onClick}
+        draggable="false"
       />
     </Cover>
   )

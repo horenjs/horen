@@ -10,7 +10,7 @@ const { USER_CONFIG_PATH, DEFAULT_CONFIG_PATH } = require('../config');
  */
 async function readUserData (event, args) {
   const appConfig = await readConfig();
-  console.log(appConfig);
+  // console.log(appConfig);
   event.reply('userData:read=>reply', appConfig);
 }
 
@@ -39,7 +39,7 @@ async function readConfig() {
 
             let appConfig = _.merge(defaultConfig, userConfig);
 
-            const { songList, playHistory } = appConfig;
+            const { songList, playHistory, currentSong } = appConfig;
 
             if (songList) {
               // 因为只保留了文件路径，读取时要复原完整
@@ -66,6 +66,14 @@ async function readConfig() {
               appConfig.playHistory = finalHistory;
             }
 
+            if (currentSong) {
+              const metaData = await getMusicMeta(currentSong.path);
+              appConfig.currentSong = {
+                path: currentSong.path,
+                ...metaData
+              }
+            }
+
             resolve(appConfig);
           } else {
             reject(e);
@@ -90,27 +98,30 @@ async function saveConfig(currentStatus) {
   // console.log(finalConfig);
 
   // 歌曲、历史播放列表，只保留文件路径
-  const { songList, playHistory } = finalConfig;
+  const { songList, playHistory, currentSong, } = finalConfig;
 
   if (songList) {
-    console.log(songList);
     finalConfig.songList = songList.map(s => ({path: s.path}));
   }
 
   if (playHistory) {
-    console.log(playHistory);
     finalConfig.playHistory = playHistory.map(s => ({path: s.path}));
   }
 
-  // console.log(finalConfig);
-  /* 写入配置文件
-  fs.writeFile(USER_CONFIG_PATH, JSON.stringify(finalConfig), (e) => {
+  if (currentSong) {
+    finalConfig.currentSong = {path: currentSong.path};
+  }
+
+  console.log(finalConfig);
+
+  // 写入配置文件
+  fs.writeFile(USER_CONFIG_PATH, JSON.stringify(finalConfig, null, 2), (e) => {
     if (!e) {
       console.log('write config success');
     } else {
       console.log(e);
     }
-  }) */
+  })
 }
 
 module.exports = {

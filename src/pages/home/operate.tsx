@@ -138,7 +138,7 @@ export default function (props: IProps) :React.ReactElement {
   }
 
   return (
-    <Operate>
+    <Operate className="fadeInLeft">
       <div className="header">
         <h3>{ song ? song.common.title : 'No Song'}</h3>
         <h4>{ song ? song.common.artist : 'No Singer'}</h4>

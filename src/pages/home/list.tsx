@@ -15,8 +15,9 @@ const Container = styled.div`
     padding: 0 4px;
     display: flex;
     align-items: center;
+    cursor: pointer;
     &:hover {
-      background-color: #f1f1f1;
+      background-color: #ececec;
     }
   }
   .inner {
@@ -44,15 +45,13 @@ const SongListItem = styled.div`
     visibility: hidden;
   }
   &:hover {
-    // color: #82E0AA;
-    &:after {
-      visibility: visible;
-    }
+    background-color: #ABEBC6;
+    color: #999;
   }
   .item-line {
     margin: 4px 0;
     &.more-info {
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       color: #999;
     }
   }
@@ -62,13 +61,18 @@ interface IProps {
   songs: ISong[],
   onClose: React.MouseEventHandler<HTMLElement>,
   onSelect: (e: React.MouseEvent<HTMLElement>, s: ISong) => void,
+  onDoubleSelect: (e: React.MouseEvent<HTMLElement>, s: ISong) => void,
 }
 
 export default function (props: IProps) :React.ReactElement {
-  const { songs, onClose, onSelect } = props;
+  const { songs, onClose, onSelect, onDoubleSelect } = props;
 
   const renderItem = (s: ISong, index: number) => (
-    <SongListItem onClick={e => onSelect(e, s)} key={index}>
+    <SongListItem
+      onClick={e => onSelect(e, s)}
+      onDoubleClick={e => onDoubleSelect(e, s)}
+      key={index}
+    >
       <div className="item-line">
         <span>{ s.common.artist }</span>
         <span> - </span>
@@ -76,9 +80,8 @@ export default function (props: IProps) :React.ReactElement {
       </div>
       <div className="item-line more-info">
         <span>{ s.common.album }</span>
-        <span> | </span>
-        <span>
-          { s.common.track.no + '/' + s.common.track.of }
+        <span style={{marginLeft: 8}}>
+          { s.common.track.no + ' / ' + s.common.track.of }
         </span>
       </div>
     </SongListItem>

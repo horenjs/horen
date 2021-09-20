@@ -8,11 +8,11 @@ Minsic 是一个用 React 和 electron 打造的本地音乐播放器
 
 预览图：
 
-![preview-main](C:\Users\wangqiang\Projects\minsic\preview-main.png)
+![preview-main](./preview-main.png)
 
 
 
-![preview-list](C:\Users\wangqiang\Projects\minsic\preview-list.png)
+![preview-list](./preview-list.png)
 
 
 

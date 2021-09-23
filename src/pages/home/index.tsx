@@ -219,6 +219,7 @@ function App () :React.ReactElement {
         sound.once('load', () => {
           if (currentSound.state() === 'unloaded') {
             console.log('old sound unloaded.')
+            setIsPaused(false);
             setCurrentSound(sound);
             setLock(false); // release the lock while playing
             
@@ -227,6 +228,7 @@ function App () :React.ReactElement {
         });
       } else {
         sound.once('load', () => {
+          setIsPaused(false);
           setCurrentSound(sound);
           setLock(false); // release the lock while playing
           

@@ -320,8 +320,13 @@ function App () :React.ReactElement {
                 setIsListVisibleRightnow(true);
                 setIsListVisible(true);
               }}
+              onSelectOrder={(e, flag) => {
+                e.preventDefault();
+                setPlayOrder(flag);
+              }}
               isPaused={isPaused}
               progress={progress}
+              playOrder={playOrder}
             />
         }
       </Right>
@@ -349,7 +354,7 @@ function uint8arrayToBase64(u8arr: Uint8Array) {
 }
 
 const getNextSong = (current: ISong, songList: ISong[], order = 'asc') :ISong => {
-  let i = 0;
+  let i;
   let index = 0;
 
   for (let j = 0; j < songList.length; j ++) {
@@ -370,15 +375,28 @@ const getNextSong = (current: ISong, songList: ISong[], order = 'asc') :ISong =>
         return getNextSong(current, songList, order);
       }
       break;
+    case 'loop':
+      if (index < songList.length - 1) {
+        i = index + 1;
+      } else {
+        i = 0;
+      }
+      break;
+    case 'repeat':
+      i = index;
+      break;
   }
 
   console.log(`i: ${i} <=> index: ${index}`);
 
-  return songList[i];
+  let ns = {..._.clone(songList[i])};
+  ns.uid = String(Math.random());
+
+  return ns;
 }
 
 function getCoverImgStr(song: ISong) {
-  let cover = '';
+  let cover;
 
   const { common } = song;
   const { picture } = common;
@@ -386,14 +404,14 @@ function getCoverImgStr(song: ISong) {
   if (picture) {
     const { format, data } = picture[0];
 
+    // console.log(format, data);
+
     if (_.isTypedArray(data)) {
       cover = `data:${format};base64,${uint8arrayToBase64(data)}`;
-    } else {
-      cover = `data:${format};base64,${data}`;
     }
   }
 
-  return cover;
+  return cover || DefaultCover;
 }
 
 export default App;

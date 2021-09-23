@@ -76,8 +76,12 @@ export default function (props: IProps) :React.ReactElement {
   const renderItem = (s: ISong, index: number) => {
     let classname = '';
     
-    if (s.path === currentSong.path) {
-      classname = 'current-song';
+    // console.log(s, currentSong);
+
+    if (currentSong) {
+      if (s.path === currentSong.path) {
+        classname = 'current-song';
+      }
     }
 
     return (
@@ -108,7 +112,7 @@ export default function (props: IProps) :React.ReactElement {
         <img src={DoubleRight} alt='close-list' style={{marginBottom:16}} />
       </div>
       {
-        songs
+        songs.length
           ?
           <div className="inner custom-scrollbar">
             { songs.map(renderItem) }

@@ -25,7 +25,8 @@ async function openFiles (event, args) {
 
     for (let file of result.filePaths) {
       const metadata = await getMusicMeta(file);
-      fileList.push({path:file, ...metadata});
+      const uid = String(Math.random());
+      fileList.push({path:file, ...metadata, uid});
     }
 
     event.reply("file:open=>reply", fileList);

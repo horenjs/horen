@@ -13,6 +13,9 @@ import Next from '@/assets/icons/next.svg';
 import NextLight from '@/assets/icons/next-light.svg';
 // play order
 import Random from '@/assets/icons/random.svg';
+import Asc from '@/assets/icons/asc.svg';
+import Loop from '@/assets/icons/loop.svg';
+import Repeat from '@/assets/icons/repeat.svg';
 // music settings
 import Setting from '@/assets/icons/setting-tri-line.svg';
 // music playing list
@@ -68,6 +71,34 @@ const Operate = styled.div`
   }
 `;
 
+const PlayOrder = styled.div`
+  position: relative;
+  .play-orders {
+    position: absolute;
+    bottom: 28px;
+    left: -32px;
+    background-color: #fff;
+    border: 1px solid #acacac;
+    border-radius: 4px;
+    .play-order-item {
+      width: 88px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.75rem;
+      padding: 4px 0;
+      &:hover {
+        background-color: #f1f1f1;
+      }
+      img {
+        margin-right: 4px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+`;
+
 const Popover = styled.div`
   position: relative;
   display: flex;
@@ -82,6 +113,7 @@ const Popover = styled.div`
     font-size: 12px;
     border: 1px solid #aaa;
     border-radius: 4px;
+    background-color: #fff;
     .option-item {
       box-sizing: border-box;
       padding: 4px 8px;
@@ -99,9 +131,11 @@ interface IProps {
   onNext?: React.MouseEventHandler<HTMLElement>,
   onSetting?: (e: React.MouseEvent<HTMLElement>, flag: string) => void,
   onList?: React.MouseEventHandler<HTMLElement>,
+  onSelectOrder: (e: React.MouseEvent<HTMLElement>, flag: string) => void;
   isPaused?: boolean,
   progress?: number,
   song?: ISong,
+  playOrder?: string,
 };
 
 export default function (props: IProps) :React.ReactElement {
@@ -112,21 +146,34 @@ export default function (props: IProps) :React.ReactElement {
     onPrev,
     onNext,
     onList,
+    onSelectOrder,
     isPaused = false,
     progress = 0,
+    playOrder = 'asc',
   } = props;
 
   const [isPopoverVisible, setIsPopoverVisible] = React.useState(false);
+  const [isOrderPopVisible, setIsOrderPopVisible] = React.useState(false);
   // operator icon color
   const [isNextHover, setIsNextHover] = React.useState(false);
   const [isPrevHover, setIsPrevHover] = React.useState(false);
-  const [isPauseHover, setIsPauseHover] = React.useState(false);
   const [isMusicPlayHover, setIsMusicPlayHover] = React.useState(false);
 
   const handleClickSetting = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     setIsPopoverVisible(!isPopoverVisible);
   }
+
+  const handleClickOrder = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    setIsOrderPopVisible(!isOrderPopVisible);
+  }
+
+  const handleSelectOrder = (e: React.MouseEvent<HTMLElement>, flag: string) => {
+    e.preventDefault();
+    setIsOrderPopVisible(false);
+    if (onSelectOrder) onSelectOrder(e, flag);
+  } 
 
   const handleMouseHover = (
     e: React.MouseEvent<HTMLElement>,
@@ -135,6 +182,27 @@ export default function (props: IProps) :React.ReactElement {
   ) => {
     e.preventDefault();
     setter(flag);
+  }
+
+  const getPlayOrderIcon = (order: string) => {
+    let orderIcon;
+
+    switch (order) {
+      case 'asc':
+        orderIcon = Asc;
+        break;
+      case 'random':
+        orderIcon = Random;
+        break;
+      case 'loop':
+        orderIcon = Loop;
+        break;
+      case 'repeat':
+        orderIcon = Repeat;
+        break;
+    }
+
+    return orderIcon;
   }
 
   return (
@@ -166,7 +234,31 @@ export default function (props: IProps) :React.ReactElement {
           onMouseEnter={e => handleMouseHover(e, setIsNextHover, true)}
           onMouseLeave={e => handleMouseHover(e, setIsNextHover, false)}
         />
-        <img src={Random} alt="random" className="random item" />
+        <PlayOrder className="random item">
+          <div className="play-orders no-drag" style={{display: isOrderPopVisible ? 'block' : 'none'}}>
+            <div onClick={e => handleSelectOrder(e, 'random')} className="play-order-item">
+              <img src={Random} alt="random" />
+              <span>随机播放</span>
+            </div>
+            <div onClick={e => handleSelectOrder(e, 'asc')} className="play-order-item">
+              <img src={Asc} alt="asc" />
+              <span>顺序播放</span>
+            </div>
+            <div onClick={e => handleSelectOrder(e, 'loop')} className="play-order-item">
+              <img src={Loop} alt="loop" />
+              <span>列表播放</span>
+            </div>
+            <div onClick={e => handleSelectOrder(e, 'repeat')} className="play-order-item">
+              <img src={Repeat} alt="repeat" />
+              <span>单曲循环</span>
+            </div>
+          </div>
+          <img
+            src={getPlayOrderIcon(playOrder)}
+            alt="random"
+            onClick={handleClickOrder}
+          />
+        </PlayOrder>
         <Popover className="setting item" onClick={handleClickSetting}>
           <img src={Setting} alt="setting" />
           <div

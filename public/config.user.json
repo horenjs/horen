@@ -1,8 +1,8 @@
 {
-  "playOrder": "repeat",
+  "playOrder": "random",
   "playHistory": [
     {
-      "path": "D:\\Music\\大鱼海棠\\18.鲲在长大.flac"
+      "path": "D:\\Music\\林俊杰合集\\2019 林俊杰 - 将故事写成我们\\01. 将故事写成我们.flac"
     },
     {
       "path": "D:\\Music\\大鱼海棠\\18.鲲在长大.flac"
@@ -49,11 +49,11 @@
   "isLoop": false,
   "isListVisible": false,
   "currentSong": {
-    "path": "D:\\Music\\大鱼海棠\\18.鲲在长大.flac"
+    "path": "D:\\Music\\林俊杰合集\\2019 林俊杰 - 将故事写成我们\\01. 将故事写成我们.flac"
   },
   "songList": [
     {
-      "path": "D:\\Music\\大鱼海棠\\18.鲲在长大.flac"
+      "path": "D:\\Music\\林俊杰合集\\2019 林俊杰 - 将故事写成我们\\01. 将故事写成我们.flac"
     },
     {
       "path": "D:\\Music\\大鱼海棠\\22.爷爷的黄昏.flac"

@@ -3,8 +3,8 @@
     "outDir": "./dist",
     "sourceMap": true,
     "noImplicitAny": true,
-    "module": "es2020",
-    "target": "es6",
+    "module": "commonjs",
+    "target": "es5",
     "jsx": "react",
     "esModuleInterop": true,
     "moduleResolution": "node",
@@ -13,14 +13,13 @@
       "@/*": [
         "src/*"
       ]
-    }
+    },
   },
   "include": [
-    "./src/**/*",
+    "./src/main/**/*"
   ],
   "exclude": [
     "./node_modules/**/*",
     "./dist/**/*",
-    "./main/**/*",
   ]
 }

@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-17 22:07:21
- * @LastEditTime : 2022-01-19 23:39:22
+ * @LastEditTime : 2022-01-20 17:38:40
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \mintin-alo\src\main\player.ts
+ * @FilePath     : \alo\src\main\player.ts
  * @Description  : 
  */
 import fs from 'fs';
@@ -58,6 +58,12 @@ export default class Player {
       if (this.status === "to-pause") {
         this.start = length * this.chunkSize;
         // todo: 暂停流会延迟 暂时不知道原因
+        // http://nodejs.cn/api/stream.html#two-reading-modes
+        // 此外，如果有管道目标，则调用 stream.pause() 
+        // 将不能保证一旦这些目标排空并要求更多数据，流将保持暂停状态。
+        // Also, if there are piped destinations, then calling stream.pause() 
+        // will not guarantee that the stream will remain paused once those 
+        // destinations drain and ask for more data.
         this.rs.pause();
         console.log("do pause", new Date());
       }

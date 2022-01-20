@@ -1,0 +1,20 @@
+{
+  "name": "horen-plugin-player",
+  "version": "0.0.1",
+  "description": "player plugin for Horen",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [
+    "player",
+    "howl",
+    "howler",
+    "typescript"
+  ],
+  "author": "Kevin Jobs (kevinjobs.com)",
+  "license": "MIT",
+  "dependencies": {
+    "howler": "^2.2.3"
+  }
+}

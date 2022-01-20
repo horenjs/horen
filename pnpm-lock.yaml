@@ -1,0 +1,25 @@
+lockfileVersion: 5.3
+
+importers:
+
+  .:
+    specifiers:
+      '@types/howler': ^2.2.4
+    dependencies:
+      '@types/howler': 2.2.4
+
+  packages/horen-plugin-player:
+    specifiers:
+      howler: ^2.2.3
+    dependencies:
+      howler: 2.2.3
+
+packages:
+
+  /@types/howler/2.2.4:
+    resolution: {integrity: sha1-+30CvDNdIMwUGYfxbBlbGvd9dWo=, tarball: '@types/howler/download/@types/howler-2.2.4.tgz'}
+    dev: false
+
+  /howler/2.2.3:
+    resolution: {integrity: sha512-QM0FFkw0LRX1PR8pNzJVAY25JhIWvbKMBFM4gqk+QdV+kPXOhleWGCB6AiAF/goGjIHK2e/nIElplvjQwhr0jg==, tarball: howler/download/howler-2.2.3.tgz}
+    dev: false

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-20 23:05:39
- * @LastEditTime : 2022-01-21 17:49:16
+ * @LastEditTime : 2022-01-21 19:52:41
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen-plugin-player\index.ts
  * @Description  : a player for AlO
@@ -50,7 +50,7 @@ export default class HowlPlayer extends AbstractPlayer {
     this._trackList = list;
 
     if (this._howler) {
-      // if there is a howler, do nothing      
+      // if there is a howler, do nothing
     } else {
       const first = this._trackList[0];
       if (first.src) {
@@ -93,27 +93,27 @@ export default class HowlPlayer extends AbstractPlayer {
     if (this._howler?.playing()) return;
 
     this._howler?.play();
-    this._playing = true;
+    if (this._howler?.playing()) this._playing = true;
   }
 
   public pause() {
     this._howler?.pause();
-    this._playing = false;
+    if (!this._howler?.playing()) this._playing = false;
   }
 
   public stop(): void {
     this._howler?.stop();
-    this._playing = false;
+    if (!this._howler?.playing()) this._playing = false;
   }
 
   public playOrPause(): void {
     if (this._howler) {
       if (this._howler.playing()) {
         this._howler.pause();
-        this._playing = false;
+        if (!this._howler?.playing()) this._playing = false;
       } else {
         this._howler.play();
-        this._playing = true;
+        if (!this._howler?.playing()) this._playing = false;
       }
     }
   }

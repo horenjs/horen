@@ -18,5 +18,15 @@
   ],
   "scripts": {
     "lint": "eslint -c .eslintrc.js --ext .ts"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.10.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^8.7.0",
+    "typescript": "^4.5.5"
+  },
+  "peerDependencies": {
+    "@typescript-eslint/parser": "^5.0.0",
+    "typescript": "^4.5.5"
   }
 }

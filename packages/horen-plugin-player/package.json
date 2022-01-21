@@ -18,6 +18,10 @@
     "howler": "^2.2.3"
   },
   "devDependencies": {
+    "@babel/runtime": "^7.16.7",
     "@types/howler": "^2.2.4"
+  },
+  "peerDependencies": {
+    "@babel/runtime": "^7.16.7"
   }
 }

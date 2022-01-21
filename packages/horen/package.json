@@ -8,7 +8,8 @@
     "build:renderer": "",
     "start": "cross-env NODE_ENV=development concurrently \"pnpm start:main\" \"pnpm start:renderer\"",
     "start:main": "wait-on tcp:8080 && pnpm build:main && electron ./dist/main/index.js",
-    "start:renderer": "webpack serve --config ./renderer/webpack/config.dev.js"
+    "start:renderer": "webpack serve --config ./renderer/webpack/config.dev.js",
+    "rebuild": "electron-rebuild"
   },
   "author": "Kevin Jobs (kevinjobs.com)",
   "license": "MIT",
@@ -37,6 +38,7 @@
     "copy-webpack-plugin": "^10.2.1",
     "cross-env": "^7.0.3",
     "css-loader": "^6.5.1",
+    "electron-rebuild": "^3.2.7",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
     "react-is": "^17.0.2",
@@ -52,6 +54,7 @@
   },
   "peerDependencies": {
     "@babel/core": "^7.16.10",
+    "@babel/runtime": "^7.16.7",
     "@types/node": "^17.0.10",
     "react-is": "^17.0.2",
     "react-refresh": "^0.10.0",

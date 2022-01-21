@@ -4,9 +4,9 @@
   "description": "A Music Player",
   "main": "index.js",
   "scripts": {
-    "start": "pnpm build && electron ./dist/main/index.js",
     "build:main": "rimraf ./dist && tsc -p ./main/tsconfig.json",
     "build:renderer": "",
+    "start:main": "pnpm build:main && electron ./dist/main/index.js",
     "start:renderer": ""
   },
   "author": "Kevin Jobs (kevinjobs.com)",

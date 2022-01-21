@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-20 23:05:39
- * @LastEditTime : 2022-01-21 00:51:37
+ * @LastEditTime : 2022-01-21 12:06:18
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen-plugin-player\index.ts
+ * @FilePath     : \Horen\packages\horen-plugin-player\index.ts
  * @Description  : a player for AlO
  */
 import { Howl, Howler } from 'howler';
@@ -16,12 +16,12 @@ if (typeof window === 'undefined')
   );
 
 export interface Track {
-  id: number,
-  src?: string,
-  title?: string,
-  artist?: string,
-  artistList?: string[],
-  album?: string,
+  id: number;
+  src?: string;
+  title?: string;
+  artist?: string;
+  artistList?: string[];
+  album?: string;
 }
 
 /**
@@ -38,7 +38,7 @@ export default class HowlPlayer extends AbstractPlayer {
   protected _progress = 0;
   protected _enabled = false;
   protected _volume = 1;
-  protected _mode: "repeat" | "single" | "shuffle" = "repeat";
+  protected _mode: 'repeat' | 'single' | 'shuffle' = 'repeat';
 
   constructor() {
     super();
@@ -49,7 +49,8 @@ export default class HowlPlayer extends AbstractPlayer {
 
     const firstToPlay = this._trackList[0];
 
-    this._playAudioSource(firstToPlay.src!);
+    if (firstToPlay.src)
+      this._playAudioSource(firstToPlay.src);
   }
 
   public set playing(playing: boolean) {
@@ -66,16 +67,16 @@ export default class HowlPlayer extends AbstractPlayer {
 
   public pause() {
     this._howler?.pause();
-    
+
     this._playing = false;
   }
 
   public stop(): void {
-      
+    // TODO: stop the track
   }
 
   public playOrPause(): void {
-    
+    // TODO: play or pause the track
   }
 
   protected _playAudioSource(src: string, autoplay = true) {
@@ -83,7 +84,7 @@ export default class HowlPlayer extends AbstractPlayer {
 
     this._howler = new Howl({
       src: [src],
-      format: ["flac", "mp3"],
+      format: ['flac', 'mp3'],
     });
 
     if (autoplay) {

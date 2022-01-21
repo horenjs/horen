@@ -16,5 +16,8 @@
   "license": "MIT",
   "dependencies": {
     "howler": "^2.2.3"
+  },
+  "devDependencies": {
+    "@types/howler": "^2.2.4"
   }
 }

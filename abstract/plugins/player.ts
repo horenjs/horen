@@ -1,10 +1,10 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 00:29:58
- * @LastEditTime : 2022-01-21 00:54:50
+ * @LastEditTime : 2022-01-21 09:26:59
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\abstract\plugins\player.ts
- * @Description  : 
+ * @FilePath     : \alo\abstract\plugins\player.ts
+ * @Description  :
  */
 import { Howl } from 'howler';
 
@@ -30,7 +30,7 @@ export default abstract class Player {
   protected _progress = 0;
   protected _enabled = false;
   protected _volume = 1;
-  protected _mode: "repeat" | "single" | "shuffle" = "repeat";
+  protected _mode: 'repeat' | 'single' | 'shuffle' = 'repeat';
 
   /**
    * 设置播放列表
@@ -45,27 +45,27 @@ export default abstract class Player {
   /**
    * 播放歌曲
    */
-  public abstract play() :void;
+  public abstract play(): void;
 
   /**
    * 暂停播放
    */
-  public abstract pause() :void;
+  public abstract pause(): void;
 
   /**
    * 停止播放
    */
-  public abstract stop() :void;
+  public abstract stop(): void;
 
   /**
    * 播放或停止
    */
-  public abstract playOrPause() :void;
+  public abstract playOrPause(): void;
 
   /**
    * 从音源播放歌曲
    * @param src 歌曲源，可以是网址或本地文件地址
    * @param autoplay 是否自动播放
    */
-  protected abstract _playAudioSource(src: string, autoplay: boolean) :void;
+  protected abstract _playAudioSource(src: string, autoplay: boolean): void;
 }

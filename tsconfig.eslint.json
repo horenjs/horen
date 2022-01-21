@@ -1,0 +1,5 @@
+{
+  // https://stackoverflow.com/questions/61956555/why-is-typescript-eslint-pa
+  // rser-including-files-outside-of-those-configured-in
+  "include": [".eslintrc.js"]
+}

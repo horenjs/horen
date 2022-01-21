@@ -3,11 +3,12 @@
   "include": [
     "index.ts",
     "index.test.ts",
-    "abstract/**/*"
+    "player.ts"
   ],
+  "exclude": ["./dist"],
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "../../",
+    "rootDir": "./",
     "declaration": true
   }
 }

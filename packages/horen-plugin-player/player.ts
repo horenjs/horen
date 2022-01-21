@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 00:29:58
- * @LastEditTime : 2022-01-21 09:26:59
+ * @LastEditTime : 2022-01-21 17:18:34
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \alo\abstract\plugins\player.ts
+ * @FilePath     : \Horen\packages\horen-plugin-player\player.ts
  * @Description  :
  */
 import { Howl } from 'howler';
@@ -23,7 +23,7 @@ export interface Track {
  */
 export default abstract class Player {
   protected _trackList: Track[] = [];
-  protected _currentTrack: Track = { id: 1234 };
+  protected _currentTrack?: Track;
   protected _howler?: Howl;
   // player status
   protected _playing = false;

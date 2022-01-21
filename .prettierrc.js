@@ -1,31 +1,31 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 19:14:15
- * @LastEditTime : 2022-01-21 09:46:40
+ * @LastEditTime : 2022-01-21 12:30:02
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \alo\.prettierrc.js
+ * @FilePath     : \Horen\.prettierrc.js
  * @Description  :
  */
 module.exports = {
-  printWidth: 80,
-  tabWidth: 2,
-  useTabs: false,
-  semi: true,
-  singleQuote: true,
-  quoteProps: 'as-needed',
-  jsxSingleQuote: false,
-  trailingComma: 'es5',
-  bracketSpacing: true,
-  bracketLine: false,
-  arrowParens: 'always',
-  rangeStart: 0,
-  rangeEnd: Infinity,
-  // parser: '',
-  // filePath: '',
-  // requirePragma: <bool>
-  // insertPragma: <bool>
-  proseWrap: 'preserve',
-  htmlWhitespaceSensitivity: 'css',
-  endOfLine: 'lf',
-  embeddedLanguageFormatting: 'auto',
+  printWidth: 80,                         // 每行字符数
+  tabWidth: 2,                            // tab 的宽度
+  useTabs: false,                         // 是否使用 tab
+  semi: true,                             // 分号
+  singleQuote: true,                      // 单引号
+  quoteProps: 'as-needed',                // 引号属性（针对特殊格式如 md 等）
+  jsxSingleQuote: false,                  // jsx 使用单引号
+  trailingComma: 'es5',                   // 
+  bracketSpacing: true,                   // 大括号里面加一个空格
+  bracketLine: false,                     // 大括号跨行
+  arrowParens: 'always',                  // 箭头函数的参数是否用括号括起来
+  rangeStart: 0,                          // 对文件的作用开始处
+  rangeEnd: Infinity,                     // 对文件的作用结束处
+  // parser: '',                          //
+  // filePath: '',                        //
+  // requirePragma: <bool>                //
+  // insertPragma: <bool>                 //
+  proseWrap: 'preserve',                  //
+  htmlWhitespaceSensitivity: 'css',       // html 空格敏感
+  endOfLine: 'lf',                        // 换行方式 'lf' - unix
+  embeddedLanguageFormatting: 'auto',     // 在其他格式中引用代码是否格式化
 };

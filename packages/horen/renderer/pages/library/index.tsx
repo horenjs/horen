@@ -1,20 +1,20 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-21 00:25:15
+ * @LastEditTime : 2022-01-22 02:29:28
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \alo\packages\alo\renderer\pages\library\index.tsx
- * @Description  : 
+ * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
+ * @Description  :
  */
 import { FileDC } from '../../data-center';
 import React from 'react';
 import styled from 'styled-components';
-import { ISong } from '../../../../../src/types';
+import { Track } from 'types';
 import defaultCover from '../../components/control-panel/default-cover';
 
 const MyLib = styled.div`
   padding: 32px 48px;
-  height: calc(100vh - 140px);
+  height: 100%;
   overflow: auto;
   background-color: #313233;
   color: #f1f1f1;
@@ -49,7 +49,7 @@ const MyLib = styled.div`
     display: flex;
     flex-wrap: wrap;
     position: fixed;
-    width: 520px;
+    width: 620px;
     max-height: 480px;
     top: 35%;
     left: 50%;
@@ -57,7 +57,7 @@ const MyLib = styled.div`
     padding: 0 32px 32px 32px;
     background-color: #313233;
     color: #aaa;
-    box-shadow:2px 2px 16px rgba(255,255,255,0.5);
+    box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.5);
     border-radius: 8px;
     z-index: 9999;
     .album-close {
@@ -125,7 +125,7 @@ const MyLib = styled.div`
     .album-infos {
       width: 192px;
       line-height: 2;
-      font-size: .9rem;
+      font-size: 0.9rem;
       .name {
         width: 100%;
         color: #f1f1f1;
@@ -140,7 +140,10 @@ const MyLib = styled.div`
         object-fit: cover;
         border-radius: 4px;
       }
-      .count,.artists,.date,.path {
+      .count,
+      .artists,
+      .date,
+      .path {
         span {
           display: inline-block;
           margin-right: 8px;
@@ -164,13 +167,13 @@ const MyLib = styled.div`
 `;
 
 export interface Album {
-  name: string,
-  children: ISong[],
-  [key: string]: any,
-} 
+  name: string;
+  children: Track[];
+  [key: string]: any;
+}
 
 export interface LibraryProps {
-  onAddToPlaylist?(songs: ISong[]): void;
+  onAddToPlaylist?(songs: Track[]): void;
 }
 
 const Library: React.FC<LibraryProps> = (props) => {
@@ -183,15 +186,15 @@ const Library: React.FC<LibraryProps> = (props) => {
     e.preventDefault();
     e.stopPropagation();
     setAlbum(a);
-  }
+  };
 
-  const handleISong = (e: React.MouseEvent<HTMLElement>, song: ISong) => {
+  const handleTrack = (e: React.MouseEvent<HTMLElement>, song: Track) => {
     e.preventDefault();
     e.stopPropagation();
     if (onAddToPlaylist) {
       onAddToPlaylist([song]);
     }
-  }
+  };
 
   React.useEffect(() => {
     const p = 'D:\\Music\\流行音乐\\CRITTY\\单曲';
@@ -202,34 +205,34 @@ const Library: React.FC<LibraryProps> = (props) => {
         {
           name: 'Uncategory',
           children: [],
-        }
+        },
       ];
 
       for (let file of files) {
         const meta = await FileDC.get(file);
         const { album } = meta;
 
-        const newISong: ISong = {
+        const newTrack: Track = {
           ...meta,
-          path: file,
+          src: file,
           title: meta?.title || file.split('\\').pop(),
-        }
+        };
 
         if (album) {
           const exact = abs.filter((a) => a.name === album);
           if (exact.length) {
-            exact[0].children.push(newISong);
+            exact[0].children.push(newTrack);
           } else {
-            abs.push({name: album, children: [newISong]});
+            abs.push({ name: album, children: [newTrack] });
           }
         } else {
-          abs[0].children.push(newISong);
+          abs[0].children.push(newTrack);
         }
       }
 
       setAlbums(abs);
     })();
-  }, [])
+  }, []);
 
   return (
     <MyLib className="component-library">
@@ -272,7 +275,7 @@ const Library: React.FC<LibraryProps> = (props) => {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                setAlbum(null);
+                setAlbum(undefined);
               }}
             >
               X
@@ -282,13 +285,13 @@ const Library: React.FC<LibraryProps> = (props) => {
             {album.children.map((c, index) => (
               <div className="album-child" key={c.title}>
                 <div className="title">
-                  <div className="title-order">{index + 1 + "."}</div>
+                  <div className="title-order">{index + 1 + '.'}</div>
                   <div className="title-text">{c.title}</div>
                 </div>
                 <div
                   className="operator"
                   title="添加到播放列表"
-                  onClick={(e) => handleISong(e, c)}
+                  onClick={(e) => handleTrack(e, c)}
                 >
                   <span>+</span>
                 </div>
@@ -299,7 +302,9 @@ const Library: React.FC<LibraryProps> = (props) => {
             <div className="name">{album.name}</div>
             <div className="cover">
               <img
-                src={`data:image/png;base64,${album.children[0].picture}`}
+                src={`data:image/png;base64,${
+                  album.children[0].picture || defaultCover
+                }`}
                 alt={album.name}
               />
             </div>
@@ -310,14 +315,15 @@ const Library: React.FC<LibraryProps> = (props) => {
             <div className="artists">
               <span>艺术家</span> {album.children[0].artist}
             </div>
-            <div className="path" title={album.children[0].path}>
-              <span>专辑路径</span> {album.children[0].path}
+            <div className="path" title={album.children[0].src}>
+              <span>专辑路径</span> {album.children[0].src}
             </div>
           </div>
         </div>
       )}
+      {album && <div className="mask"></div> }
     </MyLib>
   );
-}
+};
 
 export default Library;

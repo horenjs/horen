@@ -1,14 +1,14 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:00:44
- * @LastEditTime : 2022-01-21 00:25:15
+ * @LastEditTime : 2022-01-22 01:54:22
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \alo\packages\alo\renderer\data-center\index.tsx
+ * @FilePath     : \horen\packages\horen\renderer\data-center\index.tsx
  * @Description  : 
  */
 const electron = window.require('electron');
 const { ipcRenderer } = electron;
-import { ISong } from '../../../../src/types';
+import { Track } from 'types';
 import { IPC_CODE } from '../../configs';
 
 export class FileDC {
@@ -16,7 +16,7 @@ export class FileDC {
     return await ipcRenderer.invoke(IPC_CODE.file.getList, path);
   }
 
-  public static async get(p: string) :Promise<ISong> {
+  public static async get(p: string) :Promise<Track> {
     return await ipcRenderer.invoke(IPC_CODE.file.get, p);
   }
 }

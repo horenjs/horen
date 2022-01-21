@@ -5,8 +5,14 @@
   "main": "./dist/index.js",
   "files": [
     "./dist",
+    "./lib",
     "package.json"
   ],
+  "exports": [
+    "./dist/index.js",
+    "./lib/index.js"
+  ],
+  "types": "./dist",
   "scripts": {
     "build": "tsc",
     "test": "mocha --require ts-node/register test/**/*.test.ts"

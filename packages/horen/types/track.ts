@@ -1,12 +1,14 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 22:24:48
- * @LastEditTime : 2022-01-21 22:24:49
+ * @LastEditTime : 2022-01-22 02:20:17
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\types\song.ts
+ * @FilePath     : \horen\packages\horen\types\track.ts
  * @Description  :
  */
-export interface Track {
+import { Track as ITrack } from 'horen-plugin-player';
+
+export interface Track extends ITrack {
   src?: string;
   album?: string;
   albumartist?: string;

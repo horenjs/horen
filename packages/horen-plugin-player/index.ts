@@ -1,13 +1,13 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-20 23:05:39
- * @LastEditTime : 2022-01-22 01:20:03
+ * @LastEditTime : 2022-01-22 02:31:59
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen-plugin-player\index.ts
  * @Description  : a player for AlO
  */
 import { Howl, Howler } from 'howler';
-import { randomInt, shift } from 'horen-util/lib';
+import { randomInt, shift } from 'horen-util';
 
 // 判断是否为浏览器环境
 if (typeof window === 'undefined')
@@ -81,8 +81,6 @@ export default class HowlPlayer {
 
   public set trackList(list: Track[]) {
     this._trackList = list;
-
-    console.log(this._trackList);
 
     if (this._howler) {
       // if there is a howler, do nothing

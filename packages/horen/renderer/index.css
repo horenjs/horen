@@ -1,3 +1,23 @@
 * {
   box-sizing: border-box;
 }
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+#root {
+  padding: 0;
+  height: 100vh;
+}
+
+.pages {
+  height: calc(100vh - 80px);
+}
+
+.mask {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.85);
+}

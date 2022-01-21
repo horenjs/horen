@@ -1,22 +1,25 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 10:26:10
- * @LastEditTime : 2022-01-21 17:43:05
+ * @LastEditTime : 2022-01-22 02:38:48
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\main\create.ts
- * @Description  : 
+ * @FilePath     : \horen\packages\horen\main\create.ts
+ * @Description  :
  */
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 
-export function createWindow() {
+export function createWindow(opts?: BrowserWindowConstructorOptions) {
   return new BrowserWindow({
-    width: 800,
-    height: 600,
+    ...opts,
+    width: opts?.width || 900,
+    height: opts?.height || 700,
+    minWidth: opts?.minWidth || 850,
+    minHeight: opts?.minHeight || 650,
     resizable: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
       webSecurity: false,
     }
-  })
+  });
 }

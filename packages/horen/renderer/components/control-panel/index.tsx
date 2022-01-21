@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:12:15
- * @LastEditTime : 2022-01-22 01:46:23
+ * @LastEditTime : 2022-01-22 02:32:42
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\control-panel\index.tsx
  * @Description  :
@@ -29,7 +29,7 @@ const My = styled.div`
       top: -3px;
       .back {
         height: 5px;
-        background-color: #abebc6;
+        background-color: #616263;
       }
       .front {
         height: 5px;
@@ -40,7 +40,7 @@ const My = styled.div`
     }
     .back {
       width: 100%;
-      background-color: #d5f5e3;
+      background-color: #414243;
       height: 4px;
       position: absolute;
       z-index: 0;
@@ -99,7 +99,7 @@ const My = styled.div`
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-left: -32px;
+      margin-left: -64px;
       .prev,
       .player-or-pause,
       .next {

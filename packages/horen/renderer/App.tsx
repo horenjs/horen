@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-22 01:09:32
+ * @LastEditTime : 2022-01-22 02:24:46
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -10,6 +10,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Player from 'horen-plugin-player';
 import ControlPanel from './components/control-panel';
+import Library from './pages/library';
 
 export default function App() {
   // todo: should use the absolute path.
@@ -47,47 +48,41 @@ export default function App() {
     const timer = setInterval(() => {
       setProgress((player.seek / player.duration) * 100);
     }, 1000);
-    
+
     return () => clearInterval(timer);
   }, [progress]);
 
   return (
     <Router>
-      <Routes>
-        <Route path="/">
-          <Route
-            index
-            element={
-              <ControlPanel
-                track={player.currentTrack}
-                playing={player.playing}
-                onPrev={() => player.skip('prev')}
-                onPlayOrPause={() => player.playOrPause()}
-                onNext={() => {
-                  player.skip('next');
-                  console.log(player.historyList);
-                }}
-                onSeek={(per) => (player.seek = per * player.duration)}
-                progress={progress}
-              />
-            }
-          />
-        </Route>
-      </Routes>
-      <button
-        onClick={(e) => {
-          player.trackList = srcs;
+      <div className="pages">
+        <Routes>
+          <Route path="/">
+            <Route
+              index
+              element={
+                <Library
+                  onAddToPlaylist={(tracks) => {
+                    console.log(tracks);
+                    player.trackList = player.trackList.concat(tracks);
+                  }}
+                />
+              }
+            />
+          </Route>
+        </Routes>
+      </div>
+      <ControlPanel
+        track={player.currentTrack}
+        playing={player.playing}
+        onPrev={() => player.skip('prev')}
+        onPlayOrPause={() => player.playOrPause()}
+        onNext={() => {
+          player.skip('next');
+          console.log(player.historyList);
         }}
-      >
-        load track
-      </button>
-      <button onClick={(e) => (player.mode = 'shuffle')}>shuffle</button>
-      <button onClick={(e) => (player.mode = 'single')}>single</button>
-      <button onClick={(e) => (player.currentTrack = srcs[4])}>4</button>
-      <button onClick={(e) => (player.currentTrack = srcs[5])}>5</button>
-      <button onClick={(e) => (player.currentTrack = srcs[3])}>3</button>
-      <button onClick={(e) => (player.currentTrack = srcs[1])}>1</button>
-      <button onClick={(e) => (player.currentTrack = srcs[2])}>2</button>
+        onSeek={(per) => (player.seek = per * player.duration)}
+        progress={progress}
+      />
     </Router>
   );
 }

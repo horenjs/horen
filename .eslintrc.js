@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 09:47:41
- * @LastEditTime : 2022-01-21 12:06:57
+ * @LastEditTime : 2022-01-21 14:47:08
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\.eslintrc.js
  * @Description  :
@@ -23,4 +23,7 @@ module.exports = {
   },
   rules: {},
   env: {},
+  ignorePatterns: [
+    "*/dist/**/*"
+  ]
 };

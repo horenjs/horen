@@ -1,10 +1,10 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 10:34:25
- * @LastEditTime : 2022-01-21 12:13:42
+ * @LastEditTime : 2022-01-21 15:05:02
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\main\app.ts
- * @Description  :
+ * @Description  : 
  */
 import { app, BrowserWindow } from 'electron';
 import { createWindow } from './create';

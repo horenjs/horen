@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 10:34:25
- * @LastEditTime : 2022-01-21 15:05:02
+ * @LastEditTime : 2022-01-21 16:57:37
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\main\app.ts
  * @Description  : 
@@ -20,6 +20,7 @@ export class App {
     app.whenReady().then(() => {
       // create a new window
       this.mainWindow = createWindow();
+      this.start();
       // only in macOS
       app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
@@ -31,6 +32,8 @@ export class App {
         app.quit();
       }
     });
+
+    this.start();
   }
 
   start() {

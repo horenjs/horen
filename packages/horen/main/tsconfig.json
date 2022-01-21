@@ -4,7 +4,7 @@
     "rootDir": "./",
     "outDir": "../dist/main",
     "declaration": true,
-    "declarationDir": "../main/typings",
+    "declarationDir": "../typings/main",
     // "emitDeclarationOnly": true,
   },
   "include": ["./**/*.ts"]

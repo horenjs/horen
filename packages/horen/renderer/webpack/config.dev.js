@@ -2,9 +2,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 15:52:15
- * @LastEditTime : 2022-01-21 17:00:50
+ * @LastEditTime : 2022-01-21 22:28:37
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\webpack\config.dev.js
+ * @FilePath     : \horen\packages\horen\renderer\webpack\config.dev.js
  * @Description  :
  */
 const path = require('path');
@@ -52,6 +52,7 @@ module.exports = {
     alias: {
       '@': path.resolve(__dirname, '../'),
       '~': path.resolve(__dirname, '../node_modules'),
+      'types': path.resolve(__dirname, '../../types'),
     },
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
   },

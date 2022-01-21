@@ -2,7 +2,6 @@
   "extends": "../shared/tsconfig.base.json",
   "include": [
     "index.ts",
-    "player.ts"
   ],
   "exclude": ["./dist"],
   "compilerOptions": {

@@ -1,15 +1,15 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:12:15
- * @LastEditTime : 2022-01-21 00:25:14
+ * @LastEditTime : 2022-01-22 01:23:46
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \alo\packages\alo\renderer\components\control-panel\index.tsx
+ * @FilePath     : \horen\packages\horen\renderer\components\control-panel\index.tsx
  * @Description  :
  */
-import React from "react";
-import styled from "styled-components";
-import { ISong } from "../../../../../src/types";
+import React from 'react';
+import styled from 'styled-components';
 import defaultCover from './default-cover';
+import { Track } from 'types';
 
 const My = styled.div`
   height: 80px;
@@ -45,7 +45,7 @@ const My = styled.div`
       position: absolute;
       top: 0;
       z-index: 1;
-      // transition: all .1s ease;
+      // transition: all .25s ease-out;
       .pointer {
         position: absolute;
         height: 12px;
@@ -62,7 +62,7 @@ const My = styled.div`
     width: 100%;
     display: flex;
     align-items: center;
-    .song-cover {
+    .track-cover {
       height: 52px;
       width: 52px;
       background-color: #999;
@@ -72,7 +72,7 @@ const My = styled.div`
         object-fit: cover;
       }
     }
-    .song-info {
+    .track-info {
       margin: 0 0 0 16px;
       width: 160px;
       .title {
@@ -87,52 +87,42 @@ const My = styled.div`
         margin-top: 4px;
       }
     }
-    .song-operate {
+    .track-operate {
       flex-grow: 1;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-left: -32px;
       .prev,
-      .pause,
-      .next,
-      .play {
+      .player-or-pause,
+      .next {
         margin: 0 8px;
         cursor: pointer;
         user-select: none;
-      }
-    }
-    .song-list {
-      span {
-        cursor: pointer;
       }
     }
   }
 `;
 
 export interface ControlPanelProps {
-  song: ISong;
-  state: string;
+  track?: Track;
+  playing: boolean;
   progress: number | string;
-  onPlay(): void;
   onPrev(): void;
   onNext(): void;
-  onPause(): void;
-  onSeek(e: React.MouseEvent<HTMLElement>): void;
-  onQueue(e: React.MouseEvent<HTMLElement>): void;
+  onPlayOrPause(): void;
+  onSeek(per: number): void;
 }
 
 const ControlPanel: React.FC<ControlPanelProps> = (props) => {
   const {
-    song,
-    state,
-    progress,
+    track,
+    playing = false,
+    progress = 0,
     onPrev,
-    onPlay,
-    onPause,
+    onPlayOrPause,
     onNext,
     onSeek,
-    onQueue,
   } = props;
 
   const handlePrev = (e: React.MouseEvent<HTMLElement>) => {
@@ -140,14 +130,9 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
     onPrev();
   };
 
-  const handlePlay = (e: React.MouseEvent<HTMLElement>) => {
+  const handlePlayOrPause = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    onPlay();
-  };
-
-  const handlePause = (e: React.MouseEvent<HTMLElement>) => {
-    e.preventDefault();
-    onPause();
+    onPlayOrPause();
   };
 
   const handleNext = (e: React.MouseEvent<HTMLElement>) => {
@@ -158,7 +143,7 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    onSeek(e);
+    onSeek(0.95);
   };
 
   return (
@@ -170,35 +155,30 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
         </div>
       </div>
       <div className="panel">
-        <div className="song-cover">
+        <div className="track-cover">
           <img
-            src={`data:image/png;base64,${song && song.picture ? song?.picture : defaultCover}`}
-            alt={song?.title || "unkown-song"}
+            src={`data:image/png;base64,${track?.picture || defaultCover}`}
+            alt={track?.title || 'unkown-track'}
           />
         </div>
-        <div className="song-info">
-          <div className="title">{song?.title || "Unkown Song"}</div>
-          <div className="artist">{song?.artist || "Unkown Artist"}</div>
+        <div className="track-info">
+          <div className="title">
+            {track?.title ||
+              track?.src?.split('.').slice(-2, -1) ||
+              'Unkown track'}
+          </div>
+          <div className="artist">{track?.artist || 'Unkown Artist'}</div>
         </div>
-        <div className="song-operate">
+        <div className="track-operate">
           <div className="prev" onClick={handlePrev}>
             上一首
           </div>
-          {state !== "playing" ? (
-            <div className="play" onClick={handlePlay}>
-              播放
-            </div>
-          ) : (
-            <div className="paused" onClick={handlePause}>
-              暂停
-            </div>
-          )}
+          <div className="player-or-pause" onClick={handlePlayOrPause}>
+            {playing ? '暂停' : '播放'}
+          </div>
           <div className="next" onClick={handleNext}>
             下一首
           </div>
-        </div>
-        <div className="song-list">
-          <span onClick={(e) => onQueue(e)}>播放队列</span>
         </div>
       </div>
     </My>

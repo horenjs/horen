@@ -5,5 +5,12 @@
     "declaration": true,
     "declarationDir": "../typings",
     "emitDeclarationOnly": true,
-  }
+    "paths": {
+      "types": ["../types"]
+    }
+  },
+  "include": [
+    "./**/*",
+    "../types/**/*"
+  ]
 }

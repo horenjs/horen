@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:12:15
- * @LastEditTime : 2022-01-22 01:23:46
+ * @LastEditTime : 2022-01-22 01:46:23
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\control-panel\index.tsx
  * @Description  :
@@ -24,8 +24,15 @@ const My = styled.div`
     position: absolute;
     top: -2px;
     left: 0;
+    padding: 4px 0;
     &:hover {
+      top: -3px;
+      .back {
+        height: 5px;
+        background-color: #abebc6;
+      }
       .front {
+        height: 5px;
         .pointer {
           visibility: visible;
         }
@@ -33,19 +40,19 @@ const My = styled.div`
     }
     .back {
       width: 100%;
-      background-color: #515253;
+      background-color: #d5f5e3;
       height: 4px;
       position: absolute;
       z-index: 0;
+      top: 2px;
     }
     .front {
       width: 0%;
       background-color: #25b184;
       height: 4px;
       position: absolute;
-      top: 0;
+      top: 2px;
       z-index: 1;
-      // transition: all .25s ease-out;
       .pointer {
         position: absolute;
         height: 12px;
@@ -125,6 +132,8 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
     onSeek,
   } = props;
 
+  const ref: any = React.useRef();
+
   const handlePrev = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     onPrev();
@@ -143,12 +152,19 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    onSeek(0.95);
+    const target = e.target as any;
+    // 进度条距离可视区域左边的距离
+    const left = target.getBoundingClientRect().left;
+    // 进度条的宽度
+    const width = ref.current ? ref.current.offsetWidth : target.offsetWidth;
+    // 鼠标点击的位置 只需要 X 轴的位置即可
+    const x = e.clientX;
+    onSeek((x - left) / width);
   };
 
   return (
     <My className="control-panel">
-      <div className="progress" onClick={handleSeek}>
+      <div className="progress" onClick={handleSeek} ref={ref}>
         <div className="back"></div>
         <div className="front" style={{ width: `${progress}%` }}>
           <span className="pointer"></span>

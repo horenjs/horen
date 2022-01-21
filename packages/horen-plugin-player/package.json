@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "player plugin for Horen",
   "main": "./dist/index.js",
+  "files": [
+    "./dist/**/*",
+    "package.json"
+  ],
   "scripts": {
     "build": "tsc"
   },

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 12:32:21
- * @LastEditTime : 2022-01-22 13:17:21
+ * @LastEditTime : 2022-01-22 14:28:13
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\album-modal.tsx
  * @Description  :
@@ -12,13 +12,14 @@ import defaultCover from '@/static/image/default-cover';
 import { Track } from 'types';
 
 interface Props {
+  tracks?: Track[];
   album: Album;
   onClose(): void;
   onAddTo(track: Track): void;
 }
 
 export function AlbumModal(props: Props) {
-  const { album, onClose, onAddTo } = props;
+  const { tracks, album, onClose, onAddTo } = props;
 
   const publishDate = album.children[0].date;
   const artist = album.children[0].artist;
@@ -42,8 +43,18 @@ export function AlbumModal(props: Props) {
         <div className="title-order">{index + 1 + '.'}</div>
         <div className="title-text">{item.title}</div>
       </div>
-      <div className="operator" title="添加到播放列表">
-        <span onClick={(e) => handleAddTo(e, item)}>+</span>
+      <div className="operator">
+        {tracks?.includes(item) ? (
+          <span title="已经在播放列表中">✔</span>
+        ) : (
+          <span
+            className="add-to"
+            onClick={(e) => handleAddTo(e, item)}
+            title="添加到播放列表"
+          >
+            ✚
+          </span>
+        )}
       </div>
     </div>
   );

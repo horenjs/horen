@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-22 13:49:10
+ * @LastEditTime : 2022-01-22 14:26:15
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
@@ -20,12 +20,13 @@ export interface Album {
 }
 
 export interface LibraryProps {
+  tracks?: Track[];
   paths: string[];
   onAddTo?(t: Track[]): void;
 }
 
 const Library: React.FC<LibraryProps> = (props) => {
-  const { paths, onAddTo } = props;
+  const { tracks, paths, onAddTo } = props;
 
   const [albums, setAlbums] = React.useState<Album[]>([]);
   const [album, setAlbum] = React.useState<Album>();
@@ -99,6 +100,7 @@ const Library: React.FC<LibraryProps> = (props) => {
 
       {album && (
         <AlbumModal
+          tracks={tracks}
           album={album}
           onAddTo={handleAddTo}
           onClose={handleCloseAlbumModal}
@@ -199,6 +201,11 @@ const MyLib = styled.div`
           background-color: #2a2b2c;
           .operator {
             visibility: visible;
+            .add-to {
+              &:hover {
+                color: #f1f1f1;
+              }
+            }
           }
         }
         .title {
@@ -215,7 +222,7 @@ const MyLib = styled.div`
           }
         }
         .operator {
-          font-size: 1.5rem;
+          font-size: 1.2rem;
           visibility: hidden;
         }
       }

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-22 14:09:30
+ * @LastEditTime : 2022-01-22 14:21:32
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -42,6 +42,7 @@ export default function App() {
                 index
                 element={
                   <Library
+                    tracks={player.trackList}
                     paths={libraryPaths}
                     onAddTo={(tracks) => {
                       console.log(tracks);

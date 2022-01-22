@@ -6,7 +6,8 @@
     "declarationDir": "../typings",
     "emitDeclarationOnly": true,
     "paths": {
-      "types": ["../types"]
+      "types": ["../types"],
+      "@/*": ["./*"]
     }
   },
   "include": [

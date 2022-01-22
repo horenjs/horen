@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 23:47:40
- * @LastEditTime : 2022-01-22 02:08:13
+ * @LastEditTime : 2022-01-22 13:37:44
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen-util\lib\index.ts
  * @Description  :
@@ -40,14 +40,9 @@ export async function readDir(
     const filePath = path.join(p, f);
     const stat = await fs.stat(filePath);
 
-    if (stat.isFile()) {
-      fileList.push(filePath);
-    }
-
-    if (stat.isDirectory()) {
-      const r = await readDir(filePath, fileList);
-      r.forEach((e) => fileList.push(e));
-    }
+    if (stat.isFile()) fileList.push(filePath);
+    
+    if (stat.isDirectory()) await readDir(filePath, fileList);
   }
 
   return fileList;

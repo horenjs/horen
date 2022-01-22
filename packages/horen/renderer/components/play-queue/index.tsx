@@ -1,22 +1,53 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 16:24:28
- * @LastEditTime : 2022-01-21 00:25:16
+ * @LastEditTime : 2022-01-22 12:30:53
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \alo\packages\alo\renderer\components\play-queue\index.tsx
+ * @FilePath     : \horen\packages\horen\renderer\components\play-queue\index.tsx
  * @Description  : 右侧滑出的歌曲列表
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
-import { ISong } from '../../../../../src/types';
+import { Track } from 'types';
+import Queue from './queue';
 
-interface PlaylistProps {
-  songs: ISong[],
-  visible: boolean,
-  playing: ISong,
-  onPlay(e: React.MouseEvent<HTMLElement>, i: number): void;
+export interface PlayQueueProps {
+  /**
+   * track list
+   */
+  tracks: Track[];
+  /**
+   * selected track
+   */
+  track: Track;
+  visible: boolean;
+  onPlay(track: Track): void;
   onClose(): void;
+}
+
+export function PlayQueue(props: PlayQueueProps) {
+  const { tracks, track, visible, onPlay, onClose } = props;
+
+  const classname = `component-playlist ${
+    visible ? 'slideInRight' : 'slideOutRight'
+  }`;
+
+  return ReactDOM.createPortal(
+    <MyPlayQueue className={classname}>
+      <div className="header">
+        <div className="title">播放队列</div>
+        <div className="count">{tracks.length} 首歌曲</div>
+      </div>
+      <Queue track={track} tracks={tracks} onPlay={onPlay} />
+      <div className="bottom">
+        <div className="close" role="button" onClick={(e) => onClose()}>
+          <span>收起队列</span>
+        </div>
+      </div>
+    </MyPlayQueue>,
+    document.getElementById('root') || document.body
+  );
 }
 
 const MyPlayQueue = styled.div`
@@ -29,13 +60,13 @@ const MyPlayQueue = styled.div`
   z-index: 999;
   background-color: #414243;
   color: #f1f1f1;
-  
+
   &.slideOutRight {
-    animation: slideOutRight .25s;
+    animation: slideOutRight 0.25s;
     animation-fill-mode: forwards;
   }
   &.slideInRight {
-    animation: slideInRight .25s;
+    animation: slideInRight 0.25s;
     animation-fill-mode: forwards;
   }
   .header {
@@ -112,63 +143,3 @@ const MyPlayQueue = styled.div`
     }
   }
 `;
-
-const PlayQueue: React.FC<PlaylistProps> = (props) => {
-  const { songs, visible, playing, onPlay, onClose } = props;
-
-  const handlePlay = (e: React.MouseEvent<HTMLElement>, i: number) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onPlay(e, i);
-  }
-
-  const renderItem = (item: ISong, index: number) => {
-    const isPlaying = item?.title === playing?.title;
-
-    return (
-      <div
-        className="queue-item"
-        onClick={(e) => handlePlay(e, index)}
-        key={item.path}
-      >
-        <div className="info">
-          <div
-            className="title"
-            style={{ color: isPlaying ? "#1ece9d" : "#fcfcfc" }}
-          >
-            {item.title || "Unkown Song"}
-          </div>
-          <div
-            className="artist"
-            style={{ color: isPlaying ? "#1ece9d" : "#aaa" }}
-          >
-            {item.artist || "Unkown Artist"}
-          </div>
-        </div>
-        <div className="operate"></div>
-      </div>
-    );
-  }
-
-  return ReactDOM.createPortal(
-    <MyPlayQueue
-      className={`component-playlist ${
-        visible ? "slideInRight" : "slideOutRight"
-      }`}
-    >
-      <div className="header">
-        <div className="title">播放队列</div>
-        <div className="count">{songs?.length} 首歌曲</div>
-      </div>
-      <div className="queue">{songs && songs.map(renderItem)}</div>
-      <div className="bottom">
-        <div className="close" role="button" onClick={(e) => onClose()}>
-          <span>收起队列</span>
-        </div>
-      </div>
-    </MyPlayQueue>,
-    document.getElementById("root")
-  );
-}
-
-export default PlayQueue;

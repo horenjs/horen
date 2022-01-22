@@ -1,14 +1,14 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:12:15
- * @LastEditTime : 2022-01-22 02:32:42
+ * @LastEditTime : 2022-01-22 12:41:25
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\control-panel\index.tsx
  * @Description  :
  */
 import React from 'react';
 import styled from 'styled-components';
-import defaultCover from './default-cover';
+import defaultCover from '../../static/image/default-cover';
 import { Track } from 'types';
 
 const My = styled.div`

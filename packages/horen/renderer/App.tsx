@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-22 02:24:46
+ * @LastEditTime : 2022-01-22 13:06:20
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -13,34 +13,6 @@ import ControlPanel from './components/control-panel';
 import Library from './pages/library';
 
 export default function App() {
-  // todo: should use the absolute path.
-  const srcs = [
-    {
-      id: 1,
-      src: 'D:\\Music\\流行音乐\\刘惜君\\当我身边空无一人\\刘惜君 - .就算了吗.flac',
-    },
-    {
-      id: 2,
-      src: 'D:\\Music\\流行音乐\\刘惜君\\当我身边空无一人\\刘惜君 - .你的手.flac',
-    },
-    {
-      id: 3,
-      src: 'D:\\Music\\流行音乐\\刘惜君\\当我身边空无一人\\刘惜君 - .鱼的记忆.flac',
-    },
-    {
-      id: 4,
-      src: 'D:\\Music\\流行音乐\\刘惜君\\当我身边空无一人\\刘惜君 - .多傻.flac',
-    },
-    {
-      id: 5,
-      src: 'D:\\Music\\流行音乐\\刘惜君\\当我身边空无一人\\刘惜君 - .光.flac',
-    },
-    {
-      id: 6,
-      src: 'D:\\Music\\流行音乐\\刘惜君\\当我身边空无一人\\刘惜君 - .后来我们会怎样.flac',
-    },
-  ];
-
   const [player, setPlayer] = React.useState(new Player());
   const [progress, setProgress] = React.useState(0);
 
@@ -61,7 +33,7 @@ export default function App() {
               index
               element={
                 <Library
-                  onAddToPlaylist={(tracks) => {
+                  onAddTo={(tracks) => {
                     console.log(tracks);
                     player.trackList = player.trackList.concat(tracks);
                   }}

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-22 02:29:28
+ * @LastEditTime : 2022-01-22 13:28:31
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
@@ -10,7 +10,105 @@ import { FileDC } from '../../data-center';
 import React from 'react';
 import styled from 'styled-components';
 import { Track } from 'types';
-import defaultCover from '../../components/control-panel/default-cover';
+import { AlbumModal } from './album-modal';
+import { AlbumView } from './album-viewer';
+
+export interface Album {
+  name: string;
+  children: Track[];
+  [key: string]: any;
+}
+
+export interface LibraryProps {
+  onAddTo?(t: Track[]): void;
+}
+
+const Library: React.FC<LibraryProps> = (props) => {
+  const { onAddTo } = props;
+
+  const [albums, setAlbums] = React.useState<Album[]>([]);
+  const [album, setAlbum] = React.useState<Album>();
+
+  const handleOpenAlbum = (a: Album) => {
+    setAlbum(a);
+  };
+
+  const handleAddTo = (t: Track) => {
+    if (onAddTo) onAddTo([t]);
+  };
+
+  const handleCloseAlbumModal = () => setAlbum(undefined);
+
+  React.useEffect(() => {
+    const p = 'D:\\Music\\周杰伦全集\\01 正式专辑\\01 2000.JAY';
+    (async () => {
+      const files = await FileDC.getList(p);
+
+      const abs: Album[] = [
+        {
+          name: 'Uncategory',
+          children: [],
+        },
+      ];
+
+      console.log(files);
+
+      for (let file of files) {
+        const meta = await FileDC.get(file);
+        const al = meta.album;
+
+        const newTrack: Track = {
+          ...meta,
+          src: file,
+          title: meta?.title || file.split('\\').pop(),
+        };
+
+        if (al) {
+          // 遍历暂时存放专辑的列表与传入的专辑进行对比
+          const exact = abs.filter((a) => a.name === al);
+          // 如果暂存列表中有这个专辑名 就将这个 Track push 到第一个匹配的专辑
+          if (exact.length) exact[0].children.push(newTrack);
+          // 如有没有这个专辑名 则新建一个
+          else abs.push({ name: al, children: [newTrack] });
+        } else {
+          // 如果专辑名为空 则传入 Uncategory 专辑
+          abs[0].children.push(newTrack);
+        }
+      }
+
+      setAlbums(abs);
+    })();
+  }, []);
+
+  return (
+    <MyLib className="component-library">
+      <div className="header">
+        <h1>Library</h1>
+      </div>
+
+      <div className="albums">
+        {albums.length &&
+          albums.map((value) => (
+            <AlbumView
+              album={value}
+              onOpen={handleOpenAlbum}
+              key={value.name}
+            />
+          ))}
+      </div>
+
+      {album && (
+        <AlbumModal
+          album={album}
+          onAddTo={handleAddTo}
+          onClose={handleCloseAlbumModal}
+        />
+      )}
+
+      {album && <div className="mask"></div>}
+    </MyLib>
+  );
+};
 
 const MyLib = styled.div`
   padding: 32px 48px;
@@ -165,165 +263,5 @@ const MyLib = styled.div`
     }
   }
 `;
-
-export interface Album {
-  name: string;
-  children: Track[];
-  [key: string]: any;
-}
-
-export interface LibraryProps {
-  onAddToPlaylist?(songs: Track[]): void;
-}
-
-const Library: React.FC<LibraryProps> = (props) => {
-  const { onAddToPlaylist } = props;
-
-  const [albums, setAlbums] = React.useState<Album[]>([]);
-  const [album, setAlbum] = React.useState<Album>();
-
-  const handleOpenAlbum = (e: React.MouseEvent<HTMLElement>, a: Album) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setAlbum(a);
-  };
-
-  const handleTrack = (e: React.MouseEvent<HTMLElement>, song: Track) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (onAddToPlaylist) {
-      onAddToPlaylist([song]);
-    }
-  };
-
-  React.useEffect(() => {
-    const p = 'D:\\Music\\流行音乐\\CRITTY\\单曲';
-    (async () => {
-      const files = await FileDC.getList(p);
-
-      const abs: Album[] = [
-        {
-          name: 'Uncategory',
-          children: [],
-        },
-      ];
-
-      for (let file of files) {
-        const meta = await FileDC.get(file);
-        const { album } = meta;
-
-        const newTrack: Track = {
-          ...meta,
-          src: file,
-          title: meta?.title || file.split('\\').pop(),
-        };
-
-        if (album) {
-          const exact = abs.filter((a) => a.name === album);
-          if (exact.length) {
-            exact[0].children.push(newTrack);
-          } else {
-            abs.push({ name: album, children: [newTrack] });
-          }
-        } else {
-          abs[0].children.push(newTrack);
-        }
-      }
-
-      setAlbums(abs);
-    })();
-  }, []);
-
-  return (
-    <MyLib className="component-library">
-      <div className="header">
-        <h1>Library</h1>
-      </div>
-      <div className="albums">
-        {albums.length ? (
-          albums.map((album) => {
-            if (album.children.length < 1) return;
-
-            const src = album.children[0].picture || defaultCover;
-
-            return (
-              <div
-                className="album"
-                key={album.name}
-                onClick={(e) => handleOpenAlbum(e, album)}
-              >
-                <img src={`data:image/png;base64,${src}`} alt={album.name} />
-                <div className="info">
-                  <div className="name">{album.name}</div>
-                  <div className="artist">{album.children[0].artist}</div>
-                </div>
-              </div>
-            );
-          })
-        ) : (
-          <div className="open-dir">
-            <button>添加歌曲</button>
-          </div>
-        )}
-      </div>
-      {album && (
-        <div className="album-view">
-          <div className="album-close">
-            <div
-              className="close-button"
-              role="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setAlbum(undefined);
-              }}
-            >
-              X
-            </div>
-          </div>
-          <div className="album-children">
-            {album.children.map((c, index) => (
-              <div className="album-child" key={c.title}>
-                <div className="title">
-                  <div className="title-order">{index + 1 + '.'}</div>
-                  <div className="title-text">{c.title}</div>
-                </div>
-                <div
-                  className="operator"
-                  title="添加到播放列表"
-                  onClick={(e) => handleTrack(e, c)}
-                >
-                  <span>+</span>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="album-infos">
-            <div className="name">{album.name}</div>
-            <div className="cover">
-              <img
-                src={`data:image/png;base64,${
-                  album.children[0].picture || defaultCover
-                }`}
-                alt={album.name}
-              />
-            </div>
-            <div className="count">{album.children.length} 首歌曲</div>
-            <div className="date">
-              <span>发行时间</span> {album.children[0].date}
-            </div>
-            <div className="artists">
-              <span>艺术家</span> {album.children[0].artist}
-            </div>
-            <div className="path" title={album.children[0].src}>
-              <span>专辑路径</span> {album.children[0].src}
-            </div>
-          </div>
-        </div>
-      )}
-      {album && <div className="mask"></div> }
-    </MyLib>
-  );
-};
 
 export default Library;

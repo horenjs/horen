@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 16:24:28
- * @LastEditTime : 2022-01-22 12:30:53
+ * @LastEditTime : 2022-01-22 14:04:02
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\play-queue\index.tsx
  * @Description  : 右侧滑出的歌曲列表
@@ -86,7 +86,7 @@ const MyPlayQueue = styled.div`
       background: #777;
     }
     padding: 16px 0;
-    height: calc(100vh - 220px);
+    height: calc(100vh - 180px);
     overflow-y: auto;
     .queue-item {
       padding: 8px 32px;

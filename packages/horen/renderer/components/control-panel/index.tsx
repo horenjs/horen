@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:12:15
- * @LastEditTime : 2022-01-22 12:41:25
+ * @LastEditTime : 2022-01-22 13:56:06
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\control-panel\index.tsx
  * @Description  :
@@ -82,6 +82,7 @@ const My = styled.div`
     .track-info {
       margin: 0 0 0 16px;
       width: 160px;
+      cursor: pointer;
       .title {
         text-overflow: ellipsis;
         overflow: hidden;
@@ -119,6 +120,7 @@ export interface ControlPanelProps {
   onNext(): void;
   onPlayOrPause(): void;
   onSeek(per: number): void;
+  plugin?: React.ReactNode;
 }
 
 const ControlPanel: React.FC<ControlPanelProps> = (props) => {
@@ -130,9 +132,13 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
     onPlayOrPause,
     onNext,
     onSeek,
+    plugin,
   } = props;
 
   const ref: any = React.useRef();
+
+  const trackTitle =
+    track?.title || track?.src?.split('.').slice(-2, -1)[0] || 'Unkown track';
 
   const handlePrev = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -178,10 +184,8 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
           />
         </div>
         <div className="track-info">
-          <div className="title">
-            {track?.title ||
-              track?.src?.split('.').slice(-2, -1) ||
-              'Unkown track'}
+          <div className="title" title={trackTitle}>
+            { trackTitle }
           </div>
           <div className="artist">{track?.artist || 'Unkown Artist'}</div>
         </div>
@@ -196,6 +200,7 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
             下一首
           </div>
         </div>
+        <div className="track-plugin">{plugin}</div>
       </div>
     </My>
   );

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-20 23:05:39
- * @LastEditTime : 2022-01-22 02:31:59
+ * @LastEditTime : 2022-01-22 14:12:21
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen-plugin-player\index.ts
  * @Description  : a player for AlO
@@ -80,7 +80,8 @@ export default class HowlPlayer {
   constructor() {}
 
   public set trackList(list: Track[]) {
-    this._trackList = list;
+    // 歌曲不允许重复
+    this._trackList = Array.from(new Set(list));
 
     if (this._howler) {
       // if there is a howler, do nothing

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:12:15
- * @LastEditTime : 2022-01-22 13:56:06
+ * @LastEditTime : 2022-01-22 17:02:54
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\control-panel\index.tsx
  * @Description  :
@@ -10,6 +10,7 @@ import React from 'react';
 import styled from 'styled-components';
 import defaultCover from '../../static/image/default-cover';
 import { Track } from 'types';
+import { Loader } from '../loader';
 
 const My = styled.div`
   height: 80px;
@@ -74,9 +75,16 @@ const My = styled.div`
       width: 52px;
       background-color: #999;
       border-radius: 4px;
+      position: relative;
       img {
         width: 100%;
         object-fit: cover;
+      }
+      .loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
       }
     }
     .track-info {
@@ -182,10 +190,15 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
             src={`data:image/png;base64,${track?.picture || defaultCover}`}
             alt={track?.title || 'unkown-track'}
           />
+          {playing && (
+            <div className="loader">
+              <Loader style="pulse" />
+            </div>
+          )}
         </div>
         <div className="track-info">
           <div className="title" title={trackTitle}>
-            { trackTitle }
+            {trackTitle}
           </div>
           <div className="artist">{track?.artist || 'Unkown Artist'}</div>
         </div>

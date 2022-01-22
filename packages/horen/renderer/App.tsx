@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-22 13:06:20
+ * @LastEditTime : 2022-01-22 13:49:04
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -11,6 +11,11 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Player from 'horen-plugin-player';
 import ControlPanel from './components/control-panel';
 import Library from './pages/library';
+
+const libraryPaths = [
+  'D:\\Music\\林俊杰合集\\2010 林俊杰 - 她说',
+  'D:\\Music\\流行音乐\\李荣浩'
+]
 
 export default function App() {
   const [player, setPlayer] = React.useState(new Player());
@@ -33,6 +38,7 @@ export default function App() {
               index
               element={
                 <Library
+                  paths={libraryPaths}
                   onAddTo={(tracks) => {
                     console.log(tracks);
                     player.trackList = player.trackList.concat(tracks);

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-22 13:28:31
+ * @LastEditTime : 2022-01-22 13:49:10
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
@@ -20,11 +20,12 @@ export interface Album {
 }
 
 export interface LibraryProps {
+  paths: string[];
   onAddTo?(t: Track[]): void;
 }
 
 const Library: React.FC<LibraryProps> = (props) => {
-  const { onAddTo } = props;
+  const { paths, onAddTo } = props;
 
   const [albums, setAlbums] = React.useState<Album[]>([]);
   const [album, setAlbum] = React.useState<Album>();
@@ -40,10 +41,7 @@ const Library: React.FC<LibraryProps> = (props) => {
   const handleCloseAlbumModal = () => setAlbum(undefined);
 
   React.useEffect(() => {
-    const p = 'D:\\Music\\周杰伦全集\\01 正式专辑\\01 2000.JAY';
     (async () => {
-      const files = await FileDC.getList(p);
-
       const abs: Album[] = [
         {
           name: 'Uncategory',
@@ -51,28 +49,30 @@ const Library: React.FC<LibraryProps> = (props) => {
         },
       ];
 
-      console.log(files);
+      for (let p of paths) {
+        const files = await FileDC.getList(p);
 
-      for (let file of files) {
-        const meta = await FileDC.get(file);
-        const al = meta.album;
+        for (let file of files) {
+          const meta = await FileDC.get(file);
+          const al = meta.album;
 
-        const newTrack: Track = {
-          ...meta,
-          src: file,
-          title: meta?.title || file.split('\\').pop(),
-        };
+          const newTrack: Track = {
+            ...meta,
+            src: file,
+            title: meta?.title || file.split('\\').pop(),
+          };
 
-        if (al) {
-          // 遍历暂时存放专辑的列表与传入的专辑进行对比
-          const exact = abs.filter((a) => a.name === al);
-          // 如果暂存列表中有这个专辑名 就将这个 Track push 到第一个匹配的专辑
-          if (exact.length) exact[0].children.push(newTrack);
-          // 如有没有这个专辑名 则新建一个
-          else abs.push({ name: al, children: [newTrack] });
-        } else {
-          // 如果专辑名为空 则传入 Uncategory 专辑
-          abs[0].children.push(newTrack);
+          if (al) {
+            // 遍历暂时存放专辑的列表与传入的专辑进行对比
+            const exact = abs.filter((a) => a.name === al);
+            // 如果暂存列表中有这个专辑名 就将这个 Track push 到第一个匹配的专辑
+            if (exact.length) exact[0].children.push(newTrack);
+            // 如有没有这个专辑名 则新建一个
+            else abs.push({ name: al, children: [newTrack] });
+          } else {
+            // 如果专辑名为空 则传入 Uncategory 专辑
+            abs[0].children.push(newTrack);
+          }
         }
       }
 

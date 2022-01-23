@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-23 16:32:47
+ * @LastEditTime : 2022-01-23 17:32:51
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -109,7 +109,7 @@ export default function App() {
                     tracks={player.trackList}
                     paths={libraryPaths}
                     onAddTo={(tracks) => {
-                      console.log(tracks);
+                      // console.log(tracks);
                       player.trackList = player.trackList.concat(tracks);
                     }}
                   />

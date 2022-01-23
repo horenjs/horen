@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 12:32:21
- * @LastEditTime : 2022-01-23 16:33:31
+ * @LastEditTime : 2022-01-23 17:02:12
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\album-modal.tsx
  * @Description  :
@@ -15,7 +15,7 @@ interface Props {
   tracks?: Track[];
   album: Album;
   onClose(): void;
-  onAddTo(track: Track): void;
+  onAddTo(tracks: Track[]): void;
 }
 
 export function AlbumModal(props: Props) {
@@ -31,10 +31,10 @@ export function AlbumModal(props: Props) {
     onClose();
   };
 
-  const handleAddTo = (e: React.MouseEvent<HTMLSpanElement>, track: Track) => {
+  const handleAddTo = (e: React.MouseEvent<HTMLSpanElement>, ts: Track[]) => {
     e.preventDefault();
     e.stopPropagation();
-    onAddTo(track);
+    onAddTo([...ts]);
   };
 
   const renderItem = (item: Track, index: number) => (
@@ -49,7 +49,7 @@ export function AlbumModal(props: Props) {
         ) : (
           <span
             className="add-to"
-            onClick={(e) => handleAddTo(e, item)}
+            onClick={(e) => handleAddTo(e, [item])}
             title="添加到播放列表"
           >
             ✚
@@ -61,7 +61,17 @@ export function AlbumModal(props: Props) {
 
   return (
     <div className="album-modal-view">
-      <div className="album-close">
+      <div className="album-header">
+        <div className="add-all">
+          <span
+            role="button"
+            onClick={(e) => {
+              handleAddTo(e, album.children)
+            }}
+          >
+            ✚ 全部添加
+          </span>
+        </div>
         <div className="close-button" role="button" onClick={handleClose}>
           X
         </div>

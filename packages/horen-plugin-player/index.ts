@@ -1,13 +1,14 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-20 23:05:39
- * @LastEditTime : 2022-01-22 14:12:21
+ * @LastEditTime : 2022-01-23 17:45:27
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen-plugin-player\index.ts
  * @Description  : a player for AlO
  */
 import { Howl, Howler } from 'howler';
 import { randomInt, shift } from 'horen-util';
+import _ from 'underscore';
 
 // 判断是否为浏览器环境
 if (typeof window === 'undefined')
@@ -81,7 +82,15 @@ export default class HowlPlayer {
 
   public set trackList(list: Track[]) {
     // 歌曲不允许重复
-    this._trackList = Array.from(new Set(list));
+    const uniqueArr = list.reduce((prev, curr) => {
+      if (prev.length === 0) return [curr];
+      // 深比较是否相等
+      // 防止切换路由后 Track 对象重新生成
+      // new Set() 认为对象总是不相等
+      else return includesDeep(prev, curr) ? prev : [...prev, curr];
+    }, [] as Track[]);
+
+    this._trackList = uniqueArr;
 
     if (this._howler) {
       // if there is a howler, do nothing
@@ -290,4 +299,10 @@ export default class HowlPlayer {
       this._play();
     }
   }
+}
+
+function includesDeep(arr: any[], obj: object) {
+  const filtered = arr.filter((value) => _.isEqual(value, obj));
+  if (filtered.length) return true;
+  else return false;
 }

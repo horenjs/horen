@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-23 16:39:56
+ * @LastEditTime : 2022-01-23 17:01:29
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
@@ -20,7 +20,7 @@ export interface Album {
 }
 
 export interface LibraryProps {
-  tracks?: Track[];
+  tracks: Track[];
   paths: string[];
   onAddTo?(t: Track[]): void;
 }
@@ -35,8 +35,8 @@ const Library: React.FC<LibraryProps> = (props) => {
     setAlbum(a);
   };
 
-  const handleAddTo = (t: Track) => {
-    if (onAddTo) onAddTo([t]);
+  const handleAddTo = (ts: Track[]) => {
+    if (onAddTo) onAddTo([...ts]);
   };
 
   const handleCloseAlbumModal = () => setAlbum(undefined);
@@ -154,10 +154,23 @@ const MyLib = styled.div`
     box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.5);
     border-radius: 8px;
     z-index: 9999;
-    .album-close {
+    .album-header {
       width: 100%;
-      padding: 16px 0;
-      text-align: right;
+      padding: 16px 4px 12px 4px;
+      display: flex;
+      .add-all {
+        flex-grow: 1;
+        span {
+          font-size: 0.8rem;
+          padding: 6px 8px;
+          border-radius: 4px;
+          cursor: pointer;
+          background-color: #272829;
+        }
+        span:hover {
+          background-color: #212223;
+        }
+      }
       .close-button {
         display: inline-block;
         cursor: pointer;
@@ -168,7 +181,7 @@ const MyLib = styled.div`
     }
     .album-children {
       width: calc(100% - 280px);
-      max-height: calc(480px - 92px);
+      max-height: calc(480px - 100px);
       margin: 0 48px 0 0;
       padding-right: 8px;
       display: flex;
@@ -186,7 +199,7 @@ const MyLib = styled.div`
         background: #4a4b4c;
       }
       .album-child {
-        width: 100%;
+        width: calc(100% - 4px);
         padding: 6px 8px 6px 8px;
         cursor: pointer;
         text-align: left;

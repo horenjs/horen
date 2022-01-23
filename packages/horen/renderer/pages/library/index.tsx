@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-23 17:01:29
+ * @LastEditTime : 2022-01-23 18:14:47
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
@@ -12,6 +12,7 @@ import styled from 'styled-components';
 import { Track } from 'types';
 import { AlbumModal } from './album-modal';
 import { AlbumView } from './album-viewer';
+import { Loader } from '@/components/loader';
 
 export interface Album {
   name: string;
@@ -84,14 +85,17 @@ const Library: React.FC<LibraryProps> = (props) => {
   return (
     <MyLib className="component-library">
       <div className="albums">
-        {albums.length &&
+        {albums.length === 0 ? (
+          <div><Loader style='square' /></div>
+        ) : (
           albums.map((value) => (
             <AlbumView
               album={value}
               onOpen={handleOpenAlbum}
               key={value.name}
             />
-          ))}
+          ))
+        )}
       </div>
 
       {album && (

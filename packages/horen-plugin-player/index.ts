@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-20 23:05:39
- * @LastEditTime : 2022-01-23 17:45:27
+ * @LastEditTime : 2022-01-23 17:49:07
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen-plugin-player\index.ts
  * @Description  : a player for AlO
@@ -303,6 +303,6 @@ export default class HowlPlayer {
 
 function includesDeep(arr: any[], obj: object) {
   const filtered = arr.filter((value) => _.isEqual(value, obj));
-  if (filtered.length) return true;
+  if (filtered.length > 0) return true;
   else return false;
 }

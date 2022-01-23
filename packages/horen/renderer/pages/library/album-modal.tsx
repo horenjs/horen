@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 12:32:21
- * @LastEditTime : 2022-01-22 14:28:13
+ * @LastEditTime : 2022-01-23 16:33:31
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\album-modal.tsx
  * @Description  :
@@ -60,7 +60,7 @@ export function AlbumModal(props: Props) {
   );
 
   return (
-    <div className="album-view">
+    <div className="album-modal-view">
       <div className="album-close">
         <div className="close-button" role="button" onClick={handleClose}>
           X

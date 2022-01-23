@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-22 14:26:15
+ * @LastEditTime : 2022-01-23 16:39:56
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
@@ -83,10 +83,6 @@ const Library: React.FC<LibraryProps> = (props) => {
 
   return (
     <MyLib className="component-library">
-      <div className="header">
-        <h1>Library</h1>
-      </div>
-
       <div className="albums">
         {albums.length &&
           albums.map((value) => (
@@ -113,9 +109,7 @@ const Library: React.FC<LibraryProps> = (props) => {
 };
 
 const MyLib = styled.div`
-  padding: 32px 48px;
   height: 100%;
-  overflow: auto;
   background-color: #313233;
   color: #f1f1f1;
   .albums {
@@ -125,7 +119,7 @@ const MyLib = styled.div`
       display: inline-block;
       height: 272px;
       width: 192px;
-      margin: 8px 16px 8px 0;
+      margin: 8px 8px 8px 8px;
       cursor: pointer;
       img {
         width: 100%;
@@ -145,7 +139,7 @@ const MyLib = styled.div`
       }
     }
   }
-  .album-view {
+  .album-modal-view {
     display: flex;
     flex-wrap: wrap;
     position: fixed;
@@ -173,9 +167,9 @@ const MyLib = styled.div`
       }
     }
     .album-children {
-      width: calc(100% - 296px);
-      max-height: 408px;
-      margin: 0 64px 0 0;
+      width: calc(100% - 280px);
+      max-height: calc(480px - 92px);
+      margin: 0 48px 0 0;
       padding-right: 8px;
       display: flex;
       align-items: center;
@@ -193,10 +187,11 @@ const MyLib = styled.div`
       }
       .album-child {
         width: 100%;
-        padding: 6px 8px 6px 0;
+        padding: 6px 8px 6px 8px;
         cursor: pointer;
         text-align: left;
         display: flex;
+        border-radius: 4px;
         &:hover {
           background-color: #2a2b2c;
           .operator {

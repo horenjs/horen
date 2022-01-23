@@ -22,3 +22,11 @@ body {
   inset: 0;
   background-color: rgba(0, 0, 0, 0.85);
 }
+
+.perfect-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.perfect-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #4a4b4c;
+}

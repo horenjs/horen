@@ -1,14 +1,14 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:00:44
- * @LastEditTime : 2022-01-22 01:54:22
+ * @LastEditTime : 2022-01-23 21:10:33
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\data-center\index.tsx
  * @Description  : 
  */
 const electron = window.require('electron');
 const { ipcRenderer } = electron;
-import { Track } from 'types';
+import { Track, Setting } from 'types';
 import { IPC_CODE } from '../../configs';
 
 export class FileDC {
@@ -21,20 +21,12 @@ export class FileDC {
   }
 }
 
-export class PlayerDC {
-  public static async play(src: string) :Promise<number> {
-    return await ipcRenderer.invoke(IPC_CODE.player.play, src);
+export class SettingDC {
+  public static async get() {
+    return await ipcRenderer.invoke(IPC_CODE.setting.get);
   }
 
-  public static async pause(id: number) {
-    return await ipcRenderer.invoke(IPC_CODE.player.pause, id);
-  }
-
-  public static async resume(id: number) {
-    return await ipcRenderer.invoke(IPC_CODE.player.resume, id);
-  }
-
-  public static async stop(id: number) {
-    return await ipcRenderer.invoke(IPC_CODE.player.stop, id);
+  public static async set(setting: Setting) {
+    return await ipcRenderer.invoke(IPC_CODE.setting.set, setting);
   }
 }

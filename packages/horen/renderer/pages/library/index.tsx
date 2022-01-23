@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-23 18:14:47
+ * @LastEditTime : 2022-01-23 21:13:25
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
@@ -51,10 +51,10 @@ const Library: React.FC<LibraryProps> = (props) => {
         },
       ];
 
-      for (let p of paths) {
+      for (const p of paths) {
         const files = await FileDC.getList(p);
 
-        for (let file of files) {
+        for (const file of files) {
           const meta = await FileDC.get(file);
           const al = meta.album;
 

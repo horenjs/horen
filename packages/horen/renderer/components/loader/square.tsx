@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-23 18:12:18
- * @LastEditTime : 2022-01-23 18:15:15
+ * @LastEditTime : 2022-01-23 21:54:46
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\loader\square.tsx
  * @Description  :
@@ -9,7 +9,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-export default function(props: { color?: string }) {
+export default function (props: { color?: string }) {
   const { color } = props;
 
   return (
@@ -18,25 +18,25 @@ export default function(props: { color?: string }) {
         <polyline
           className="line-cornered stroke-still"
           points="0,0 100,0 100,100"
-          stroke-width="20"
+          strokeWidth="20"
           fill="none"
         ></polyline>
         <polyline
           className="line-cornered stroke-still"
           points="0,0 0,100 100,100"
-          stroke-width="20"
+          strokeWidth="20"
           fill="none"
         ></polyline>
         <polyline
           className="line-cornered stroke-animation"
           points="0,0 100,0 100,100"
-          stroke-width="20"
+          strokeWidth="20"
           fill="none"
         ></polyline>
         <polyline
           className="line-cornered stroke-animation"
           points="0,0 0,100 100,100"
-          stroke-width="20"
+          strokeWidth="20"
           fill="none"
         ></polyline>
       </svg>

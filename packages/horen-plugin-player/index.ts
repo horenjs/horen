@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-20 23:05:39
- * @LastEditTime : 2022-01-23 17:49:07
+ * @LastEditTime : 2022-01-23 20:05:22
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen-plugin-player\index.ts
  * @Description  : a player for AlO
@@ -17,7 +17,7 @@ if (typeof window === 'undefined')
   );
 
 export interface Track {
-  id: number;
+  id?: number;
   src?: string;
   title?: string;
   artist?: string;
@@ -77,8 +77,6 @@ export default class HowlPlayer {
    * play mode
    */
   protected _mode: PlayMode = 'repeat';
-
-  constructor() {}
 
   public set trackList(list: Track[]) {
     // 歌曲不允许重复
@@ -261,7 +259,7 @@ export default class HowlPlayer {
       case 'single':
         this.currentTrack = this.trackList[index];
         break;
-      case 'shuffle':
+      case 'shuffle': {
         // todo: momerize the tracks passed.
         const i = randomInt(0, length - 1);
         // 如果随机到的数与当前正在播放的相差在 1 位以内
@@ -269,6 +267,7 @@ export default class HowlPlayer {
         if (Math.abs(i - index) < 2) this._skipTo(order, index, length);
         else this.currentTrack = this.trackList[i];
         break;
+      }
     }
   }
 
@@ -301,6 +300,7 @@ export default class HowlPlayer {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function includesDeep(arr: any[], obj: object) {
   const filtered = arr.filter((value) => _.isEqual(value, obj));
   if (filtered.length > 0) return true;

@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 10:40:55
- * @LastEditTime : 2022-01-23 22:02:20
+ * @LastEditTime : 2022-01-25 16:52:28
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\main\ipc.ts
+ * @FilePath     : \Horen\packages\horen\main\ipc.ts
  * @Description  :
  */
 import path from 'path';
@@ -18,7 +18,7 @@ import {
   DEFAULT_SETTING,
 } from '../configs';
 import { readDir, arrayBufferToBase64 } from 'horen-util';
-import { Setting, Track } from '../types';
+import { SettingFile, Track } from '../types';
 
 ipcMain.handle(IPC_CODE.file.getList, async (evt, p) => {
   const files = await readDir(p);
@@ -51,7 +51,7 @@ ipcMain.handle(IPC_CODE.setting.get, async (evt) => {
 
   try {
     const settingStr = await fs.readFile(p, { encoding: 'utf-8' });
-    return JSON.parse(settingStr);
+    return JSON.parse(settingStr) as SettingFile;
   } catch(err) {
     await fs.writeFile(p, JSON.stringify(DEFAULT_SETTING));
     return DEFAULT_SETTING;

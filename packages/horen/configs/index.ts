@@ -1,12 +1,12 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 01:51:07
- * @LastEditTime : 2022-01-23 22:03:17
+ * @LastEditTime : 2022-01-25 16:49:48
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\configs\index.ts
+ * @FilePath     : \Horen\packages\horen\configs\index.ts
  * @Description  :
  */
-import { Setting } from '../types';
+import { SettingFile } from '../types';
 
 export const IPC_CODE = {
   file: {
@@ -17,22 +17,25 @@ export const IPC_CODE = {
     get: 'setting:get',
     set: 'setting:set',
   },
+  dialog: {
+    open: 'dialog:get'
+  }
 };
 
 export const APP_DATA_PATH = process.env.APPDATA || '.';
 
 export const APP_NAME = 'horen';
 
-export const DEFAULT_SETTING: Setting = {
+export const DEFAULT_SETTING: SettingFile = {
   createAt: new Date().valueOf(),
   updateAt: new Date().valueOf(),
-  items: [
+  grounps: [
     {
-      category: 'common',
+      name: 'common',
       children: [
         {
           label: 'collectionPaths',
-          value: ['test', 'test/hello']
+          value: []
         },
         {
           label: 'refreshWhenOpen',

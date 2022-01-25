@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-23 21:13:25
+ * @LastEditTime : 2022-01-25 17:45:19
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
+ * @FilePath     : \Horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
  */
 import { FileDC } from '../../data-center';
@@ -17,6 +17,7 @@ import { Loader } from '@/components/loader';
 export interface Album {
   name: string;
   children: Track[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 
@@ -80,7 +81,7 @@ const Library: React.FC<LibraryProps> = (props) => {
 
       setAlbums(abs);
     })();
-  }, []);
+  }, [paths.length]);
 
   return (
     <MyLib className="component-library">

@@ -1,19 +1,20 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-23 15:16:09
- * @LastEditTime : 2022-01-23 22:05:06
+ * @LastEditTime : 2022-01-25 17:32:43
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\renderer\pages\setting\index.tsx
+ * @FilePath     : \Horen\packages\horen\renderer\pages\setting\index.tsx
  * @Description  : setting page
  */
 import React from 'react';
 import styled from 'styled-components';
 import { SettingDC } from '@/data-center';
 import { Loader } from '@/components/loader';
-import { Setting } from 'types';
+import { SettingFile } from 'types';
+import SettingGroup from './setting-group';
 
 export default function SettingPage() {
-  const [setting, setSetting] = React.useState<Setting>();
+  const [setting, setSetting] = React.useState<SettingFile>();
 
   React.useEffect(() => {
     (async () => {
@@ -22,35 +23,39 @@ export default function SettingPage() {
     })();
   }, []);
 
-  const renderItem = (value: any) => {
-    if (value instanceof Array) {
-      return (
-        <div>
-          {value.map((v) => (
-            <div>{v}</div>
-          ))}
-        </div>
-      );
-    } else {
-      return <div>{String(value)}</div>;
-    }
-  };
+  React.useEffect(() => {
+    // console.log(setting);
+    (async () => {
+      if (setting) await SettingDC.set(setting);
+    })();
+  }, [setting?.updateAt]);
 
   return (
     <MySetting className="setting-page">
-      {!setting ? (
-        <Loader style="square" />
-      ) : (
-        setting.items.map((s) => {
-          return s.children.map((c) => {
-            return (
-              <div className={`setting-item cate-${s.category}`} key={c.label}>
-                <span className="label">{c.label}</span>
-                <span className="item">{renderItem(c.value)}</span>
-              </div>
-            );
-          });
+      {setting?.grounps ? (
+        setting?.grounps.map((group) => {
+          return (
+            <div className={`setting-group-${group.name}`} key={group.name}>
+              <h1 style={{padding: '0 0 0 40px'}}>{ group.name }</h1>
+              <SettingGroup
+                group={group}
+                onSubmit={(g) => {
+                  const index = setting.grounps.indexOf(group);
+                  const newgroups = [...setting.grounps];
+                  newgroups[index] = g;
+                  const newSt = {
+                    ...setting,
+                    updateAt: new Date().valueOf(),
+                    grounps: newgroups,
+                  };
+                  setSetting(newSt);
+                }}
+              />
+            </div>
+          );
         })
+      ) : (
+        <Loader style="square" />
       )}
     </MySetting>
   );
@@ -62,6 +67,7 @@ const MySetting = styled.div`
     display: flex;
     align-items: center;
     margin: 16px 0;
+    flex-wrap: wrap;
     span {
       display: inline-block;
       &.label {
@@ -69,7 +75,7 @@ const MySetting = styled.div`
         text-align: right;
         margin-right: 32px;
       }
-      &.item {
+      &.value {
         font-size: 0.9rem;
         color: #a1a2a3;
       }

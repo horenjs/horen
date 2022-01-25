@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-23 17:32:51
+ * @LastEditTime : 2022-01-25 16:25:44
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\renderer\App.tsx
+ * @FilePath     : \Horen\packages\horen\renderer\App.tsx
  * @Description  :
  */
 import React from 'react';
@@ -20,34 +20,8 @@ import Library from './pages/library';
 import SettingPage from './pages/setting';
 import ControlPanel from './components/control-panel';
 import { PlayQueue } from './components/play-queue';
-import TitlePanel from './components/title-panel';
-
-const libraryPaths = [
-  'D:\\Music\\林俊杰合集',
-  'D:\\Music\\流行音乐\\李荣浩',
-  'D:\\Music\\流行音乐\\李荣浩\\有理想',
-];
-
-const titlePanelOperates = [
-  {
-    name: 'minimize',
-    desc: 'minimize the main window',
-    element: <div className="minimize">小</div>,
-    onClick: (e: React.MouseEvent<HTMLElement>) => console.log(e),
-  },
-  {
-    name: 'zoom',
-    desc: 'zoom the main window',
-    element: <div className="zoom">大</div>,
-    onClick: (e: React.MouseEvent<HTMLElement>) => console.log(e),
-  },
-  {
-    name: 'close',
-    desc: 'close the main window',
-    element: <div className="close">关</div>,
-    onClick: (e: React.MouseEvent<HTMLElement>) => console.log(e),
-  },
-];
+import { SettingDC } from './data-center';
+import { SettingFile } from 'types';
 
 const pages = [
   {
@@ -64,6 +38,7 @@ export default function App() {
   const [player, setPlayer] = React.useState(new Player());
   const [progress, setProgress] = React.useState(0);
   const [isQueue, setIsQueue] = React.useState(false);
+  const [collectionPaths, setCollectionPaths] = React.useState<string[]>([]);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -75,6 +50,21 @@ export default function App() {
 
     return () => clearInterval(timer);
   }, [progress]);
+
+  React.useEffect(() => {
+    (async () => {
+      const st = await SettingDC.get() as SettingFile;
+      for (const s of st.grounps) {
+        if (s.name === 'common') {
+          for (const c of s.children) {
+            if (c.label === 'collectionPaths') {
+              setCollectionPaths(c.value as string[]);
+            }
+          }
+        }
+      }
+    })();
+  }, [])
 
   return (
     <MyApp className="app">
@@ -107,7 +97,7 @@ export default function App() {
                 element={
                   <Library
                     tracks={player.trackList}
-                    paths={libraryPaths}
+                    paths={collectionPaths}
                     onAddTo={(tracks) => {
                       // console.log(tracks);
                       player.trackList = player.trackList.concat(tracks);

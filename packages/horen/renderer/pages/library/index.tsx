@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-25 17:45:19
+ * @LastEditTime : 2022-01-25 23:43:32
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\pages\library\index.tsx
+ * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
  */
 import { FileDC } from '../../data-center';
@@ -33,6 +33,8 @@ const Library: React.FC<LibraryProps> = (props) => {
   const [albums, setAlbums] = React.useState<Album[]>([]);
   const [album, setAlbum] = React.useState<Album>();
 
+  const [trackLoading, setTrackLoading] = React.useState('');
+
   const handleOpenAlbum = (a: Album) => {
     setAlbum(a);
   };
@@ -52,12 +54,16 @@ const Library: React.FC<LibraryProps> = (props) => {
         },
       ];
 
+      let index = 0;
+
       for (const p of paths) {
         const files = await FileDC.getList(p);
 
         for (const file of files) {
+          setTrackLoading(index + ' ' + file);
+
           const meta = await FileDC.get(file);
-          const al = meta.album;
+          const al = meta?.album;
 
           const newTrack: Track = {
             ...meta,
@@ -76,6 +82,8 @@ const Library: React.FC<LibraryProps> = (props) => {
             // 如果专辑名为空 则传入 Uncategory 专辑
             abs[0].children.push(newTrack);
           }
+
+          index += 1;
         }
       }
 
@@ -85,9 +93,14 @@ const Library: React.FC<LibraryProps> = (props) => {
 
   return (
     <MyLib className="component-library">
+      <span>
+        Loading: <span style={{ fontSize: 12 }}>{trackLoading}</span>
+      </span>
       <div className="albums">
         {albums.length === 0 ? (
-          <div><Loader style='square' /></div>
+          <div>
+            <Loader style="square" />
+          </div>
         ) : (
           albums.map((value) => (
             <AlbumView

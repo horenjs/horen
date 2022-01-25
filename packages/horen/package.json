@@ -6,7 +6,7 @@
   "scripts": {
     "build:main": "rimraf ./dist && tsc -p ./main/tsconfig.json",
     "build:renderer": "",
-    "start": "cross-env NODE_ENV=development concurrently \"pnpm start:main\" \"pnpm start:renderer\"",
+    "start": "cross-env NODE_ENV=development DEBUG='horen' concurrently \"pnpm start:main\" \"pnpm start:renderer\"",
     "start:main": "wait-on tcp:8080 && pnpm build:main && electron ./dist/main/index.js",
     "start:renderer": "webpack serve --config ./renderer/webpack/config.dev.js",
     "rebuild": "electron-rebuild"

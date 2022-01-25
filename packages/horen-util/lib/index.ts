@@ -1,13 +1,17 @@
+/* eslint-disable no-var */
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 23:47:40
- * @LastEditTime : 2022-01-22 13:37:44
+ * @LastEditTime : 2022-01-25 23:18:14
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen-util\lib\index.ts
  * @Description  :
  */
 import fs from 'fs/promises';
 import path from 'path';
+import debug from 'debug';
+
+const mydebug = debug('horen');
 
 /**
  * 返回给定范围内的随机整数
@@ -36,13 +40,19 @@ export async function readDir(
 ): Promise<string[]> {
   const files = await fs.readdir(p);
 
-  for (let f of files) {
+  for (const f of files) {
     const filePath = path.join(p, f);
     const stat = await fs.stat(filePath);
 
-    if (stat.isFile()) fileList.push(filePath);
-    
-    if (stat.isDirectory()) await readDir(filePath, fileList);
+    if (stat.isFile()) {
+      fileList.push(filePath);
+      mydebug(filePath);
+    }
+
+    if (stat.isDirectory()) {
+      mydebug('it is dir, loop.');
+      await readDir(filePath, fileList);
+    }
   }
 
   return fileList;

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:00:44
- * @LastEditTime : 2022-01-26 15:23:16
+ * @LastEditTime : 2022-01-26 17:55:03
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\data-center\index.tsx
  * @Description  : 
@@ -12,8 +12,8 @@ import { Track, SettingFile } from 'types';
 import { IPC_CODE } from '../../configs';
 
 export class TrackDC {
-  public static async getList(path: string) {
-    return await ipcRenderer.invoke(IPC_CODE.file.getList, path);
+  public static async getList(path: string, clear?: boolean) {
+    return await ipcRenderer.invoke(IPC_CODE.file.getList, path, clear);
   }
 
   public static async get(p: string) :Promise<Track> {

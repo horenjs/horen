@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-26 15:50:20
+ * @LastEditTime : 2022-01-26 17:55:45
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
@@ -58,7 +58,7 @@ const Library: React.FC<LibraryProps> = (props) => {
       let index = 0;
 
       for (const p of paths) {
-        const ts = await TrackDC.getList(p);
+        const ts = await TrackDC.getList(p, true);
 
         for (const t of ts) {
           // console.log(t);

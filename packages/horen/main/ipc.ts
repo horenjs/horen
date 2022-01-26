@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 10:40:55
- * @LastEditTime : 2022-01-26 17:42:28
+ * @LastEditTime : 2022-01-26 17:53:01
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\main\ipc.ts
  * @Description  :
@@ -29,7 +29,7 @@ const mydebug = debug('horen:ipc');
 /**
  * 获取歌曲文件列表
  */
-ipcMain.handle(IPC_CODE.file.getList, async (evt, p) => {
+ipcMain.handle(IPC_CODE.file.getList, async (evt, p, clear = false) => {
   mydebug('collection path: ' + p);
 
   // 从给定的目录读取所有文件
@@ -45,13 +45,27 @@ ipcMain.handle(IPC_CODE.file.getList, async (evt, p) => {
   // 解析音频列表
   const tracksToSave = await parseTracks(finalPaths);
 
-  const finalTracksToSave = tracksToSave.filter(async (track) => {
-    const result = await TrackModel.findOne({ where: { md5: track.md5 } });
-    if (result) {
-      mydebug('音频信息已经存在 跳过: ' + track.title);
-      return false;
-    } else return true;
-  });
+  let finalTracksToSave = [];
+
+  // 如果需要清空数据库重新生成
+  if (clear) {
+    try {
+      await TrackModel.destroy({ truncate: true });
+      finalTracksToSave = tracksToSave;
+      mydebug('清空数据库并重新生成');
+    } catch (err) {
+      throw new Error('清空数据库失败');
+    }
+  } else {
+    // 如果不需要重复生成则检查是否已经存在相应数据
+    finalTracksToSave = tracksToSave.filter(async (track) => {
+      const result = await TrackModel.findOne({ where: { md5: track.md5 } });
+      if (result) {
+        mydebug('音频信息已经存在 跳过: ' + track.title);
+        return false;
+      } else return true;
+    });
+  }
 
   // 尝试写入数据库
   try {

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 22:24:48
- * @LastEditTime : 2022-01-26 11:50:06
+ * @LastEditTime : 2022-01-26 15:49:24
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\types\track.ts
  * @Description  :
@@ -23,6 +23,8 @@ export interface Base {
 }
 
 export interface MyTrack extends Base {
+  date?: MyDate,
+  picture?: string,
   common?: ICommonTagsResult;
   format?: IFormat;
   trackInfo?: ITrackInfo;

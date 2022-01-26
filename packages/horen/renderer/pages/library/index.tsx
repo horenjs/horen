@@ -1,12 +1,12 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-25 23:43:32
+ * @LastEditTime : 2022-01-26 15:50:20
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
+ * @FilePath     : \Horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
  */
-import { FileDC } from '../../data-center';
+import { TrackDC } from '../../data-center';
 import React from 'react';
 import styled from 'styled-components';
 import { Track } from 'types';
@@ -40,6 +40,7 @@ const Library: React.FC<LibraryProps> = (props) => {
   };
 
   const handleAddTo = (ts: Track[]) => {
+    console.log(ts);
     if (onAddTo) onAddTo([...ts]);
   };
 
@@ -57,27 +58,24 @@ const Library: React.FC<LibraryProps> = (props) => {
       let index = 0;
 
       for (const p of paths) {
-        const files = await FileDC.getList(p);
+        const ts = await TrackDC.getList(p);
 
-        for (const file of files) {
-          setTrackLoading(index + ' ' + file);
-
-          const meta = await FileDC.get(file);
-          const al = meta?.album;
-
+        for (const t of ts) {
+          // console.log(t);
+          setTrackLoading(index + '' + t.title);
+          
           const newTrack: Track = {
-            ...meta,
-            src: file,
-            title: meta?.title || file.split('\\').pop(),
+            ...t,
+            title: t.title || t.split('\\').pop(),
           };
 
-          if (al) {
+          if (t.album) {
             // 遍历暂时存放专辑的列表与传入的专辑进行对比
-            const exact = abs.filter((a) => a.name === al);
+            const exact = abs.filter((a) => a.name === t.album);
             // 如果暂存列表中有这个专辑名 就将这个 Track push 到第一个匹配的专辑
             if (exact.length) exact[0].children.push(newTrack);
             // 如有没有这个专辑名 则新建一个
-            else abs.push({ name: al, children: [newTrack] });
+            else abs.push({ name: t.album, children: [newTrack] });
           } else {
             // 如果专辑名为空 则传入 Uncategory 专辑
             abs[0].children.push(newTrack);

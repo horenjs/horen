@@ -1,12 +1,13 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 10:40:55
- * @LastEditTime : 2022-01-26 10:40:44
+ * @LastEditTime : 2022-01-26 17:42:28
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\main\ipc.ts
  * @Description  :
  */
 import path from 'path';
+import crypto from 'crypto';
 import fs from 'fs/promises';
 import mm from 'music-metadata';
 import { ipcMain, dialog } from 'electron';
@@ -21,6 +22,7 @@ import {
 import { readDir, arrayBufferToBase64 } from 'horen-util';
 import { SettingFile, Track } from '../types';
 import myapp from './app';
+import { TrackModel } from './db/models';
 
 const mydebug = debug('horen:ipc');
 
@@ -30,32 +32,49 @@ const mydebug = debug('horen:ipc');
 ipcMain.handle(IPC_CODE.file.getList, async (evt, p) => {
   mydebug('collection path: ' + p);
 
+  // 从给定的目录读取所有文件
   const files = await readDir(p);
 
-  return files.filter((f) => {
+  // 判断是否是可以播放的音频格式
+  const finalPaths = files.filter((f) => {
     const src = path.resolve(f);
     const ext = path.extname(src).replace('.', '');
     return TRACK_FORMAT.includes(ext);
   });
+
+  // 解析音频列表
+  const tracksToSave = await parseTracks(finalPaths);
+
+  const finalTracksToSave = tracksToSave.filter(async (track) => {
+    const result = await TrackModel.findOne({ where: { md5: track.md5 } });
+    if (result) {
+      mydebug('音频信息已经存在 跳过: ' + track.title);
+      return false;
+    } else return true;
+  });
+
+  // 尝试写入数据库
+  try {
+    await TrackModel.bulkCreate(finalTracksToSave);
+    mydebug('save the file list to db success.');
+  } catch (err) {
+    mydebug('save the file list to db failed.');
+  }
+
+  return tracksToSave;
 });
 
 /**
  * 获取歌曲文件信息
  */
-// todo: 读取后应当将数据保存到数据库避免重复读取
-ipcMain.handle(IPC_CODE.file.get, async (evt, p) => {
-  mydebug('get the song: ' + p);
+ipcMain.handle(IPC_CODE.file.get, async (evt, uuid) => {
+  mydebug('get the song: ' + uuid);
 
   try {
-    const meta = await mm.parseFile(path.resolve(p));
-    const { picture } = meta.common;
-    const arrybuffer = picture && picture[0].data;
-    return {
-      ...meta.common,
-      picture: arrybuffer ? arrayBufferToBase64(arrybuffer) : '',
-    } as Track;
+    const result = await TrackModel.findOne({ where: { uuid: uuid } });
+    if (result) return result;
   } catch (err) {
-    mydebug('read the music meta failed: ' + p);
+    mydebug('cannot get the track');
   }
 });
 
@@ -121,3 +140,58 @@ ipcMain.handle(IPC_CODE.dialog.open, async (evt, flag = 'dir') => {
     mydebug('there is no main window');
   }
 });
+
+/**
+ * 解析音频文件元数据
+ * @param paths 音频文件地址列表
+ * @returns 解析后的音频文件数据
+ */
+async function parseTracks(paths: string[]) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tracksToSave: any[] = [];
+
+  for (const p of paths) {
+    const meta = await readMusicMeta(p);
+    tracksToSave.push(meta);
+  }
+
+  return tracksToSave;
+}
+
+/**
+ * 解析音频文件元数据
+ * @param p 音频文件地址
+ * @returns 解析后的音频对象
+ */
+async function readMusicMeta(p: string) {
+  try {
+    const buffer = await fs.readFile(path.resolve(p));
+    const stats = await fs.stat(path.resolve(p));
+
+    const meta = await mm.parseBuffer(buffer);
+    const { picture } = meta.common;
+    const arrybuffer = picture && picture[0].data;
+    return {
+      createAt: stats.birthtime.valueOf(),
+      modifiedAt: stats.mtime.valueOf(),
+      updateAt: stats.ctime.valueOf(),
+      ...meta.common,
+      src: p,
+      picture: arrybuffer ? arrayBufferToBase64(arrybuffer) : '',
+      md5: getMd5(buffer),
+    } as Track;
+  } catch (err) {
+    throw new Error(String(err));
+  }
+}
+
+/**
+ * 获取字符串的md5值
+ * @param s 传入的字符串
+ * @returns md5值
+ */
+function getMd5(buf: Buffer) {
+  const hash = crypto.createHash('md5');
+  hash.update(buf);
+  return hash.digest('hex');
+}

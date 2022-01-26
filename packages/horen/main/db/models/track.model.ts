@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-26 10:46:26
- * @LastEditTime : 2022-01-26 10:52:37
+ * @LastEditTime : 2022-01-26 15:14:19
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\main\db\models\track.model.ts
  * @Description  :
@@ -18,24 +18,30 @@ const field = {
     allowNull: false,
     defaultValue: DataTypes.UUIDV4,
   },
+  src: { type: DataTypes.STRING, allowNull: true },
   title: { type: DataTypes.STRING, allowNull: false, defaultValue: '' },
-  path: { type: DataTypes.STRING, allowNull: false, defaultValue: '' },
-  authors: { type: DataTypes.STRING, allowNull: true },
-  tags: { type: DataTypes.STRING, allowNull: true },
-  ext: { type: DataTypes.STRING, allowNull: false, defaultValue: '' },
-  expert: { type: DataTypes.TEXT, allowNull: false, defaultValue: '' },
-  content: { type: DataTypes.TEXT, allowNull: false, defaultValue: '' },
-  buf: { type: DataTypes.STRING, allowNull: true },
-  md5: { type: DataTypes.STRING, allowNull: false, defaultValue: '' },
+  year: { type: DataTypes.NUMBER, allowNull: true },
+  artist: { type: DataTypes.STRING, allowNull: true },
+  artists: { type: DataTypes.STRING, allowNull: true },
+  albumartist: { type: DataTypes.STRING, allowNull: true },
+  album: { type: DataTypes.STRING, allowNull: true },
+  date: { type: DataTypes.STRING, allowNull: true },
+  originldate: { type: DataTypes.STRING, allowNull: true },
+  originlyear: { type: DataTypes.STRING, allowNull: true },
+  comment: { type: DataTypes.STRING, allowNull: true },
+  genre: { type: DataTypes.STRING, allowNull: true },
+  picture: { type: DataTypes.STRING, allowNull: true },
+  composer: { type: DataTypes.STRING, allowNull: true },
+  md5: { type: DataTypes.STRING, allowNull: true },
 };
 
 const configs = {
   sequelize: db,
-  modelName: 'File',
+  modelName: 'Track',
   timestamps: false,
 };
 
-const TrackModel = db.define('File', field, configs);
+const TrackModel = db.define('Track', field, configs);
 
 (async () => {
   await TrackModel.sync({ force: true });

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:00:44
- * @LastEditTime : 2022-01-25 17:18:40
+ * @LastEditTime : 2022-01-26 15:23:16
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\data-center\index.tsx
  * @Description  : 
@@ -11,7 +11,7 @@ const { ipcRenderer } = electron;
 import { Track, SettingFile } from 'types';
 import { IPC_CODE } from '../../configs';
 
-export class FileDC {
+export class TrackDC {
   public static async getList(path: string) {
     return await ipcRenderer.invoke(IPC_CODE.file.getList, path);
   }

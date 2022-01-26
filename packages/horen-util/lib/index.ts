@@ -2,7 +2,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 23:47:40
- * @LastEditTime : 2022-01-25 23:18:14
+ * @LastEditTime : 2022-01-26 21:25:30
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen-util\lib\index.ts
  * @Description  :
@@ -11,7 +11,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import debug from 'debug';
 
-const mydebug = debug('horen');
+const mydebug = debug('horen-util');
 
 /**
  * 返回给定范围内的随机整数
@@ -46,7 +46,7 @@ export async function readDir(
 
     if (stat.isFile()) {
       fileList.push(filePath);
-      mydebug(filePath);
+      // mydebug(filePath);
     }
 
     if (stat.isDirectory()) {

@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 10:40:55
- * @LastEditTime : 2022-01-26 17:53:01
+ * @LastEditTime : 2022-01-26 21:47:49
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\main\ipc.ts
+ * @FilePath     : \horen\packages\horen\main\ipc.ts
  * @Description  :
  */
 import path from 'path';
@@ -33,8 +33,10 @@ ipcMain.handle(IPC_CODE.file.getList, async (evt, p, clear = false) => {
   mydebug('collection path: ' + p);
 
   // 从给定的目录读取所有文件
+  mydebug('read all files from: ' + p);
   const files = await readDir(p);
 
+  mydebug('过滤非可播放的音频文件');
   // 判断是否是可以播放的音频格式
   const finalPaths = files.filter((f) => {
     const src = path.resolve(f);
@@ -43,6 +45,7 @@ ipcMain.handle(IPC_CODE.file.getList, async (evt, p, clear = false) => {
   });
 
   // 解析音频列表
+  mydebug('从音频文件中解析相关信息');
   const tracksToSave = await parseTracks(finalPaths);
 
   let finalTracksToSave = [];
@@ -50,9 +53,9 @@ ipcMain.handle(IPC_CODE.file.getList, async (evt, p, clear = false) => {
   // 如果需要清空数据库重新生成
   if (clear) {
     try {
+      mydebug('清空数据库并重新生成');
       await TrackModel.destroy({ truncate: true });
       finalTracksToSave = tracksToSave;
-      mydebug('清空数据库并重新生成');
     } catch (err) {
       throw new Error('清空数据库失败');
     }
@@ -70,9 +73,9 @@ ipcMain.handle(IPC_CODE.file.getList, async (evt, p, clear = false) => {
   // 尝试写入数据库
   try {
     await TrackModel.bulkCreate(finalTracksToSave);
-    mydebug('save the file list to db success.');
+    mydebug('写入数据库成功');
   } catch (err) {
-    mydebug('save the file list to db failed.');
+    mydebug('写入数据库失败');
   }
 
   return tracksToSave;
@@ -163,10 +166,20 @@ ipcMain.handle(IPC_CODE.dialog.open, async (evt, flag = 'dir') => {
 async function parseTracks(paths: string[]) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tracksToSave: any[] = [];
+  const len = paths.length;
+
+  let index = 0;
 
   for (const p of paths) {
+    const msg = `共${len}个，当前为第${index}个: ${p}`;
+    mydebug(msg);
+
+    // 向渲染进程主动发送文件读取情况
+    myapp.mainWindow?.webContents.send(IPC_CODE.file.get, msg);
+
     const meta = await readMusicMeta(p);
     tracksToSave.push(meta);
+    index += 1;
   }
 
   return tracksToSave;
@@ -178,25 +191,29 @@ async function parseTracks(paths: string[]) {
  * @returns 解析后的音频对象
  */
 async function readMusicMeta(p: string) {
-  try {
-    const buffer = await fs.readFile(path.resolve(p));
-    const stats = await fs.stat(path.resolve(p));
+  const buffer = await fs.readFile(path.resolve(p));
+  const stats = await fs.stat(path.resolve(p));
+  let meta;
 
-    const meta = await mm.parseBuffer(buffer);
-    const { picture } = meta.common;
-    const arrybuffer = picture && picture[0].data;
-    return {
-      createAt: stats.birthtime.valueOf(),
-      modifiedAt: stats.mtime.valueOf(),
-      updateAt: stats.ctime.valueOf(),
-      ...meta.common,
-      src: p,
-      picture: arrybuffer ? arrayBufferToBase64(arrybuffer) : '',
-      md5: getMd5(buffer),
-    } as Track;
+  try {
+    meta = await mm.parseBuffer(buffer);
   } catch (err) {
+    meta = null;
     throw new Error(String(err));
   }
+
+  const picture = meta?.common?.picture;
+  const arrybuffer = picture ? picture[0].data : null;
+
+  return {
+    createAt: stats.birthtime.valueOf(),
+    modifiedAt: stats.mtime.valueOf(),
+    updateAt: stats.ctime.valueOf(),
+    ...meta?.common,
+    src: p,
+    picture: arrybuffer ? arrayBufferToBase64(arrybuffer) : '',
+    md5: getMd5(buffer),
+  } as Track;
 }
 
 /**

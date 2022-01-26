@@ -1,10 +1,10 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:00:44
- * @LastEditTime : 2022-01-26 17:55:03
+ * @LastEditTime : 2022-01-26 21:52:51
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\data-center\index.tsx
- * @Description  : 
+ * @FilePath     : \horen\packages\horen\renderer\data-center\index.tsx
+ * @Description  :
  */
 const electron = window.require('electron');
 const { ipcRenderer } = electron;
@@ -16,8 +16,16 @@ export class TrackDC {
     return await ipcRenderer.invoke(IPC_CODE.file.getList, path, clear);
   }
 
-  public static async get(p: string) :Promise<Track> {
+  public static async get(p: string): Promise<Track> {
     return await ipcRenderer.invoke(IPC_CODE.file.get, p);
+  }
+
+  public static async getMsg() {
+    return new Promise((resolve, reject) => {
+      ipcRenderer.on(IPC_CODE.file.get, (evt, msg) => {
+        resolve(msg);
+      });
+    });
   }
 }
 

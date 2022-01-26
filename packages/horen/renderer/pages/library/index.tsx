@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-26 17:55:45
+ * @LastEditTime : 2022-01-26 21:55:28
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\pages\library\index.tsx
+ * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
  */
 import { TrackDC } from '../../data-center';
@@ -58,12 +58,9 @@ const Library: React.FC<LibraryProps> = (props) => {
       let index = 0;
 
       for (const p of paths) {
-        const ts = await TrackDC.getList(p, true);
+        const ts = await TrackDC.getList(p);
 
         for (const t of ts) {
-          // console.log(t);
-          setTrackLoading(index + '' + t.title);
-          
           const newTrack: Track = {
             ...t,
             title: t.title || t.split('\\').pop(),
@@ -89,11 +86,16 @@ const Library: React.FC<LibraryProps> = (props) => {
     })();
   }, [paths.length]);
 
+  React.useEffect(() => {
+    (async () => {
+      const msg = await TrackDC.getMsg();
+      setTrackLoading(msg as string);
+    })();
+  }, [trackLoading]);
+
   return (
     <MyLib className="component-library">
-      <span>
-        Loading: <span style={{ fontSize: 12 }}>{trackLoading}</span>
-      </span>
+      <span style={{ fontSize: 12 }}>{trackLoading}</span>
       <div className="albums">
         {albums.length === 0 ? (
           <div>

@@ -1,13 +1,17 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 01:51:07
- * @LastEditTime : 2022-01-25 23:06:46
+ * @LastEditTime : 2022-01-26 14:23:17
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\configs\index.ts
+ * @FilePath     : \Horen\packages\horen\configs\index.ts
  * @Description  :
  */
 import { SettingFile } from '../types';
+import myapp from '../main/app';
 
+/**
+ * ipc 通信使用的信号字符
+ */
 export const IPC_CODE = {
   file: {
     getList: 'file:getList',
@@ -18,14 +22,25 @@ export const IPC_CODE = {
     set: 'setting:set',
   },
   dialog: {
-    open: 'dialog:get'
-  }
+    open: 'dialog:get',
+  },
 };
 
-export const APP_DATA_PATH = process.env.APPDATA || '.';
+/**
+ * 用户目录
+ */
+export const APP_DATA_PATH =
+  process.env.APPDATA || myapp.app.getPath('appData') || '.';
 
+/**
+ * 应用名
+ * todo: 应当从 package.json 读取
+ */
 export const APP_NAME = 'horen';
 
+/**
+ * 默认设置
+ */
 export const DEFAULT_SETTING: SettingFile = {
   createAt: new Date().valueOf(),
   updateAt: new Date().valueOf(),
@@ -36,17 +51,20 @@ export const DEFAULT_SETTING: SettingFile = {
       children: [
         {
           label: 'collectionPaths',
-          value: []
+          value: [],
         },
         {
           label: 'refreshWhenOpen',
           value: true,
-        }
-      ]
-    }
-  ]
-}
+        },
+      ],
+    },
+  ],
+};
 
+/**
+ * 可以解析的音频文件格式
+ */
 export const TRACK_FORMAT = [
   'aiff',
   'aac',

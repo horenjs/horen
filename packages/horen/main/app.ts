@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 10:34:25
- * @LastEditTime : 2022-01-26 10:34:37
+ * @LastEditTime : 2022-01-26 14:19:53
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\main\app.ts
  * @Description  :
@@ -15,6 +15,7 @@ export class App {
   protected _url = 'http://localhost:8080';
   protected _path = './dist/main/index.js';
   protected _mode: Mode;
+  protected _app = app;
 
   public get mode() {
     return this._mode;
@@ -42,6 +43,10 @@ export class App {
 
   public get path() {
     return this._path;
+  }
+
+  public get app() {
+    return this._app;
   }
 
   start() {

@@ -1,24 +1,32 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 22:24:48
- * @LastEditTime : 2022-01-22 02:20:17
+ * @LastEditTime : 2022-01-26 11:50:06
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\types\track.ts
+ * @FilePath     : \Horen\packages\horen\types\track.ts
  * @Description  :
  */
-import { Track as ITrack } from 'horen-plugin-player';
+import {
+  ITrackInfo,
+  ICommonTagsResult,
+  INativeTags,
+  IFormat,
+} from 'music-metadata/lib/type';
+import { Track as ITrack } from 'horen-plugin-player'
 
-export interface Track extends ITrack {
-  src?: string;
-  album?: string;
-  albumartist?: string;
-  date?: string;
-  title?: string;
-  artist?: string;
-  artists?: string[];
-  picture?: string;
-  track?: {
-    no: number;
-    of: number;
-  };
+export type MyDate = string | number | Date;
+
+export interface Base {
+  createAt?: MyDate;
+  updateAt?: MyDate;
+  modifiedAt?: MyDate;
 }
+
+export interface MyTrack extends Base {
+  common?: ICommonTagsResult;
+  format?: IFormat;
+  trackInfo?: ITrackInfo;
+  native?: INativeTags;
+}
+
+export type Track = MyTrack & ITrack;

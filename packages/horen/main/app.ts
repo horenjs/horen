@@ -1,39 +1,57 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 10:34:25
- * @LastEditTime : 2022-01-25 17:25:36
+ * @LastEditTime : 2022-01-26 10:34:37
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\main\app.ts
  * @Description  :
  */
-import { app, BrowserWindow } from 'electron';
-import { createWindow } from './create';
-import { dialog, ipcMain } from 'electron';
-import { IPC_CODE } from '../configs';
+import { app, BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 
-export interface Opts {
-  loadURL: string;
-}
+type Mode = 'development' | 'production' | undefined;
 
 export class App {
   protected _mainWindow?: BrowserWindow;
+  protected _url = 'http://localhost:8080';
+  protected _path = './dist/main/index.js';
+  protected _mode: Mode;
 
-  constructor(protected opts: Opts) {
+  public get mode() {
+    return this._mode;
+  }
+
+  public set mode(m: Mode) {
+    this._mode = m;
+  }
+
+  public get mainWindow() {
+    return this._mainWindow;
+  }
+
+  public set url(url: string) {
+    this._url = url;
+  }
+
+  public get url() {
+    return this._url;
+  }
+
+  public set path(path: string) {
+    this._path = path;
+  }
+
+  public get path() {
+    return this._path;
+  }
+
+  start() {
     app.whenReady().then(() => {
       // create a new window
       this._mainWindow = createWindow();
-      this.start();
 
-      // 监听对话框打开
-      ipcMain.handle(IPC_CODE.dialog.open, async (evt, flag = 'dir') => {
-        if (this.mainWindow) {
-          return await dialog.showOpenDialog(this.mainWindow, {
-            properties: ['openDirectory', 'multiSelections'],
-          });
-        } else {
-          console.log('there is no main window');
-        }
-      });
+      process.env.NODE_ENV === 'development'
+        ? this._mainWindow.loadURL(this._url)
+        : this._mainWindow.loadFile(this._path);
 
       // only in macOS
       app.on('activate', function () {
@@ -48,16 +66,33 @@ export class App {
     });
   }
 
-  start() {
-    if (this.nodeEnv === 'development')
-      this.mainWindow?.loadURL(this.opts.loadURL);
-  }
-
-  public get mainWindow() {
-    return this._mainWindow;
-  }
-
   protected get nodeEnv() {
     return process.env.NODE_ENV || '';
   }
 }
+
+export function createWindow(opts?: BrowserWindowConstructorOptions) {
+  return new BrowserWindow({
+    ...opts,
+    width: opts?.width || 900,
+    height: opts?.height || 700,
+    minWidth: opts?.minWidth || 1156,
+    minHeight: opts?.minHeight || 764,
+    resizable: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      webSecurity: false,
+    },
+  });
+}
+
+const myapp = new App();
+
+myapp.mode = (process.env.NODE_ENV || 'development') as Mode;
+myapp.url =
+  process.env.NODE_ENV === 'development'
+    ? 'http://localhost:8080'
+    : './dist/main/index.js';
+
+export default myapp;

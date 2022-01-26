@@ -1,15 +1,15 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 10:40:55
- * @LastEditTime : 2022-01-25 23:46:52
+ * @LastEditTime : 2022-01-26 10:40:44
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\main\ipc.ts
+ * @FilePath     : \Horen\packages\horen\main\ipc.ts
  * @Description  :
  */
 import path from 'path';
 import fs from 'fs/promises';
 import mm from 'music-metadata';
-import { ipcMain } from 'electron';
+import { ipcMain, dialog } from 'electron';
 import debug from 'debug';
 import {
   IPC_CODE,
@@ -20,9 +20,13 @@ import {
 } from '../configs';
 import { readDir, arrayBufferToBase64 } from 'horen-util';
 import { SettingFile, Track } from '../types';
+import myapp from './app';
 
 const mydebug = debug('horen:ipc');
 
+/**
+ * 获取歌曲文件列表
+ */
 ipcMain.handle(IPC_CODE.file.getList, async (evt, p) => {
   mydebug('collection path: ' + p);
 
@@ -35,6 +39,9 @@ ipcMain.handle(IPC_CODE.file.getList, async (evt, p) => {
   });
 });
 
+/**
+ * 获取歌曲文件信息
+ */
 // todo: 读取后应当将数据保存到数据库避免重复读取
 ipcMain.handle(IPC_CODE.file.get, async (evt, p) => {
   mydebug('get the song: ' + p);
@@ -52,6 +59,9 @@ ipcMain.handle(IPC_CODE.file.get, async (evt, p) => {
   }
 });
 
+/**
+ * 获取设置选项
+ */
 ipcMain.handle(IPC_CODE.setting.get, async (evt) => {
   mydebug('get the setting');
 
@@ -79,6 +89,9 @@ ipcMain.handle(IPC_CODE.setting.get, async (evt) => {
   }
 });
 
+/**
+ * 更新设置选项
+ */
 ipcMain.handle(IPC_CODE.setting.set, async (evt, setting) => {
   mydebug('set the setting');
 
@@ -90,6 +103,21 @@ ipcMain.handle(IPC_CODE.setting.set, async (evt, setting) => {
     mydebug('setting is update: ' + new Date());
   } catch (err) {
     mydebug('update the setting failed.');
-    console.log(err);
+    mydebug(err);
+  }
+});
+
+/**
+ * 监听对话框打开
+ */
+ipcMain.handle(IPC_CODE.dialog.open, async (evt, flag = 'dir') => {
+  mydebug('to open dialog');
+
+  if (myapp.mainWindow) {
+    return await dialog.showOpenDialog(myapp.mainWindow, {
+      properties: ['openDirectory', 'multiSelections'],
+    });
+  } else {
+    mydebug('there is no main window');
   }
 });

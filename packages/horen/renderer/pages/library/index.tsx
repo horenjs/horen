@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-26 21:55:28
+ * @LastEditTime : 2022-01-26 23:23:35
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
@@ -90,6 +90,8 @@ const Library: React.FC<LibraryProps> = (props) => {
     (async () => {
       const msg = await TrackDC.getMsg();
       setTrackLoading(msg as string);
+
+      if (msg === 'finished') setTrackLoading('');
     })();
   }, [trackLoading]);
 
@@ -97,7 +99,7 @@ const Library: React.FC<LibraryProps> = (props) => {
     <MyLib className="component-library">
       <span style={{ fontSize: 12 }}>{trackLoading}</span>
       <div className="albums">
-        {albums.length === 0 ? (
+        {albums.length < 2 ? (
           <div>
             <Loader style="square" />
           </div>

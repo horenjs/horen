@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-25 16:25:44
+ * @LastEditTime : 2022-01-27 16:10:21
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -14,14 +14,16 @@ import {
   Navigate,
   useLocation,
 } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import { trackListState } from '@/store';
 import styled from 'styled-components';
 import Player from 'horen-plugin-player';
 import Library from './pages/library';
 import SettingPage from './pages/setting';
 import ControlPanel from './components/control-panel';
 import { PlayQueue } from './components/play-queue';
-import { SettingDC } from './data-center';
-import { SettingFile } from 'types';
+import { SettingDC, TrackDC } from './data-center';
+import { SettingFile, Track } from 'types';
 
 const pages = [
   {
@@ -38,10 +40,12 @@ export default function App() {
   const [player, setPlayer] = React.useState(new Player());
   const [progress, setProgress] = React.useState(0);
   const [isQueue, setIsQueue] = React.useState(false);
-  const [collectionPaths, setCollectionPaths] = React.useState<string[]>([]);
+  // const [collectionPaths, setCollectionPaths] = React.useState<string[]>([]);
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [trackList, setTrackList] = useRecoilState(trackListState);
 
   React.useEffect(() => {
     const timer = setInterval(() => {
@@ -53,18 +57,24 @@ export default function App() {
 
   React.useEffect(() => {
     (async () => {
-      const st = await SettingDC.get() as SettingFile;
+      const st = (await SettingDC.get()) as SettingFile;
       for (const s of st.grounps) {
         if (s.name === 'common') {
           for (const c of s.children) {
             if (c.label === 'collectionPaths') {
-              setCollectionPaths(c.value as string[]);
+              const paths = c.value as string[];
+              const tracks: Track[] = [];
+              for (const p of paths) {
+                const result = await TrackDC.getList(p);
+                tracks.push(...result);
+              }
+              setTrackList(tracks);
             }
           }
         }
       }
     })();
-  }, [])
+  }, []);
 
   return (
     <MyApp className="app">
@@ -97,7 +107,6 @@ export default function App() {
                 element={
                   <Library
                     tracks={player.trackList}
-                    paths={collectionPaths}
                     onAddTo={(tracks) => {
                       // console.log(tracks);
                       player.trackList = player.trackList.concat(tracks);

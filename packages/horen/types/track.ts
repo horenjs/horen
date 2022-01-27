@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 22:24:48
- * @LastEditTime : 2022-01-26 15:49:24
+ * @LastEditTime : 2022-01-27 14:50:30
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\types\track.ts
  * @Description  :
@@ -12,7 +12,7 @@ import {
   INativeTags,
   IFormat,
 } from 'music-metadata/lib/type';
-import { Track as ITrack } from 'horen-plugin-player'
+import { Track as ITrack } from 'horen-plugin-player';
 
 export type MyDate = string | number | Date;
 
@@ -23,12 +23,19 @@ export interface Base {
 }
 
 export interface MyTrack extends Base {
-  date?: MyDate,
-  picture?: string,
+  date?: MyDate;
+  picture?: string;
   common?: ICommonTagsResult;
   format?: IFormat;
   trackInfo?: ITrackInfo;
   native?: INativeTags;
+}
+
+export interface Album {
+  name: string;
+  children: Track[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
 }
 
 export type Track = MyTrack & ITrack;

@@ -1,90 +1,44 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-26 23:23:35
+ * @LastEditTime : 2022-01-27 16:11:40
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
+ * @FilePath     : \Horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
  */
 import { TrackDC } from '../../data-center';
 import React from 'react';
 import styled from 'styled-components';
-import { Track } from 'types';
+import { useRecoilValue } from 'recoil';
+import { albumListState } from '@/store';
+import { Track, Album } from 'types';
 import { AlbumModal } from './album-modal';
 import { AlbumView } from './album-viewer';
 import { Loader } from '@/components/loader';
 
-export interface Album {
-  name: string;
-  children: Track[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
-}
-
 export interface LibraryProps {
   tracks: Track[];
-  paths: string[];
   onAddTo?(t: Track[]): void;
 }
 
 const Library: React.FC<LibraryProps> = (props) => {
-  const { tracks, paths, onAddTo } = props;
+  const { tracks, onAddTo } = props;
 
-  const [albums, setAlbums] = React.useState<Album[]>([]);
+  // const [albums, setAlbums] = React.useState<Album[]>([]);
   const [album, setAlbum] = React.useState<Album>();
-
   const [trackLoading, setTrackLoading] = React.useState('');
+
+  const albums = useRecoilValue(albumListState);
 
   const handleOpenAlbum = (a: Album) => {
     setAlbum(a);
   };
 
   const handleAddTo = (ts: Track[]) => {
-    console.log(ts);
     if (onAddTo) onAddTo([...ts]);
   };
 
   const handleCloseAlbumModal = () => setAlbum(undefined);
-
-  React.useEffect(() => {
-    (async () => {
-      const abs: Album[] = [
-        {
-          name: 'Uncategory',
-          children: [],
-        },
-      ];
-
-      let index = 0;
-
-      for (const p of paths) {
-        const ts = await TrackDC.getList(p);
-
-        for (const t of ts) {
-          const newTrack: Track = {
-            ...t,
-            title: t.title || t.split('\\').pop(),
-          };
-
-          if (t.album) {
-            // 遍历暂时存放专辑的列表与传入的专辑进行对比
-            const exact = abs.filter((a) => a.name === t.album);
-            // 如果暂存列表中有这个专辑名 就将这个 Track push 到第一个匹配的专辑
-            if (exact.length) exact[0].children.push(newTrack);
-            // 如有没有这个专辑名 则新建一个
-            else abs.push({ name: t.album, children: [newTrack] });
-          } else {
-            // 如果专辑名为空 则传入 Uncategory 专辑
-            abs[0].children.push(newTrack);
-          }
-
-          index += 1;
-        }
-      }
-
-      setAlbums(abs);
-    })();
-  }, [paths.length]);
 
   React.useEffect(() => {
     (async () => {
@@ -99,16 +53,16 @@ const Library: React.FC<LibraryProps> = (props) => {
     <MyLib className="component-library">
       <span style={{ fontSize: 12 }}>{trackLoading}</span>
       <div className="albums">
-        {albums.length < 2 ? (
+        {albums.length === 0 ? (
           <div>
             <Loader style="square" />
           </div>
         ) : (
-          albums.map((value) => (
+          albums.map((value, index) => (
             <AlbumView
               album={value}
               onOpen={handleOpenAlbum}
-              key={value.name}
+              key={value.title || index}
             />
           ))
         )}

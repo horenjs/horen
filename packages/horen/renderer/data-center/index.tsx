@@ -1,15 +1,15 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:00:44
- * @LastEditTime : 2022-01-26 21:52:51
+ * @LastEditTime : 2022-01-27 10:38:30
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\renderer\data-center\index.tsx
+ * @FilePath     : \Horen\packages\horen\renderer\data-center\index.tsx
  * @Description  :
  */
 const electron = window.require('electron');
 const { ipcRenderer } = electron;
 import { Track, SettingFile } from 'types';
-import { IPC_CODE } from '../../configs';
+import { IPC_CODE } from '../../constant';
 
 export class TrackDC {
   public static async getList(path: string, clear?: boolean) {

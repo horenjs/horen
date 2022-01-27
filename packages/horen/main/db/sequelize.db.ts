@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-26 10:46:26
- * @LastEditTime : 2022-01-26 10:50:55
+ * @LastEditTime : 2022-01-27 10:36:39
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\main\db\sequelize.db.ts
  * @Description  : 
@@ -9,7 +9,7 @@
 import { Sequelize, Options } from 'sequelize';
 import debug from 'debug';
 import path from 'path';
-import { APP_DATA_PATH, APP_NAME } from '../../configs';
+import { APP_DATA_PATH, APP_NAME } from '../../constant';
 
 const mydebug = debug('horen:db');
 

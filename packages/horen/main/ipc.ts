@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 10:40:55
- * @LastEditTime : 2022-01-26 23:24:09
+ * @LastEditTime : 2022-01-27 10:36:27
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\main\ipc.ts
+ * @FilePath     : \Horen\packages\horen\main\ipc.ts
  * @Description  :
  */
 import path from 'path';
@@ -18,7 +18,7 @@ import {
   APP_DATA_PATH,
   APP_NAME,
   DEFAULT_SETTING,
-} from '../configs';
+} from '../constant';
 import { readDir, arrayBufferToBase64 } from 'horen-util';
 import { SettingFile, Track } from '../types';
 import myapp from './app';

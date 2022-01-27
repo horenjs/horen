@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-25 11:25:59
- * @LastEditTime : 2022-01-27 18:36:19
+ * @LastEditTime : 2022-01-27 20:46:37
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\pages\setting\setting-group.tsx
+ * @FilePath     : \horen\packages\horen\renderer\pages\setting\setting-group.tsx
  * @Description  :
  */
 import React from 'react';
@@ -26,6 +26,11 @@ export default function Group(props: Props) {
     onChange(settingGroup);
   }, [...settingGroup.children]);
 
+  /**
+   * 处理添加曲库目录点击事件
+   * @param e 鼠标事件
+   * @param index 设置项索引
+   */
   const handleAddCollectionPaths = async (
     e: React.MouseEvent<HTMLElement>,
     index: number
@@ -36,6 +41,27 @@ export default function Group(props: Props) {
     const label = children[index].label;
     const value = [...(children[index].value as string[])];
     value.push(...filePaths);
+    children[index] = { label, value };
+    setSettingGroup({ ...settingGroup, children });
+  };
+
+  /**
+   * 处理删除曲库目录点击事件
+   * @param e 鼠标事件
+   * @param index 设置项索引
+   * @param valueIndex 设置项值（为数组）时的索引
+   */
+  const handleDeleteCollectionPaths = (
+    e: React.MouseEvent<HTMLElement>,
+    index: number,
+    valueIndex: number
+  ) => {
+    e.preventDefault();
+    const children = [...settingGroup.children];
+    const label = children[index].label;
+    const value = [...(children[index].value as string[])];
+    value.splice(valueIndex, 1);
+    delete children[index];
     children[index] = { label, value };
     setSettingGroup({ ...settingGroup, children });
   };
@@ -52,18 +78,8 @@ export default function Group(props: Props) {
             <div key={v.toString()}>
               <span style={{ fontSize: '0.8rem' }}>{v.toString()}</span>
               <span
-                onClick={(e) => {
-                  e.preventDefault();
-                  const newgroup = { ...settingGroup };
-                  value.splice(i, 1);
-                  newgroup.children[index].value = value;
-                  setSettingGroup(newgroup);
-                }}
-                style={{
-                  color: '#f11111',
-                  margin: '0 8px',
-                  display: 'inline-block',
-                }}
+                onClick={(e) => handleDeleteCollectionPaths(e, index, i)}
+                style={{ color: '#f11', margin: '0 8px', display: 'inline' }}
               >
                 ✖
               </span>
@@ -92,8 +108,8 @@ export default function Group(props: Props) {
           onChange={(on) => {
             const children = [...settingGroup.children];
             const label = children[index].label;
-            children[index] = {label, value: on};
-            setSettingGroup({...settingGroup, children});
+            children[index] = { label, value: on };
+            setSettingGroup({ ...settingGroup, children });
           }}
         />
       );

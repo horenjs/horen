@@ -2,7 +2,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 23:47:40
- * @LastEditTime : 2022-01-26 21:25:30
+ * @LastEditTime : 2022-01-27 23:05:40
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen-util\lib\index.ts
  * @Description  :
@@ -157,4 +157,20 @@ export function arrayBufferToBase64(arr: ArrayBuffer) {
       '=';
   }
   return base64Str;
+}
+
+export function formatSecond(sec: number) {
+  let h = Math.floor(sec / 3600);
+  let m = Math.floor((sec / 60) % 60);
+  let s: string | number = Math.floor(sec % 60);
+
+  if (s < 10) s = '0' + s;
+
+  let res = '';
+  if (h !== 0) res += `${h}:`;
+  if (m !== 0) res += `${m}:`;
+
+  res += `${s}`;
+
+  return res;
 }

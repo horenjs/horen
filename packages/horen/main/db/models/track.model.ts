@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-26 10:46:26
- * @LastEditTime : 2022-01-26 15:14:19
+ * @LastEditTime : 2022-01-27 22:48:13
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\main\db\models\track.model.ts
+ * @FilePath     : \horen\packages\horen\main\db\models\track.model.ts
  * @Description  :
  */
 import { DataTypes } from 'sequelize';
@@ -25,6 +25,7 @@ const field = {
   artists: { type: DataTypes.STRING, allowNull: true },
   albumartist: { type: DataTypes.STRING, allowNull: true },
   album: { type: DataTypes.STRING, allowNull: true },
+  duration: { type: DataTypes.NUMBER, allowNull: true },
   date: { type: DataTypes.STRING, allowNull: true },
   originldate: { type: DataTypes.STRING, allowNull: true },
   originlyear: { type: DataTypes.STRING, allowNull: true },

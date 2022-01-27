@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 16:24:28
- * @LastEditTime : 2022-01-27 22:07:34
+ * @LastEditTime : 2022-01-27 23:09:09
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\play-queue\index.tsx
  * @Description  : 右侧滑出的歌曲列表
@@ -79,17 +79,17 @@ const MyPlayQueue = styled.div`
   }
   .queue {
     &::-webkit-scrollbar {
-      width: 8px;
+      width: 6px;
     }
     &::-webkit-scrollbar-thumb {
       border-radius: 10px;
-      background: #777;
+      background: #666;
     }
     padding: 16px 0;
     height: calc(100vh - 180px);
     overflow-y: auto;
     .queue-item {
-      padding: 8px 32px;
+      padding: 8px 16px 8px 32px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -100,7 +100,9 @@ const MyPlayQueue = styled.div`
       .info {
         flex-grow: 1;
         .title {
-          font-size: 1rem;
+          &-text {
+            font-size: 1rem;
+          }
         }
         .artist {
           font-size: 0.8rem;
@@ -109,7 +111,11 @@ const MyPlayQueue = styled.div`
         }
       }
       .indicator {
-        margin: 0;
+        margin: 0 16px 0 0;
+      }
+      .duration {
+        font-weight: 200;
+        color: #999;
       }
     }
   }

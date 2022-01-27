@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 12:32:21
- * @LastEditTime : 2022-01-27 21:52:19
+ * @LastEditTime : 2022-01-27 23:11:59
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\album-modal.tsx
  * @Description  :
@@ -48,10 +48,12 @@ export function AlbumModal(props: Props) {
       </span>
     );
 
+    let status;
+
     if (tracksInQueue) {
       const i = tracksInQueue?.map((track) => track.title).indexOf(item.title);
       if (i >= 0) {
-        const status = tracksInQueue[i].playStatus;
+        status = tracksInQueue[i].playStatus;
         if (status === 'in-queue') {
           child = <span title="已经在播放列表中">✔</span>;
         } else if (status === 'playing') {
@@ -62,7 +64,10 @@ export function AlbumModal(props: Props) {
 
     return (
       <div className="album-child" key={item.title} data-title={item.title}>
-        <div className="title">
+        <div
+          className="title"
+          style={{ color: status === 'playing' ? '#1ece9d' : '#aaa' }}
+        >
           <div className="title-order">{index + 1 + '.'}</div>
           <div className="title-text">{item.title}</div>
         </div>

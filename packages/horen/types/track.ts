@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 22:24:48
- * @LastEditTime : 2022-01-27 21:16:56
+ * @LastEditTime : 2022-01-27 22:45:45
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\types\track.ts
  * @Description  :
@@ -29,6 +29,7 @@ export interface MyTrack extends Base {
   format?: IFormat;
   trackInfo?: ITrackInfo;
   native?: INativeTags;
+  duration?: number,
   playStatus?: 'in-queue' | 'playing' | 'paused' | 'stop'
 }
 

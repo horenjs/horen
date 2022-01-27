@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 12:12:32
- * @LastEditTime : 2022-01-27 22:06:06
+ * @LastEditTime : 2022-01-27 23:06:27
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\play-queue\queue.tsx
  * @Description  :
@@ -10,6 +10,7 @@ import React from 'react';
 import { Track } from 'types';
 import { PlayQueueProps } from './index';
 import { Loader } from '../loader';
+import { formatSecond } from 'horen-util';
 
 type QueueProps = Omit<PlayQueueProps, 'onClose' | 'visible'>;
 
@@ -36,7 +37,7 @@ const Queue: React.FC<QueueProps> = (props) => {
             className="title"
             style={{ color: isPlaying ? '#1ece9d' : '#fcfcfc' }}
           >
-            {item.title || 'Unkown Song'}
+            <div className="title-text">{item.title || 'Unkown Song'}</div>
           </div>
           <div
             className="artist"
@@ -51,6 +52,7 @@ const Queue: React.FC<QueueProps> = (props) => {
             <Loader style="pulse" />
           </div>
         )}
+        <div className="duration">{formatSecond(item.duration || 0)}</div>
       </div>
     );
   };

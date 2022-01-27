@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 10:40:55
- * @LastEditTime : 2022-01-27 10:36:27
+ * @LastEditTime : 2022-01-27 22:47:46
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\main\ipc.ts
+ * @FilePath     : \horen\packages\horen\main\ipc.ts
  * @Description  :
  */
 import path from 'path';
@@ -219,6 +219,7 @@ async function readMusicMeta(p: string) {
     updateAt: stats.ctime.valueOf(),
     ...meta?.common,
     src: p,
+    duration: meta?.format.duration,
     picture: arrybuffer ? arrayBufferToBase64(arrybuffer) : '',
     md5: getMd5(buffer),
   } as Track;

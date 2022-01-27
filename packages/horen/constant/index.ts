@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 01:51:07
- * @LastEditTime : 2022-01-27 20:51:08
+ * @LastEditTime : 2022-01-27 22:27:27
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\constant\index.ts
  * @Description  :
@@ -44,18 +44,45 @@ export const APP_NAME = 'horen';
 export const DEFAULT_SETTING: SettingFile = {
   createAt: new Date().valueOf(),
   updateAt: new Date().valueOf(),
-  version: '0.0.3',
+  // 修改设置时同步修改版本号
+  // 以便生成新的设置文件
+  version: '0.0.5',
   groups: [
     {
       name: 'common',
+      title: '通用选项',
       children: [
         {
           label: 'collectionPaths',
           value: [],
+          title: '曲库路径',
+        },
+      ],
+    },
+    {
+      name: 'apperance',
+      title: '外观',
+      children: [
+        {
+          label: 'themeColor',
+          value: '',
+          title: '主题色',
         },
         {
+          label: 'language',
+          value: 'Chinese (Simplified)',
+          title: '语言',
+        },
+      ],
+    },
+    {
+      name: 'start',
+      title: '启动',
+      children: [
+        {
           label: 'refreshWhenOpen',
-          value: true,
+          value: false,
+          title: '启动时刷新数据库',
         },
       ],
     },

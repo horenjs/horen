@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-25 11:25:59
- * @LastEditTime : 2022-01-27 20:46:37
+ * @LastEditTime : 2022-01-27 22:17:35
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\setting\setting-group.tsx
  * @Description  :
@@ -38,10 +38,9 @@ export default function Group(props: Props) {
     e.preventDefault();
     const filePaths: string[] = (await DialogDC.open()).filePaths;
     const children = [...settingGroup.children];
-    const label = children[index].label;
     const value = [...(children[index].value as string[])];
     value.push(...filePaths);
-    children[index] = { label, value };
+    children[index] = { ...children[index], value };
     setSettingGroup({ ...settingGroup, children });
   };
 
@@ -58,11 +57,10 @@ export default function Group(props: Props) {
   ) => {
     e.preventDefault();
     const children = [...settingGroup.children];
-    const label = children[index].label;
     const value = [...(children[index].value as string[])];
     value.splice(valueIndex, 1);
     delete children[index];
-    children[index] = { label, value };
+    children[index] = { ...children[index], value };
     setSettingGroup({ ...settingGroup, children });
   };
 
@@ -107,8 +105,7 @@ export default function Group(props: Props) {
           on={value}
           onChange={(on) => {
             const children = [...settingGroup.children];
-            const label = children[index].label;
-            children[index] = { label, value: on };
+            children[index] = { ...children[index], value: on };
             setSettingGroup({ ...settingGroup, children });
           }}
         />
@@ -117,7 +114,7 @@ export default function Group(props: Props) {
 
     return (
       <>
-        <span className="label">{child.label}</span>
+        <span className="label">{child.title}</span>
         <span className="value">{valueChild}</span>
       </>
     );

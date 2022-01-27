@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-25 11:25:59
- * @LastEditTime : 2022-01-27 17:56:00
+ * @LastEditTime : 2022-01-27 18:36:19
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\pages\setting\setting-group.tsx
  * @Description  :
@@ -13,12 +13,18 @@ import { DialogDC } from '../../data-center';
 
 interface Props {
   group: ISettingGroup;
+  onChange(group: ISettingGroup): void;
 }
 
 export default function Group(props: Props) {
-  const { group } = props;
+  const { group, onChange } = props;
 
   const [settingGroup, setSettingGroup] = React.useState(group);
+
+  React.useEffect(() => {
+    console.log(settingGroup);
+    onChange(settingGroup);
+  }, [...settingGroup.children]);
 
   const handleAddCollectionPaths = async (
     e: React.MouseEvent<HTMLElement>,

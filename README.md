@@ -1,17 +1,32 @@
+<!--
+ * @Author       : Kevin Jobs
+ * @Date         : 2022-01-19 23:40:05
+ * @LastEditTime : 2022-01-27 23:34:49
+ * @lastEditors  : Kevin Jobs
+ * @FilePath     : \horen\README.md
+ * @Description  : 
+-->
 # Horen
 
 Horen 是一个用 React 和 electron 打造的本地音乐播放器，正在不断开发中
 
-预览图：
+## 预览图
 
-![preview-main](./preview.jpg)
+### 曲库界面
 
-功能进度
+![preview-library](./preview-library.jpg)
+
+### 设置界面
+
+![preview-setting](./preview-setting.jpg)
+
+## 功能进度
 
 - [x] 主体界面
 - [x] 当前播放
 - [x] 播放队列
 - [x] 控制播放进度
+- [x] 设置界面
 - [ ] 控制音量
 - [ ] 歌词显示
 - [ ] 调音器

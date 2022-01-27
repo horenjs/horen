@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 01:51:07
- * @LastEditTime : 2022-01-27 22:27:27
+ * @LastEditTime : 2022-01-27 22:41:44
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\constant\index.ts
  * @Description  :
@@ -124,11 +124,13 @@ export const TRACK_FORMAT = [
  */
 export const PAGES = [
   {
-    title: 'Library',
+    name: 'Library',
     path: '/library',
+    title: '音乐库',
   },
   {
-    title: 'setting',
+    name: 'setting',
     path: '/setting',
+    title: '设置',
   },
 ];

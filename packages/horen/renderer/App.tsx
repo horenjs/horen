@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-27 21:54:28
+ * @LastEditTime : 2022-01-27 22:42:04
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -93,7 +93,7 @@ export default function App() {
             return (
               <div
                 className={cls}
-                key={p.title}
+                key={p.name}
                 onClick={() => navigate(p.path)}
               >
                 {p.title}

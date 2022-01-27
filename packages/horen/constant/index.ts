@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 01:51:07
- * @LastEditTime : 2022-01-27 16:35:58
+ * @LastEditTime : 2022-01-27 20:51:08
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\constant\index.ts
+ * @FilePath     : \horen\packages\horen\constant\index.ts
  * @Description  :
  */
 import { SettingFile } from '../types';
@@ -90,4 +90,18 @@ export const TRACK_FORMAT = [
   'webm',
   'wv',
   'wma',
+];
+
+/**
+ * 页面
+ */
+export const PAGES = [
+  {
+    title: 'Library',
+    path: '/library',
+  },
+  {
+    title: 'setting',
+    path: '/setting',
+  },
 ];

@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-27 16:29:24
+ * @LastEditTime : 2022-01-27 21:10:00
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\App.tsx
+ * @FilePath     : \horen\packages\horen\renderer\App.tsx
  * @Description  :
  */
 import React from 'react';
@@ -17,27 +17,20 @@ import {
 import { useSetRecoilState } from 'recoil';
 import { settingState, trackListState } from '@/store';
 import styled from 'styled-components';
-import Player from 'horen-plugin-player';
 import Library from './pages/library';
 import SettingPage from './pages/setting';
 import ControlPanel from './components/control-panel';
 import { PlayQueue } from './components/play-queue';
 import { SettingDC, TrackDC } from './data-center';
 import { SettingFile, SettingGroup, Track } from 'types';
+import { PAGES } from '../constant';
+import Player from 'horen-plugin-player';
 
-const pages = [
-  {
-    title: 'Library',
-    path: '/library',
-  },
-  {
-    title: 'setting',
-    path: '/setting',
-  },
-];
+// 初始化一个播放器
+// 这个播放器是全局唯一的播放器
+const player = new Player();
 
 export default function App() {
-  const [player, setPlayer] = React.useState(new Player());
   const [progress, setProgress] = React.useState(0);
   const [isQueue, setIsQueue] = React.useState(false);
 
@@ -47,6 +40,11 @@ export default function App() {
   const setTrackList = useSetRecoilState(trackListState);
   const setSetting = useSetRecoilState(settingState);
 
+  const handleAddTrack = (tracks: Track[]) => {
+    player.trackList = player.trackList.concat(tracks);
+  };
+
+  // 每隔一秒刷新播放进度
   React.useEffect(() => {
     const timer = setInterval(() => {
       setProgress((player.seek / player.duration) * 100);
@@ -82,7 +80,7 @@ export default function App() {
       }
       <div className="pages">
         <div className="page-header">
-          {pages.map((p) => {
+          {PAGES.map((p) => {
             const cls =
               location.pathname === p.path ? 'title actived' : 'title';
             return (
@@ -104,13 +102,7 @@ export default function App() {
               <Route
                 path="library"
                 element={
-                  <Library
-                    tracks={player.trackList}
-                    onAddTo={(tracks) => {
-                      // console.log(tracks);
-                      player.trackList = player.trackList.concat(tracks);
-                    }}
-                  />
+                  <Library tracks={player.trackList} onAddTo={handleAddTrack} />
                 }
               />
               {/* setting page */}

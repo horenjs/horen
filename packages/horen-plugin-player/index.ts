@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-20 23:05:39
- * @LastEditTime : 2022-01-23 20:05:22
+ * @LastEditTime : 2022-01-27 20:58:38
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen-plugin-player\index.ts
  * @Description  : a player for AlO
@@ -149,7 +149,7 @@ export default class HowlPlayer {
    * get the play status
    */
   public get playing() {
-    this._playing = Boolean(this._howler?.playing());
+    this._playing = this._howler?.playing() || false;
     return this._playing;
   }
 

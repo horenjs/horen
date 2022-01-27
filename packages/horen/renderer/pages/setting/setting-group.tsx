@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-25 11:25:59
- * @LastEditTime : 2022-01-27 22:17:35
+ * @LastEditTime : 2022-01-27 23:21:15
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\setting\setting-group.tsx
  * @Description  :
@@ -59,7 +59,7 @@ export default function Group(props: Props) {
     const children = [...settingGroup.children];
     const value = [...(children[index].value as string[])];
     value.splice(valueIndex, 1);
-    delete children[index];
+    // delete children[index];
     children[index] = { ...children[index], value };
     setSettingGroup({ ...settingGroup, children });
   };

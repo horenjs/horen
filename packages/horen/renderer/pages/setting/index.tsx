@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-23 15:16:09
- * @LastEditTime : 2022-01-27 22:38:22
+ * @LastEditTime : 2022-01-27 23:22:41
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\setting\index.tsx
  * @Description  : setting page
@@ -60,7 +60,6 @@ export default function SettingPage() {
 const MySetting = styled.div`
   color: #c1c2c3;
   .setting-container {
-    width: 70%;
     .setting-groups {
       padding: 8px 0;
       position: relative;

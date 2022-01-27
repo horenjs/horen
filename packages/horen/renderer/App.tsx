@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-27 16:10:21
+ * @LastEditTime : 2022-01-27 16:29:24
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -14,8 +14,8 @@ import {
   Navigate,
   useLocation,
 } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
-import { trackListState } from '@/store';
+import { useSetRecoilState } from 'recoil';
+import { settingState, trackListState } from '@/store';
 import styled from 'styled-components';
 import Player from 'horen-plugin-player';
 import Library from './pages/library';
@@ -23,7 +23,7 @@ import SettingPage from './pages/setting';
 import ControlPanel from './components/control-panel';
 import { PlayQueue } from './components/play-queue';
 import { SettingDC, TrackDC } from './data-center';
-import { SettingFile, Track } from 'types';
+import { SettingFile, SettingGroup, Track } from 'types';
 
 const pages = [
   {
@@ -40,12 +40,12 @@ export default function App() {
   const [player, setPlayer] = React.useState(new Player());
   const [progress, setProgress] = React.useState(0);
   const [isQueue, setIsQueue] = React.useState(false);
-  // const [collectionPaths, setCollectionPaths] = React.useState<string[]>([]);
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [trackList, setTrackList] = useRecoilState(trackListState);
+  const setTrackList = useSetRecoilState(trackListState);
+  const setSetting = useSetRecoilState(settingState);
 
   React.useEffect(() => {
     const timer = setInterval(() => {
@@ -57,22 +57,21 @@ export default function App() {
 
   React.useEffect(() => {
     (async () => {
-      const st = (await SettingDC.get()) as SettingFile;
-      for (const s of st.grounps) {
-        if (s.name === 'common') {
-          for (const c of s.children) {
-            if (c.label === 'collectionPaths') {
-              const paths = c.value as string[];
-              const tracks: Track[] = [];
-              for (const p of paths) {
-                const result = await TrackDC.getList(p);
-                tracks.push(...result);
-              }
-              setTrackList(tracks);
-            }
-          }
-        }
+      // 获取设置
+      const setting = (await SettingDC.get()) as SettingFile;
+      // 填入到 setting state 中
+      setSetting(setting);
+      // 从设置中将曲库位置取出
+      // 设置一个空数组用于存储
+      const tracks: Track[] = [];
+      // 获取设置中的曲库位置列表
+      const collectionPaths = getCollectionPaths(setting.groups) || [];
+      // 遍历列表获取其中的所有音频列表
+      for (const p of collectionPaths) {
+        tracks.push(...(await TrackDC.getList(p)));
       }
+      // 填入到相应的 state 中
+      setTrackList(tracks);
     })();
   }, []);
 
@@ -90,7 +89,7 @@ export default function App() {
               <div
                 className={cls}
                 key={p.title}
-                onClick={(e) => navigate(p.path)}
+                onClick={() => navigate(p.path)}
               >
                 {p.title}
               </div>
@@ -151,6 +150,18 @@ export default function App() {
       />
     </MyApp>
   );
+}
+
+function getCollectionPaths(groups: SettingGroup[]) {
+  for (const group of groups) {
+    if (group.name === 'common') {
+      for (const c of group.children) {
+        if (c.label === 'collectionPaths') {
+          return c.value as string[];
+        }
+      }
+    }
+  }
 }
 
 const MyApp = styled.div`

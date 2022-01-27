@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-25 11:25:59
- * @LastEditTime : 2022-01-25 17:36:11
+ * @LastEditTime : 2022-01-27 17:56:00
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\pages\setting\setting-group.tsx
  * @Description  :
@@ -13,17 +13,25 @@ import { DialogDC } from '../../data-center';
 
 interface Props {
   group: ISettingGroup;
-  onSubmit(newGroup: ISettingGroup): void;
 }
 
-export default function SettingGroup(props: Props) {
-  const { group, onSubmit } = props;
+export default function Group(props: Props) {
+  const { group } = props;
 
   const [settingGroup, setSettingGroup] = React.useState(group);
 
-  const handleSubmit = (e: React.MouseEvent<HTMLElement>) => {
+  const handleAddCollectionPaths = async (
+    e: React.MouseEvent<HTMLElement>,
+    index: number
+  ) => {
     e.preventDefault();
-    onSubmit(settingGroup);
+    const filePaths: string[] = (await DialogDC.open()).filePaths;
+    const children = [...settingGroup.children];
+    const label = children[index].label;
+    const value = [...(children[index].value as string[])];
+    value.push(...filePaths);
+    children[index] = { label, value };
+    setSettingGroup({ ...settingGroup, children });
   };
 
   const renderValue = (child: SettingItem, index: number) => {
@@ -43,8 +51,6 @@ export default function SettingGroup(props: Props) {
                   const newgroup = { ...settingGroup };
                   value.splice(i, 1);
                   newgroup.children[index].value = value;
-                  console.log(value);
-                  console.log(newgroup.children[index]);
                   setSettingGroup(newgroup);
                 }}
                 style={{
@@ -60,17 +66,9 @@ export default function SettingGroup(props: Props) {
           {child.label === 'collectionPaths' && (
             <div style={{ width: '100%' }}>
               <button
-                onClick={async (e) => {
-                  e.preventDefault();
-                  const dialog = await DialogDC.open();
-                  const filePaths = dialog.filePaths;
-                  const newgroup = { ...settingGroup };
-                  newgroup.children[index].value = [
-                    ...(value as string[]),
-                    ...filePaths,
-                  ];
-                  setSettingGroup({ ...newgroup });
-                }}
+                onClick={async (e: React.MouseEvent<HTMLElement>) =>
+                  await handleAddCollectionPaths(e, index)
+                }
                 style={{ margin: '8px 0' }}
               >
                 <span style={{ fontSize: 12 }}>添加</span>
@@ -86,9 +84,10 @@ export default function SettingGroup(props: Props) {
         <Switch
           on={value}
           onChange={(on) => {
-            const newgroup = { ...settingGroup };
-            newgroup.children[index].value = on;
-            setSettingGroup({ ...newgroup });
+            const children = [...settingGroup.children];
+            const label = children[index].label;
+            children[index] = {label, value: on};
+            setSettingGroup({...settingGroup, children});
           }}
         />
       );
@@ -112,20 +111,6 @@ export default function SettingGroup(props: Props) {
             </div>
           );
         })}
-      <div
-        onClick={handleSubmit}
-        style={{
-          position: 'absolute',
-          left: 48,
-          bottom: 120,
-          backgroundColor: '#f1f1f1',
-          color: '#313233',
-          padding: '2px 8px',
-          borderRadius: 4,
-        }}
-      >
-        Save
-      </div>
     </div>
   );
 }

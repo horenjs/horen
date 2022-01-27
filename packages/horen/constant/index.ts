@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 01:51:07
- * @LastEditTime : 2022-01-26 14:23:17
+ * @LastEditTime : 2022-01-27 16:35:58
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\configs\index.ts
+ * @FilePath     : \Horen\packages\horen\constant\index.ts
  * @Description  :
  */
 import { SettingFile } from '../types';
@@ -44,8 +44,8 @@ export const APP_NAME = 'horen';
 export const DEFAULT_SETTING: SettingFile = {
   createAt: new Date().valueOf(),
   updateAt: new Date().valueOf(),
-  version: '0.0.2',
-  grounps: [
+  version: '0.0.3',
+  groups: [
     {
       name: 'common',
       children: [

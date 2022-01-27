@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-27 21:10:00
+ * @LastEditTime : 2022-01-27 21:54:28
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -14,8 +14,8 @@ import {
   Navigate,
   useLocation,
 } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
-import { settingState, trackListState } from '@/store';
+import { useSetRecoilState, useRecoilState } from 'recoil';
+import { settingState, trackListState, tracksInQueueState } from '@/store';
 import styled from 'styled-components';
 import Library from './pages/library';
 import SettingPage from './pages/setting';
@@ -28,7 +28,7 @@ import Player from 'horen-plugin-player';
 
 // 初始化一个播放器
 // 这个播放器是全局唯一的播放器
-const player = new Player();
+export const player = new Player();
 
 export default function App() {
   const [progress, setProgress] = React.useState(0);
@@ -39,10 +39,20 @@ export default function App() {
 
   const setTrackList = useSetRecoilState(trackListState);
   const setSetting = useSetRecoilState(settingState);
+  const [tracksInQueue, setTracksInQueue] = useRecoilState(tracksInQueueState);
 
   const handleAddTrack = (tracks: Track[]) => {
-    player.trackList = player.trackList.concat(tracks);
+    const tracksToPlay = tracks.map((track) => {
+      return { ...track, playStatus: 'in-queue' };
+    }) as Track[];
+
+    setTracksInQueue([...tracksInQueue, ...tracksToPlay]);
   };
+
+  // 音频队列改变时触发
+  React.useEffect(() => {
+    player.trackList = tracksInQueue;
+  }, [tracksInQueue.length]);
 
   // 每隔一秒刷新播放进度
   React.useEffect(() => {
@@ -75,9 +85,6 @@ export default function App() {
 
   return (
     <MyApp className="app">
-      {
-        // <TitlePanel title="" operates={titlePanelOperates} />
-      }
       <div className="pages">
         <div className="page-header">
           {PAGES.map((p) => {
@@ -101,9 +108,7 @@ export default function App() {
               {/* 歌曲库 */}
               <Route
                 path="library"
-                element={
-                  <Library tracks={player.trackList} onAddTo={handleAddTrack} />
-                }
+                element={<Library onAddTo={handleAddTrack} />}
               />
               {/* setting page */}
               <Route path="setting" element={<SettingPage />} />

@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 22:24:48
- * @LastEditTime : 2022-01-27 14:50:30
+ * @LastEditTime : 2022-01-27 21:16:56
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\types\track.ts
+ * @FilePath     : \horen\packages\horen\types\track.ts
  * @Description  :
  */
 import {
@@ -29,6 +29,7 @@ export interface MyTrack extends Base {
   format?: IFormat;
   trackInfo?: ITrackInfo;
   native?: INativeTags;
+  playStatus?: 'in-queue' | 'playing' | 'paused' | 'stop'
 }
 
 export interface Album {

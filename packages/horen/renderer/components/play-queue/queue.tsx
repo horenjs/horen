@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 12:12:32
- * @LastEditTime : 2022-01-22 12:30:18
+ * @LastEditTime : 2022-01-27 22:06:06
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\play-queue\queue.tsx
  * @Description  :
@@ -9,6 +9,7 @@
 import React from 'react';
 import { Track } from 'types';
 import { PlayQueueProps } from './index';
+import { Loader } from '../loader';
 
 type QueueProps = Omit<PlayQueueProps, 'onClose' | 'visible'>;
 
@@ -45,6 +46,11 @@ const Queue: React.FC<QueueProps> = (props) => {
           </div>
         </div>
         <div className="operate"></div>
+        {isPlaying && (
+          <div className="indicator">
+            <Loader style="pulse" />
+          </div>
+        )}
       </div>
     );
   };

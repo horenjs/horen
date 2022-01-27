@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-27 16:13:47
- * @LastEditTime : 2022-01-27 21:03:36
+ * @LastEditTime : 2022-01-27 21:26:58
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\store\state.ts
  * @Description  :
@@ -14,6 +14,14 @@ import { Track, Album, SettingFile } from 'types';
  */
 export const trackListState = atom({
   key: 'trackListState',
+  default: [] as Track[],
+});
+
+/**
+ * 在队列中的音频列表
+ */
+export const tracksInQueueState = atom({
+  key: 'tracksInQueue',
   default: [] as Track[],
 });
 
@@ -34,7 +42,7 @@ export const albumListState = selector({
 export const settingState = atom({
   key: 'settingState',
   default: {} as SettingFile,
-})
+});
 
 /**
  * 对音频列表进行重排并聚合为专辑列表

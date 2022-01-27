@@ -1,33 +1,33 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-27 16:11:40
+ * @LastEditTime : 2022-01-27 21:59:13
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\pages\library\index.tsx
+ * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
  */
 import { TrackDC } from '../../data-center';
 import React from 'react';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
-import { albumListState } from '@/store';
+import { albumListState, tracksInQueueState } from '@/store';
 import { Track, Album } from 'types';
 import { AlbumModal } from './album-modal';
 import { AlbumView } from './album-viewer';
 import { Loader } from '@/components/loader';
+import { player } from '@/App';
 
 export interface LibraryProps {
-  tracks: Track[];
   onAddTo?(t: Track[]): void;
 }
 
 const Library: React.FC<LibraryProps> = (props) => {
-  const { tracks, onAddTo } = props;
+  const { onAddTo } = props;
 
-  // const [albums, setAlbums] = React.useState<Album[]>([]);
   const [album, setAlbum] = React.useState<Album>();
   const [trackLoading, setTrackLoading] = React.useState('');
 
+  const tracksInQueue = useRecoilValue(tracksInQueueState);
   const albums = useRecoilValue(albumListState);
 
   const handleOpenAlbum = (a: Album) => {
@@ -40,6 +40,7 @@ const Library: React.FC<LibraryProps> = (props) => {
 
   const handleCloseAlbumModal = () => setAlbum(undefined);
 
+  // 监听主进程传递过来的音频文件读取进度信息
   React.useEffect(() => {
     (async () => {
       const msg = await TrackDC.getMsg();
@@ -70,7 +71,12 @@ const Library: React.FC<LibraryProps> = (props) => {
 
       {album && (
         <AlbumModal
-          tracks={tracks}
+          tracksInQueue={tracksInQueue.map((track) => {
+            // 判断歌曲是否在播放中
+            if (track.title === player.currentTrack?.title)
+              return { ...track, playStatus: 'playing' };
+            else return track;
+          })}
           album={album}
           onAddTo={handleAddTo}
           onClose={handleCloseAlbumModal}

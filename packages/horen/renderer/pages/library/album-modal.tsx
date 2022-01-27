@@ -1,26 +1,25 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 12:32:21
- * @LastEditTime : 2022-01-23 18:18:22
+ * @LastEditTime : 2022-01-27 21:52:19
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\album-modal.tsx
  * @Description  :
  */
 import React from 'react';
-import { Album } from './index';
 import defaultCover from '@/static/image/default-cover';
-import { Track } from 'types';
+import { Track, Album } from 'types';
 import _ from 'underscore';
 
 interface Props {
-  tracks: Track[];
   album: Album;
   onClose(): void;
   onAddTo(tracks: Track[]): void;
+  tracksInQueue?: Track[];
 }
 
 export function AlbumModal(props: Props) {
-  const { tracks, album, onClose, onAddTo } = props;
+  const { album, onClose, onAddTo, tracksInQueue } = props;
 
   const publishDate = album.children[0].date;
   const artist = album.children[0].artist;
@@ -38,27 +37,39 @@ export function AlbumModal(props: Props) {
     onAddTo([...ts]);
   };
 
-  const renderItem = (item: Track, index: number) => (
-    <div className="album-child" key={item.title} data-title={item.title}>
-      <div className="title">
-        <div className="title-order">{index + 1 + '.'}</div>
-        <div className="title-text">{item.title}</div>
+  const renderItem = (item: Track, index: number) => {
+    let child = (
+      <span
+        className="add-to"
+        onClick={(e) => handleAddTo(e, [item])}
+        title="添加到播放列表"
+      >
+        ✚
+      </span>
+    );
+
+    if (tracksInQueue) {
+      const i = tracksInQueue?.map((track) => track.title).indexOf(item.title);
+      if (i >= 0) {
+        const status = tracksInQueue[i].playStatus;
+        if (status === 'in-queue') {
+          child = <span title="已经在播放列表中">✔</span>;
+        } else if (status === 'playing') {
+          child = <span title="正在播放中">♫</span>;
+        }
+      }
+    }
+
+    return (
+      <div className="album-child" key={item.title} data-title={item.title}>
+        <div className="title">
+          <div className="title-order">{index + 1 + '.'}</div>
+          <div className="title-text">{item.title}</div>
+        </div>
+        <div className="operator">{child}</div>
       </div>
-      <div className="operator">
-        {includesDeep(tracks, item) ? (
-          <span title="已经在播放列表中">✔</span>
-        ) : (
-          <span
-            className="add-to"
-            onClick={(e) => handleAddTo(e, [item])}
-            title="添加到播放列表"
-          >
-            ✚
-          </span>
-        )}
-      </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="album-modal-view">
@@ -74,7 +85,7 @@ export function AlbumModal(props: Props) {
           </span>
         </div>
         <div className="close-button" role="button" onClick={handleClose}>
-          X
+          ✕
         </div>
       </div>
 
@@ -105,8 +116,12 @@ export function AlbumModal(props: Props) {
   );
 }
 
-function includesDeep(arr: any[], obj: object) {
-  const filtered = arr.filter((value) => _.isEqual(value, obj));
-  if (filtered.length > 0) return true;
+function isInQueue(track: Track, tracks?: Track[]) {
+  return tracks?.map((track) => track.title).includes(track.title);
+}
+
+function includesDeep(obj: object, arr?: Track[]) {
+  const filtered = arr?.filter((value) => _.isEqual(value, obj));
+  if (filtered && filtered.length > 0) return true;
   else return false;
 }

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-25 11:25:59
- * @LastEditTime : 2022-01-28 10:08:32
+ * @LastEditTime : 2022-01-28 17:00:15
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\pages\setting\setting-group.tsx
  * @Description  :
@@ -19,12 +19,12 @@ interface Props {
 export default function Group(props: Props) {
   const { group, onChange } = props;
 
-  const [settingGroup, setSettingGroup] = React.useState(group);
+  const [settingGroup, setSettingGroup] = React.useState<ISettingGroup>();
 
   React.useEffect(() => {
     // console.log(settingGroup);
-    onChange(settingGroup);
-  }, [...settingGroup.children]);
+    if (settingGroup) onChange(settingGroup);
+  }, [settingGroup]);
 
   /**
    * 处理添加曲库目录点击事件
@@ -37,11 +37,11 @@ export default function Group(props: Props) {
   ) => {
     e.preventDefault();
     const filePaths: string[] = (await DialogDC.open()).filePaths;
-    const children = [...settingGroup.children];
+    const children = [...group.children];
     const value = [...(children[index].value as string[])];
     value.push(...filePaths);
     children[index] = { ...children[index], value: Array.from(new Set(value)) };
-    setSettingGroup({ ...settingGroup, children });
+    setSettingGroup({ ...group, children });
   };
 
   /**
@@ -56,12 +56,12 @@ export default function Group(props: Props) {
     valueIndex: number
   ) => {
     e.preventDefault();
-    const children = [...settingGroup.children];
+    const children = [...group.children];
     const value = [...(children[index].value as string[])];
     value.splice(valueIndex, 1);
     // delete children[index];
     children[index] = { ...children[index], value };
-    setSettingGroup({ ...settingGroup, children });
+    setSettingGroup({ ...group, children });
   };
 
   const renderValue = (child: SettingItem, index: number) => {
@@ -104,9 +104,9 @@ export default function Group(props: Props) {
         <Switch
           on={value}
           onChange={(on) => {
-            const children = [...settingGroup.children];
+            const children = [...group.children];
             children[index] = { ...children[index], value: on };
-            setSettingGroup({ ...settingGroup, children });
+            setSettingGroup({ ...group, children });
           }}
         />
       );
@@ -122,8 +122,8 @@ export default function Group(props: Props) {
 
   return (
     <div className="setting-group">
-      {settingGroup?.children.length > 0 &&
-        settingGroup?.children.map((child, index) => {
+      {group?.children.length > 0 &&
+        group?.children.map((child, index) => {
           return (
             <div className="setting-item" key={child.label}>
               {renderValue(child, index)}

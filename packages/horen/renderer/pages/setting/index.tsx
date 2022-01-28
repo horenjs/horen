@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-23 15:16:09
- * @LastEditTime : 2022-01-28 09:27:33
+ * @LastEditTime : 2022-01-28 16:55:48
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\pages\setting\index.tsx
  * @Description  : setting page
@@ -13,9 +13,30 @@ import SettingGroup from './setting-group';
 import { settingState } from '@/store';
 import { useRecoilState } from 'recoil';
 import { SettingDC } from '../../data-center';
+import { SettingGroup as ISettingGroup } from 'types';
 
 export default function SettingPage() {
   const [setting, setSetting] = useRecoilState(settingState);
+
+  const handleSettingGroupChange = async (
+    newGroup: ISettingGroup,
+    index: number
+  ) => {
+    const groups = [...setting.groups];
+    groups[index] = newGroup;
+
+    setSetting({
+      ...setting,
+      updateAt: new Date().valueOf(),
+      groups,
+    });
+    
+    await SettingDC.set({
+      ...setting,
+      updateAt: new Date().valueOf(),
+      groups,
+    });
+  };
 
   return (
     <MySetting className="setting-page">
@@ -40,18 +61,8 @@ export default function SettingPage() {
                 <SettingGroup
                   group={group}
                   onChange={async (newGroup) => {
-                    const groups = [...setting.groups];
-                    groups[index] = newGroup;
-                    setSetting({
-                      ...setting,
-                      updateAt: new Date().valueOf(),
-                      groups,
-                    });
-                    await SettingDC.set({
-                      ...setting,
-                      updateAt: new Date().valueOf(),
-                      groups,
-                    });
+                    console.log('im change');
+                    await handleSettingGroupChange(newGroup, index);
                   }}
                 />
               </div>

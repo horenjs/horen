@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-28 16:42:50
+ * @LastEditTime : 2022-01-28 17:05:01
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -14,7 +14,7 @@ import {
   Navigate,
   useLocation,
 } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { settingState, trackListState, tracksInQueueState } from '@/store';
 import styled from 'styled-components';
 import Library from './pages/library';
@@ -42,7 +42,7 @@ export default function App() {
   const location = useLocation();
 
   const [trackList, setTrackList] = useRecoilState(trackListState);
-  const [setting, setSetting] = useRecoilState(settingState);
+  const setSetting = useSetRecoilState(settingState);
   const [tracksInQueue, setTracksInQueue] = useRecoilState(tracksInQueueState);
 
   const isTrackLoaded =
@@ -93,7 +93,7 @@ export default function App() {
         'start',
         'rebuildWhenStart'
       ) as boolean;
-      
+
       setTrackList(
         await getAllTracks(st, {
           rebuild: rebuild,

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-28 12:16:01
+ * @LastEditTime : 2022-01-28 14:25:23
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -14,7 +14,7 @@ import {
   Navigate,
   useLocation,
 } from 'react-router-dom';
-import { useSetRecoilState, useRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { settingState, trackListState, tracksInQueueState } from '@/store';
 import styled from 'styled-components';
 import Library from './pages/library';
@@ -41,9 +41,14 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const setTrackList = useSetRecoilState(trackListState);
+  const [trackList, setTrackList] = useRecoilState(trackListState);
   const [setting, setSetting] = useRecoilState(settingState);
   const [tracksInQueue, setTracksInQueue] = useRecoilState(tracksInQueueState);
+
+  const isTrackLoaded =
+    trackList.length ||
+    trackLoadProgress === 'done' ||
+    trackLoadProgress === '';
 
   const handleAddTrack = (tracks: Track[]) => {
     const tracksToPlay = tracks.map((track) => {
@@ -59,7 +64,6 @@ export default function App() {
       const msg = await TrackDC.getMsg();
       setTrackLoadProgress(msg);
     })();
-    setTimeout(() => setTrackLoadProgress(''), 1500);
   }, [trackLoadProgress]);
 
   // 音频队列改变时触发
@@ -91,15 +95,13 @@ export default function App() {
   // 监听：曲库位置变化时 刷新数据库
   React.useEffect(() => {
     (async () => {
-      console.log('曲库位置变化 刷新数据库');
-      console.log(getCollectionPaths(setting));
       setTrackList(await getAllTracks(setting));
     })();
   }, [getCollectionPaths(setting)?.length]);
 
   return (
     <MyApp className="app">
-      {trackLoadProgress && trackLoadProgress !== 'done' && (
+      {!isTrackLoaded && (
         <div className="track-load-progress">{trackLoadProgress}</div>
       )}
       <div className="pages">

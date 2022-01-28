@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-28 19:31:58
+ * @LastEditTime : 2022-01-28 23:48:51
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\App.tsx
+ * @FilePath     : \horen\packages\horen\renderer\App.tsx
  * @Description  :
  */
 import React from 'react';
@@ -66,7 +66,7 @@ export default function App() {
       const msg = await TrackDC.getMsg();
       setTrackLoadProgress(msg);
     })();
-  }, [trackLoadProgress]);
+  }, [trackLoadProgress, trackList.length]);
 
   // 音频队列改变时触发
   React.useEffect(() => {
@@ -87,21 +87,21 @@ export default function App() {
     (async () => {
       // 获取设置
       const st = (await SettingDC.get()) as SettingFile;
-      // 填入到 setting state 中
       setSetting(st);
-      // 填入到相应的 state 中
+      // 抽取设置项：组件加载时是否刷新
       const rebuild = getSettingItem(
         st,
         'start',
         'rebuildWhenStart'
       ) as boolean;
+      // 抽取设置项：曲库目录
+      const paths = getSettingItem(st, 'common', 'collectionPaths') as string[];
 
-      setTrackList(
-        await getAllTracks(st, {
-          rebuild: rebuild,
-          fromCache: !rebuild,
-        })
-      );
+      if (rebuild) {
+        setTrackList(await TrackDC.rebuildCache(paths));
+      } else {
+        setTrackList(await TrackDC.getListCached());
+      }
     })();
   }, []);
 
@@ -208,38 +208,12 @@ function getSettingItem(
   }
 }
 
-async function getAllTracks(
-  setting: SettingFile,
-  opts = {
-    rebuild: false,
-    fromCache: true,
-  }
-) {
-  // 从设置中将曲库位置取出
-  // 设置一个空数组用于存储
-  const tracks: Track[] = [];
-  // 获取设置中的曲库位置列表
-  const collectionPaths = getSettingItem(
-    setting,
-    'common',
-    'collectionPaths'
-  ) as string[];
-  // 遍历列表获取其中的所有音频列表
-  for (const p of collectionPaths) {
-    const allTracks = await TrackDC.getList(p, opts);
-
-    tracks.push(...allTracks);
-  }
-
-  return tracks;
-}
-
 const MyApp = styled.div`
   margin: 0;
   padding: 0;
   .track-load-progress {
     position: fixed;
-    width: 500px;
+    min-width: 800px;
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
@@ -276,7 +250,7 @@ const MyApp = styled.div`
     .page-container {
       padding: 0 44px 32px 44px;
       margin-top: 24px;
-      height: calc(100vh - 168px);
+      height: calc(100vh - 192px);
       overflow-y: auto;
     }
   }

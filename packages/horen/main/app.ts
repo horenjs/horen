@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 10:34:25
- * @LastEditTime : 2022-01-28 21:28:25
+ * @LastEditTime : 2022-01-28 21:34:24
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\main\app.ts
  * @Description  :
@@ -80,7 +80,7 @@ export function createWindow(opts?: BrowserWindowConstructorOptions) {
   return new BrowserWindow({
     ...opts,
     width: 1220,
-    height: 780,
+    height: 800,
     // minWidth: opts?.minWidth || 1024,
     // minHeight: opts?.minHeight || 764,
     resizable: false,

@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-28 14:55:06
- * @LastEditTime : 2022-01-28 16:37:51
+ * @LastEditTime : 2022-01-28 23:51:10
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\main\ipc\track.ipc.ts
+ * @FilePath     : \horen\packages\horen\main\ipc\track.ipc.ts
  * @Description  :
  */
 import path from 'path';
@@ -20,18 +20,40 @@ import mm from 'music-metadata';
 
 const mydebug = debug('horen:ipc:track');
 /**
- * 获取歌曲文件列表
+ * 从缓存中获取音频文件列表
  */
-ipcMain.handle(IPC_CODE.track.getList, async (evt, p, opts) => {
-  const { rebuild = false, fromCache = true } = opts;
+ipcMain.handle(IPC_CODE.track.getListCached, async (evt) => {
+  mydebug('从缓存数据库中读取');
+  try {
+    const allTracks = (await TrackModel.findAll()).map((t) => t.get());
+    mydebug('从缓存数据库读取成功');
+    return allTracks;
+  } catch (err) {
+    mydebug('从数据库中读取失败');
+  }
+});
 
-  mydebug('从给定的目录读取所有文件: ' + p);
-  const rawFilePaths = await readDir(p);
+/**
+ * 重建缓存并获取音频文件列表
+ */
+ipcMain.handle(IPC_CODE.track.rebuildCache, async (evt, paths: string[]) => {
+  const rawFilePaths: string[] = [];
 
-  mydebug('过滤非可播放的音频文件');
+  for (const p of paths) {
+    mydebug('从给定的目录读取所有文件: ' + p);
+    rawFilePaths.push(...(await readDir(p)));
+  }
+
+  mydebug('过滤出音频文件');
   const audioFilePaths = getAudioFiles(rawFilePaths);
 
-  let finalTracks = [];
+  mydebug('清空数据库并重新生成');
+  try {
+    await TrackModel.destroy({ truncate: true });
+    mydebug('清空数据库成功');
+  } catch (err) {
+    throw new Error('清空数据库失败');
+  }
 
   mydebug('从音频文件中解析相关信息');
   const allTracks = await getAudioFilesMeta(
@@ -39,47 +61,12 @@ ipcMain.handle(IPC_CODE.track.getList, async (evt, p, opts) => {
     audioFilePaths.length
   );
 
-  if (rebuild) {
-    mydebug('清空数据库并重新生成');
-    try {
-      await TrackModel.destroy({ truncate: true });
-      mydebug('清空数据库成功');
-      finalTracks = allTracks;
-    } catch (err) {
-      throw new Error('清空数据库失败');
-    }
-  }
+  mydebug('等待写入数据库');
+  await saveToDB(allTracks);
 
-  if (fromCache) {
-    mydebug('从缓存数据库中读取');
-    try {
-      finalTracks = (await TrackModel.findAll()).map((t) => t.get());
-      mydebug('从缓存数据库读取成功');
-    } catch (err) {
-      mydebug('从数据库中读取失败');
-    }
-  } else {
-    finalTracks = allTracks;
-    await saveToDB(finalTracks);
-  }
+  myapp.mainWindow?.webContents.send(IPC_CODE.track.msg, 'done');
 
-  myapp.mainWindow?.webContents.send(IPC_CODE.track.get, 'done');
-
-  return finalTracks;
-});
-
-/**
- * 获取歌曲文件信息
- */
-ipcMain.handle(IPC_CODE.track.get, async (evt, uuid) => {
-  mydebug('音频文件 uuid:' + uuid);
-
-  try {
-    const result = await TrackModel.findOne({ where: { uuid: uuid } });
-    if (result) return result;
-  } catch (err) {
-    mydebug('无法获取音频文件');
-  }
+  return allTracks;
 });
 
 //
@@ -118,7 +105,7 @@ async function getAudioFilesMeta(paths: string[], totals: number) {
     const msg = `共${totals}个，当前为第${index}个: ${p}`;
 
     // 向渲染进程主动发送文件读取情况
-    myapp.mainWindow?.webContents.send(IPC_CODE.track.get, msg);
+    myapp.mainWindow?.webContents.send(IPC_CODE.track.msg, msg);
 
     const meta = await readMusicMeta(p);
     tracks.push(meta);
@@ -134,13 +121,16 @@ async function getAudioFilesMeta(paths: string[], totals: number) {
  * @param tracks 最终需要进行保存的音频列表
  */
 async function saveToDB(tracks: Track[]) {
-  const tracksToSave = await getTracksNotCached(tracks);
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await TrackModel.bulkCreate(tracksToSave as any[]);
-    mydebug('写入数据库成功');
-  } catch (err) {
-    mydebug('写入数据库失败');
+  const chunkSize = 200;
+  const tracksToSave: any[] = await getTracksNotCached(tracks);
+  for (let i = 0; i < tracks.length; i += chunkSize) {
+    try {
+      await TrackModel.bulkCreate(tracksToSave.slice(i, i + chunkSize));
+      mydebug('写入数据库成功', i, '-', i + chunkSize);
+    } catch (err) {
+      console.error(err);
+      mydebug('写入数据库失败', i, '-', i + chunkSize);
+    }
   }
 }
 
@@ -154,9 +144,11 @@ async function getTracksNotCached(tracks: Track[]) {
   for (const track of tracks) {
     const cached = await isCached(track);
     if (!cached) {
-      mydebug('未缓存，加入缓存列表: ' + track.title);
+      // mydebug('未缓存，加入缓存列表: ' + track.title);
       temp.push(track);
-    } else mydebug('已经缓存: ' + track.title);
+    } else {
+      // mydebug('已经缓存: ' + track.title);
+    }
   }
   return temp;
 }
@@ -175,20 +167,32 @@ async function readMusicMeta(p: string) {
     meta = await mm.parseBuffer(buffer);
   } catch (err) {
     meta = null;
-    mydebug(err);
+    console.error(err);
+    mydebug('文件名: ' + p);
   }
 
-  const picture = meta?.common?.picture;
+  const picture = meta ? meta.common?.picture : '';
   const arrybuffer = picture ? picture[0].data : null;
 
   return {
     createAt: stats.birthtime.valueOf(),
-    modifiedAt: stats.mtime.valueOf(),
     updateAt: stats.ctime.valueOf(),
-    ...meta?.common,
+    modifiedAt: stats.mtime.valueOf(),
+    //uuid
     src: p,
+    title: meta?.common.title,
+    year: meta?.common.year,
+    artist: meta?.common.artist,
+    artists: String(meta?.common.artists),
+    albumartist: String(meta?.common.albumartist),
+    album: meta?.common.album,
     duration: meta?.format.duration,
+    origindate: meta?.common.originalyear,
+    originyear: meta?.common.originalyear,
+    comment: String(meta?.common.comment),
+    genre: String(meta?.common.genre),
     picture: arrybuffer ? arrayBufferToBase64(arrybuffer) : '',
+    composer: meta?.common.composer,
     md5: getMd5(buffer),
   } as Track;
 }

@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 01:51:07
- * @LastEditTime : 2022-01-28 15:46:32
+ * @LastEditTime : 2022-01-28 22:17:23
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\constant\index.ts
+ * @FilePath     : \horen\packages\horen\constant\index.ts
  * @Description  :
  */
 import { SettingFile } from '../types';
@@ -14,8 +14,9 @@ import myapp from '../main/app';
  */
 export const IPC_CODE = {
   track: {
-    getList: 'file:getList',
-    get: 'file:get',
+    getListCached: 'track:get-list-cached',
+    rebuildCache: 'track:rebuild-list',
+    msg: 'track:msg',
   },
   setting: {
     get: 'setting:get',

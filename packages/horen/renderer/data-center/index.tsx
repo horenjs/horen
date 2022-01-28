@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:00:44
- * @LastEditTime : 2022-01-28 15:38:06
+ * @LastEditTime : 2022-01-28 22:20:31
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\data-center\index.tsx
+ * @FilePath     : \horen\packages\horen\renderer\data-center\index.tsx
  * @Description  :
  */
 const electron = window.require('electron');
@@ -12,23 +12,17 @@ import { Track, SettingFile } from 'types';
 import { IPC_CODE } from '../../constant';
 
 export class TrackDC {
-  public static async getList(
-    path: string,
-    opts: {
-      rebuild: boolean;
-      fromCache: boolean;
-    }
-  ) {
-    return await ipcRenderer.invoke(IPC_CODE.track.getList, path, opts);
+  public static async getListCached() :Promise<Track[]> {
+    return await ipcRenderer.invoke(IPC_CODE.track.getListCached);
   }
 
-  public static async get(p: string): Promise<Track> {
-    return await ipcRenderer.invoke(IPC_CODE.track.get, p);
+  public static async rebuildCache(paths: string[]): Promise<Track[]> {
+    return await ipcRenderer.invoke(IPC_CODE.track.rebuildCache, paths);
   }
 
   public static async getMsg(): Promise<string> {
     return new Promise((resolve, reject) => {
-      ipcRenderer.on(IPC_CODE.track.get, (evt, msg) => {
+      ipcRenderer.on(IPC_CODE.track.msg, (evt, msg) => {
         resolve(msg);
       });
     });

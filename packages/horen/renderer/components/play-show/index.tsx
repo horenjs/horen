@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-28 18:20:34
- * @LastEditTime : 2022-01-28 19:36:37
+ * @LastEditTime : 2022-01-28 23:46:43
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\components\play-show\index.tsx
+ * @FilePath     : \horen\packages\horen\renderer\components\play-show\index.tsx
  * @Description  :
  */
 import React from 'react';
@@ -34,8 +34,6 @@ export default function PlayShow(props: Props) {
   };
 
   React.useEffect(() => {
-    console.log(visible);
-
     if (visible) {
       if (isMounting) setAni('hidden');
       else setAni('slideInDown');

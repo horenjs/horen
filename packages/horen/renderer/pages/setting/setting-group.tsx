@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-25 11:25:59
- * @LastEditTime : 2022-01-28 17:00:15
+ * @LastEditTime : 2022-01-28 22:30:01
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\pages\setting\setting-group.tsx
+ * @FilePath     : \horen\packages\horen\renderer\pages\setting\setting-group.tsx
  * @Description  :
  */
 import React from 'react';
@@ -89,9 +89,9 @@ export default function Group(props: Props) {
                 onClick={async (e: React.MouseEvent<HTMLElement>) =>
                   await handleAddCollectionPaths(e, index)
                 }
-                style={{ margin: '8px 0' }}
+                style={{ margin: '8px 0', fontSize: 12 }}
               >
-                <span style={{ fontSize: 12 }}>添加</span>
+                添加目录
               </button>
             </div>
           )}

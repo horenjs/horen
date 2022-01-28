@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-26 10:46:26
- * @LastEditTime : 2022-01-28 17:38:18
+ * @LastEditTime : 2022-01-28 23:41:41
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\main\db\models\track.model.ts
+ * @FilePath     : \horen\packages\horen\main\db\models\track.model.ts
  * @Description  :
  */
 import { DataTypes } from 'sequelize';

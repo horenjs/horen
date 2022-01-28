@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 12:32:21
- * @LastEditTime : 2022-01-28 10:38:46
+ * @LastEditTime : 2022-01-28 11:06:28
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\pages\library\album-modal.tsx
  * @Description  :
@@ -9,7 +9,6 @@
 import React from 'react';
 import defaultCover from '@/static/image/default-cover';
 import { Track, Album } from 'types';
-import _ from 'underscore';
 
 interface Props {
   album: Album;

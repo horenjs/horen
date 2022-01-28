@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-28 10:38:15
+ * @LastEditTime : 2022-01-28 11:10:59
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
@@ -149,10 +149,8 @@ const MyLib = styled.div`
     .album-children {
       width: calc(100% - 280px);
       max-height: calc(480px - 100px);
-      margin: 0 48px 0 0;
+      margin: 16px 48px 0 0;
       padding-right: 8px;
-      display: flex;
-      align-items: center;
       flex-wrap: wrap;
       overflow-y: hidden;
       &:hover {
@@ -171,6 +169,7 @@ const MyLib = styled.div`
         cursor: pointer;
         text-align: left;
         display: flex;
+        align-items: center;
         border-radius: 4px;
         &:hover {
           background-color: #2a2b2c;

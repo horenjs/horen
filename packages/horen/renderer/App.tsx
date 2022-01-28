@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-28 17:05:01
+ * @LastEditTime : 2022-01-28 19:31:58
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -21,6 +21,7 @@ import Library from './pages/library';
 import SettingPage from './pages/setting';
 import ControlPanel from './components/control-panel';
 import { PlayQueue } from './components/play-queue';
+import PlayShow from './components/play-show';
 import { SettingDC, TrackDC } from './data-center';
 import { SettingFile, Track } from 'types';
 import { PAGES } from '../constant';
@@ -33,6 +34,7 @@ export const player = new Player();
 export default function App() {
   const [progress, setProgress] = React.useState(0);
   const [isQueueVisible, setIsQueueVisible] = React.useState(false);
+  const [playShow, setPlayShow] = React.useState(false);
   /**
    * 音频加载进度
    */
@@ -140,6 +142,7 @@ export default function App() {
           </Routes>
         </div>
       </div>
+
       {/* 歌曲控制中心 */}
       <ControlPanel
         track={player.currentTrack}
@@ -148,6 +151,7 @@ export default function App() {
         onPlayOrPause={() => player.playOrPause()}
         onNext={() => player.skip('next')}
         onSeek={(per) => (player.seek = per * player.duration)}
+        onShow={() => setPlayShow(true)}
         progress={progress}
         plugin={
           <div
@@ -167,6 +171,13 @@ export default function App() {
         visible={isQueueVisible}
         onPlay={(track) => (player.currentTrack = track)}
         onClose={() => setIsQueueVisible(false)}
+      />
+      <PlayShow
+        playingTrack={player.currentTrack}
+        visible={playShow}
+        onClose={() => {
+          setPlayShow(false);
+        }}
       />
     </MyApp>
   );

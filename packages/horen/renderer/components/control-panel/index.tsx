@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:12:15
- * @LastEditTime : 2022-01-22 17:02:54
+ * @LastEditTime : 2022-01-28 19:43:39
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\renderer\components\control-panel\index.tsx
+ * @FilePath     : \Horen\packages\horen\renderer\components\control-panel\index.tsx
  * @Description  :
  */
 import React from 'react';
@@ -76,9 +76,32 @@ const My = styled.div`
       background-color: #999;
       border-radius: 4px;
       position: relative;
+      &:hover {
+        .up-arrow {
+          visibility: visible;
+        }
+        .loader {
+          visibility: hidden;
+        }
+      }
       img {
         width: 100%;
         object-fit: cover;
+      }
+      .up-arrow {
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        position: absolute;
+        line-height: 44px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #f1f1f1;
+        cursor: pointer;
+        visibility: hidden;
       }
       .loader {
         position: absolute;
@@ -128,6 +151,7 @@ export interface ControlPanelProps {
   onNext(): void;
   onPlayOrPause(): void;
   onSeek(per: number): void;
+  onShow(): void;
   plugin?: React.ReactNode;
 }
 
@@ -140,6 +164,7 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
     onPlayOrPause,
     onNext,
     onSeek,
+    onShow,
     plugin,
   } = props;
 
@@ -190,6 +215,17 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
             src={`data:image/png;base64,${track?.picture || defaultCover}`}
             alt={track?.title || 'unkown-track'}
           />
+          <div
+            className="up-arrow"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onShow();
+            }}
+            role="button"
+          >
+            ︿
+          </div>
           {playing && (
             <div className="loader">
               <Loader style="pulse" />

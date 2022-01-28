@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 10:34:25
- * @LastEditTime : 2022-01-26 14:19:53
+ * @LastEditTime : 2022-01-28 11:27:12
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\main\app.ts
  * @Description  :
@@ -79,9 +79,9 @@ export class App {
 export function createWindow(opts?: BrowserWindowConstructorOptions) {
   return new BrowserWindow({
     ...opts,
-    width: opts?.width || 900,
-    height: opts?.height || 700,
-    minWidth: opts?.minWidth || 1156,
+    width: opts?.width || 1024,
+    height: opts?.height || 800,
+    minWidth: opts?.minWidth || 1024,
     minHeight: opts?.minHeight || 764,
     resizable: true,
     webPreferences: {

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-28 11:10:59
+ * @LastEditTime : 2022-01-28 11:22:19
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
@@ -84,13 +84,13 @@ const MyLib = styled.div`
     flex-wrap: wrap;
     .album {
       display: inline-block;
-      height: 272px;
+      height: 280px;
       width: 192px;
-      margin: 8px 8px 8px 8px;
+      margin: 8px 16px;
       cursor: pointer;
       img {
         width: 100%;
-        height: calc(100% - 70px);
+        height: calc(100% - 88px);
         object-fit: cover;
         border-radius: 4px;
       }
@@ -98,7 +98,7 @@ const MyLib = styled.div`
         .name {
           color: #f1f1f1;
         }
-        .artist {
+        .track-count,.artist {
           color: #aaa;
           font-size: 0.8rem;
           margin: 4px 0;

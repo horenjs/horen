@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 12:50:22
- * @LastEditTime : 2022-01-28 09:24:16
+ * @LastEditTime : 2022-01-28 11:17:45
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\pages\library\album-viewer.tsx
  * @Description  : 
@@ -37,6 +37,7 @@ export function AlbumView(props: Props) {
       <img src={`data:image/png;base64,${src}`} alt={album.name} />
       <div className="info">
         <div className="name">{album.name}</div>
+        <div className='track-count'>{album.children.length} 首歌曲</div>
         <div className="artist">{album.children[0].artist}</div>
       </div>
     </div>

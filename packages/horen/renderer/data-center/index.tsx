@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:00:44
- * @LastEditTime : 2022-01-27 10:38:30
+ * @LastEditTime : 2022-01-28 12:06:06
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\data-center\index.tsx
  * @Description  :
@@ -20,7 +20,7 @@ export class TrackDC {
     return await ipcRenderer.invoke(IPC_CODE.file.get, p);
   }
 
-  public static async getMsg() {
+  public static async getMsg() :Promise<string> {
     return new Promise((resolve, reject) => {
       ipcRenderer.on(IPC_CODE.file.get, (evt, msg) => {
         resolve(msg);

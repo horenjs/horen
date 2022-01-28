@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-28 10:39:08
+ * @LastEditTime : 2022-01-28 12:16:01
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -36,7 +36,7 @@ export default function App() {
   /**
    * 音频加载进度
    */
-  const [trackLoadProgress, setTrackLoadProgress] = React.useState<string>();
+  const [trackLoadProgress, setTrackLoadProgress] = React.useState<string>('');
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -57,9 +57,9 @@ export default function App() {
   React.useEffect(() => {
     (async () => {
       const msg = await TrackDC.getMsg();
-      setTrackLoadProgress(msg as string);
-      if (msg === 'finished') setTrackLoadProgress(undefined);
+      setTrackLoadProgress(msg);
     })();
+    setTimeout(() => setTrackLoadProgress(''), 1500);
   }, [trackLoadProgress]);
 
   // 音频队列改变时触发
@@ -99,7 +99,7 @@ export default function App() {
 
   return (
     <MyApp className="app">
-      {trackLoadProgress && (
+      {trackLoadProgress && trackLoadProgress !== 'done' && (
         <div className="track-load-progress">{trackLoadProgress}</div>
       )}
       <div className="pages">
@@ -202,7 +202,7 @@ const MyApp = styled.div`
   .track-load-progress {
     position: fixed;
     width: 500px;
-    top: 50px;
+    top: 20px;
     left: 50%;
     transform: translateX(-50%);
     background-color: #717273;
@@ -210,6 +210,7 @@ const MyApp = styled.div`
     font-size: 0.8rem;
     color: #f1f1f1;
     text-align: center;
+    border-radius: 4px;
   }
   .pages {
     background-color: #313233;

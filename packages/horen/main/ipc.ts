@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 10:40:55
- * @LastEditTime : 2022-01-27 22:47:46
+ * @LastEditTime : 2022-01-28 12:01:12
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\main\ipc.ts
+ * @FilePath     : \Horen\packages\horen\main\ipc.ts
  * @Description  :
  */
 import path from 'path';
@@ -83,8 +83,6 @@ ipcMain.handle(IPC_CODE.file.getList, async (evt, p, clear = false) => {
   } catch (err) {
     mydebug('写入数据库失败');
   }
-
-  myapp.mainWindow?.webContents.send(IPC_CODE.file.get, 'finished');
 
   return tracksToSaveParsed;
 });
@@ -175,10 +173,12 @@ async function parseTracks(paths: string[], totals: number) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tracksToSave: any[] = [];
 
-  let index = 0;
+  let index = 1;
 
   for (const p of paths) {
-    const msg = `共${totals}个，当前为第${index}个: ${p}`;
+    let msg = `共${totals}个，当前为第${index}个: ${p}`;
+    if (index === totals) msg = 'done';
+    
     mydebug(msg);
 
     // 向渲染进程主动发送文件读取情况

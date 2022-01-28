@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 16:24:28
- * @LastEditTime : 2022-01-28 13:16:31
+ * @LastEditTime : 2022-01-28 13:23:10
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\components\play-queue\index.tsx
  * @Description  : 右侧滑出的歌曲列表
@@ -11,6 +11,7 @@ import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import { Track } from 'types';
 import Queue from './queue';
+import { ANIMATION_DELAY } from '../../../constant';
 
 export interface PlayQueueProps {
   /**
@@ -51,7 +52,10 @@ export function PlayQueue(props: PlayQueueProps) {
   }, [visible]);
 
   React.useEffect(() => {
-    const timer = setTimeout(() => setIsMounting(false), 500);
+    const timer = setTimeout(
+      () => setIsMounting(false),
+      ANIMATION_DELAY.normal * 2
+    );
     return () => clearTimeout(timer);
   }, []);
 
@@ -83,11 +87,11 @@ const MyPlayQueue = styled.div`
   background-color: #414243;
   color: #f1f1f1;
   &.animation-slideOutRight {
-    animation: slideOutRight 0.25s;
+    animation: slideOutRight ${ANIMATION_DELAY.normal / 1000}s;
     animation-fill-mode: forwards;
   }
   &.animation-slideInRight {
-    animation: slideInRight 0.25s;
+    animation: slideInRight ${ANIMATION_DELAY.normal / 1000}s;
     animation-fill-mode: forwards;
   }
   &.animation-hidden {

@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 01:51:07
- * @LastEditTime : 2022-01-27 22:41:44
+ * @LastEditTime : 2022-01-28 13:20:26
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\constant\index.ts
+ * @FilePath     : \Horen\packages\horen\constant\index.ts
  * @Description  :
  */
 import { SettingFile } from '../types';
@@ -134,3 +134,12 @@ export const PAGES = [
     title: '设置',
   },
 ];
+
+/**
+ * 动画持续时长
+ */
+export const ANIMATION_DELAY = {
+  slow: 500,
+  normal: 250,
+  fast: 100
+}

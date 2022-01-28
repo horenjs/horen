@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-28 14:55:06
- * @LastEditTime : 2022-01-28 16:06:05
+ * @LastEditTime : 2022-01-28 16:37:51
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\main\ipc\track.ipc.ts
  * @Description  :
@@ -59,7 +59,7 @@ ipcMain.handle(IPC_CODE.track.getList, async (evt, p, opts) => {
       mydebug('从数据库中读取失败');
     }
   } else {
-    finalTracks = getTracksNotCached(allTracks);
+    finalTracks = allTracks;
     await saveToDB(finalTracks);
   }
 
@@ -130,28 +130,35 @@ async function getAudioFilesMeta(paths: string[], totals: number) {
 }
 
 /**
- * 找到未缓存的音频文件
- * @param tracks 音频列表
- * @returns 过滤后的列表
- */
-function getTracksNotCached(tracks: Track[]) {
-  return tracks.filter(async (track) => {
-    return await isCached(track);
-  });
-}
-
-/**
  * 保存音频文件信息到缓存数据库
  * @param tracks 最终需要进行保存的音频列表
  */
 async function saveToDB(tracks: Track[]) {
+  const tracksToSave = await getTracksNotCached(tracks);
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await TrackModel.bulkCreate(tracks as any[]);
+    await TrackModel.bulkCreate(tracksToSave as any[]);
     mydebug('写入数据库成功');
   } catch (err) {
     mydebug('写入数据库失败');
   }
+}
+
+/**
+ * 找到未缓存的音频文件
+ * @param tracks 音频列表
+ * @returns 过滤后的列表
+ */
+async function getTracksNotCached(tracks: Track[]) {
+  const temp = [];
+  for (const track of tracks) {
+    const cached = await isCached(track);
+    if (!cached) {
+      mydebug('未缓存，加入缓存列表: ' + track.title);
+      temp.push(track);
+    } else mydebug('已经缓存: ' + track.title);
+  }
+  return temp;
 }
 
 /**
@@ -203,7 +210,9 @@ function getMd5(buf: Buffer) {
  * @returns
  */
 async function isCached(track: Track) {
-  return await TrackModel.findOne({
+  const result = await TrackModel.findOne({
     where: { md5: track.md5 },
   });
+  if (result) return true;
+  else return false;
 }

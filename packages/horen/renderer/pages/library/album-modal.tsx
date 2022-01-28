@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 12:32:21
- * @LastEditTime : 2022-01-27 23:11:59
+ * @LastEditTime : 2022-01-28 10:38:46
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\renderer\pages\library\album-modal.tsx
+ * @FilePath     : \Horen\packages\horen\renderer\pages\library\album-modal.tsx
  * @Description  :
  */
 import React from 'react';
@@ -119,14 +119,4 @@ export function AlbumModal(props: Props) {
       </div>
     </div>
   );
-}
-
-function isInQueue(track: Track, tracks?: Track[]) {
-  return tracks?.map((track) => track.title).includes(track.title);
-}
-
-function includesDeep(obj: object, arr?: Track[]) {
-  const filtered = arr?.filter((value) => _.isEqual(value, obj));
-  if (filtered && filtered.length > 0) return true;
-  else return false;
 }

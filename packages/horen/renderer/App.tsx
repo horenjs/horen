@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-28 10:28:26
+ * @LastEditTime : 2022-01-28 10:39:08
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -36,7 +36,7 @@ export default function App() {
   /**
    * 音频加载进度
    */
-  const [trackLoadProgress, setTrackLoadProgress] = React.useState('');
+  const [trackLoadProgress, setTrackLoadProgress] = React.useState<string>();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -58,6 +58,7 @@ export default function App() {
     (async () => {
       const msg = await TrackDC.getMsg();
       setTrackLoadProgress(msg as string);
+      if (msg === 'finished') setTrackLoadProgress(undefined);
     })();
   }, [trackLoadProgress]);
 
@@ -98,7 +99,7 @@ export default function App() {
 
   return (
     <MyApp className="app">
-      {trackLoadProgress !== 'finished' && (
+      {trackLoadProgress && (
         <div className="track-load-progress">{trackLoadProgress}</div>
       )}
       <div className="pages">

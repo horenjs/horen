@@ -1,13 +1,13 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 12:50:22
- * @LastEditTime : 2022-01-22 13:12:43
+ * @LastEditTime : 2022-01-28 09:24:16
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\renderer\pages\library\album-viewer.tsx
+ * @FilePath     : \Horen\packages\horen\renderer\pages\library\album-viewer.tsx
  * @Description  : 
  */
 import React from 'react';
-import { Album } from '.';
+import { Album } from 'types';
 import defaultCover from '@/static/image/default-cover';
 
 interface Props {

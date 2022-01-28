@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-23 15:16:09
- * @LastEditTime : 2022-01-27 23:22:41
+ * @LastEditTime : 2022-01-28 09:27:33
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\renderer\pages\setting\index.tsx
+ * @FilePath     : \Horen\packages\horen\renderer\pages\setting\index.tsx
  * @Description  : setting page
  */
 import React from 'react';
@@ -42,8 +42,16 @@ export default function SettingPage() {
                   onChange={async (newGroup) => {
                     const groups = [...setting.groups];
                     groups[index] = newGroup;
-                    setSetting({ ...setting, groups });
-                    await SettingDC.set({ ...setting, groups });
+                    setSetting({
+                      ...setting,
+                      updateAt: new Date().valueOf(),
+                      groups,
+                    });
+                    await SettingDC.set({
+                      ...setting,
+                      updateAt: new Date().valueOf(),
+                      groups,
+                    });
                   }}
                 />
               </div>

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:00:44
- * @LastEditTime : 2022-01-28 22:20:31
+ * @LastEditTime : 2022-01-29 00:41:14
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\data-center\index.tsx
  * @Description  :
@@ -18,6 +18,10 @@ export class TrackDC {
 
   public static async rebuildCache(paths: string[]): Promise<Track[]> {
     return await ipcRenderer.invoke(IPC_CODE.track.rebuildCache, paths);
+  }
+
+  public static async getByUUID(uuid: string): Promise<Track> {
+    return await ipcRenderer.invoke(IPC_CODE.track.getByUUID, uuid);
   }
 
   public static async getMsg(): Promise<string> {
@@ -42,5 +46,11 @@ export class SettingDC {
 export class DialogDC {
   public static async open(flag?: string) {
     return await ipcRenderer.invoke(IPC_CODE.dialog.open, flag);
+  }
+}
+
+export class MainwindowDC {
+  public static async close() {
+    return await ipcRenderer.invoke(IPC_CODE.mainwindow.close);
   }
 }

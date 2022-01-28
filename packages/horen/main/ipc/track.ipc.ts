@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-28 14:55:06
- * @LastEditTime : 2022-01-28 23:51:10
+ * @LastEditTime : 2022-01-29 00:09:05
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\main\ipc\track.ipc.ts
  * @Description  :
@@ -67,6 +67,21 @@ ipcMain.handle(IPC_CODE.track.rebuildCache, async (evt, paths: string[]) => {
   myapp.mainWindow?.webContents.send(IPC_CODE.track.msg, 'done');
 
   return allTracks;
+});
+
+ipcMain.handle(IPC_CODE.track.getByUUID, async (evt, uuid: string) => {
+  try {
+    const result = await TrackModel.findOne({ where: { uuid } });
+    if (result) {
+      mydebug('获取音频成功: ' + uuid);
+      return result.toJSON();
+    } else {
+      mydebug('获取音频失败: ' + uuid);
+    }
+  } catch (err) {
+    console.error(err);
+    mydebug('获取音频失败: ' + uuid);
+  }
 });
 
 //

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 01:51:07
- * @LastEditTime : 2022-01-28 22:17:23
+ * @LastEditTime : 2022-01-29 00:38:17
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\constant\index.ts
  * @Description  :
@@ -17,6 +17,7 @@ export const IPC_CODE = {
     getListCached: 'track:get-list-cached',
     rebuildCache: 'track:rebuild-list',
     msg: 'track:msg',
+    getByUUID: 'track:get-by-uuid',
   },
   setting: {
     get: 'setting:get',
@@ -25,6 +26,9 @@ export const IPC_CODE = {
   dialog: {
     open: 'dialog:get',
   },
+  mainwindow: {
+    close: 'mainwindow:close',
+  }
 };
 
 /**
@@ -47,7 +51,8 @@ export const DEFAULT_SETTING: SettingFile = {
   updateAt: new Date().valueOf(),
   // 修改设置时同步修改版本号
   // 以便生成新的设置文件
-  version: '0.0.6',
+  version: '0.0.7',
+  playList: [],
   groups: [
     {
       name: 'common',

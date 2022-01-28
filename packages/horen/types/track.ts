@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 22:24:48
- * @LastEditTime : 2022-01-28 14:45:41
+ * @LastEditTime : 2022-01-29 00:03:28
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\types\track.ts
+ * @FilePath     : \horen\packages\horen\types\track.ts
  * @Description  :
  */
 import {
@@ -23,6 +23,7 @@ export interface Base {
 }
 
 export interface MyTrack extends Base {
+  uuid?: string,
   date?: MyDate;
   picture?: string;
   common?: ICommonTagsResult;

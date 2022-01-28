@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-28 23:48:51
+ * @LastEditTime : 2022-01-29 00:41:57
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -22,7 +22,7 @@ import SettingPage from './pages/setting';
 import ControlPanel from './components/control-panel';
 import { PlayQueue } from './components/play-queue';
 import PlayShow from './components/play-show';
-import { SettingDC, TrackDC } from './data-center';
+import { SettingDC, TrackDC, MainwindowDC } from './data-center';
 import { SettingFile, Track } from 'types';
 import { PAGES } from '../constant';
 import Player from 'horen-plugin-player';
@@ -44,7 +44,7 @@ export default function App() {
   const location = useLocation();
 
   const [trackList, setTrackList] = useRecoilState(trackListState);
-  const setSetting = useSetRecoilState(settingState);
+  const [setting, setSetting] = useRecoilState(settingState);
   const [tracksInQueue, setTracksInQueue] = useRecoilState(tracksInQueueState);
 
   const isTrackLoaded =
@@ -58,6 +58,14 @@ export default function App() {
     }) as Track[];
 
     setTracksInQueue([...tracksInQueue, ...tracksToPlay]);
+  };
+
+  const savePlaylist = async () => {
+    // 保存播放列表到文件
+    await SettingDC.set({
+      ...setting,
+      playList: tracksInQueue.map((t) => t.uuid || ''),
+    });
   };
 
   // 监听主进程传递过来的音频文件读取进度信息
@@ -102,11 +110,38 @@ export default function App() {
       } else {
         setTrackList(await TrackDC.getListCached());
       }
+
+      const playList = [];
+      // console.log(st);
+      for (const u of st.playList) {
+        // console.log(u);
+        playList.push(await TrackDC.getByUUID(u));
+      }
+      setTracksInQueue(playList);
     })();
   }, []);
 
   return (
     <MyApp className="app">
+      <div className="title-bar">
+        <div
+          className="close"
+          role="button"
+          onClick={async (e) => {
+            e.preventDefault();
+            if (confirm('关闭前是否保存播放列表?')) {
+              await savePlaylist();
+              // to close
+              await MainwindowDC.close();
+            } else {
+              // to close directly.
+              await MainwindowDC.close();
+            }
+          }}
+        >
+          ✕
+        </div>
+      </div>
       {!isTrackLoaded && (
         <div className="track-load-progress">{trackLoadProgress}</div>
       )}
@@ -211,6 +246,29 @@ function getSettingItem(
 const MyApp = styled.div`
   margin: 0;
   padding: 0;
+  .title-bar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 24px;
+    .close {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      right: 0px;
+      top: 0px;
+      line-height: 24px;
+      text-align: center;
+      color: #999;
+      font-size: 1rem;
+      cursor: pointer;
+      &:hover {
+        background-color: #c41313;
+        color: #ffffff;
+      }
+    }
+  }
   .track-load-progress {
     position: fixed;
     min-width: 800px;

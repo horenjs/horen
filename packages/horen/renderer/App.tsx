@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-28 14:25:23
+ * @LastEditTime : 2022-01-28 16:04:18
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -46,7 +46,7 @@ export default function App() {
   const [tracksInQueue, setTracksInQueue] = useRecoilState(tracksInQueueState);
 
   const isTrackLoaded =
-    trackList.length ||
+    trackList.length > 0 ||
     trackLoadProgress === 'done' ||
     trackLoadProgress === '';
 
@@ -88,16 +88,31 @@ export default function App() {
       // 填入到 setting state 中
       setSetting(st);
       // 填入到相应的 state 中
-      setTrackList(await getAllTracks(st));
+      const rebuild = getSettingItem(
+        st,
+        'start',
+        'rebuildWhenStart'
+      ) as boolean;
+      
+      setTrackList(
+        await getAllTracks(st, {
+          rebuild: rebuild,
+          fromCache: !rebuild,
+        })
+      );
     })();
   }, []);
 
   // 监听：曲库位置变化时 刷新数据库
   React.useEffect(() => {
     (async () => {
-      setTrackList(await getAllTracks(setting));
+      setTrackList(
+        await getAllTracks(setting, { rebuild: false, fromCache: false })
+      );
     })();
-  }, [getCollectionPaths(setting)?.length]);
+  }, [
+    (getSettingItem(setting, 'common', 'collectionPaths') as string[])?.length,
+  ]);
 
   return (
     <MyApp className="app">
@@ -168,31 +183,52 @@ export default function App() {
   );
 }
 
-function getCollectionPaths(setting: SettingFile) {
+/**
+ * 从设置中找到曲库目录
+ * @param setting SettingFile
+ * @returns collection paths
+ */
+function getSettingItem(
+  setting: SettingFile,
+  groupName: string,
+  itemLabel: string
+) {
   const groups = setting.groups;
 
   if (!groups) return [];
 
   for (const group of groups) {
-    if (group.name === 'common') {
+    if (group.name === groupName) {
       for (const c of group.children) {
-        if (c.label === 'collectionPaths') {
-          return c.value as string[];
+        if (c.label === itemLabel) {
+          return c.value;
         }
       }
     }
   }
 }
 
-async function getAllTracks(setting: SettingFile) {
+async function getAllTracks(
+  setting: SettingFile,
+  opts = {
+    rebuild: false,
+    fromCache: true,
+  }
+) {
   // 从设置中将曲库位置取出
   // 设置一个空数组用于存储
   const tracks: Track[] = [];
   // 获取设置中的曲库位置列表
-  const collectionPaths = getCollectionPaths(setting) || [];
+  const collectionPaths = getSettingItem(
+    setting,
+    'common',
+    'collectionPaths'
+  ) as string[];
   // 遍历列表获取其中的所有音频列表
   for (const p of collectionPaths) {
-    tracks.push(...(await TrackDC.getList(p)));
+    const allTracks = await TrackDC.getList(p, opts);
+
+    tracks.push(...allTracks);
   }
 
   return tracks;

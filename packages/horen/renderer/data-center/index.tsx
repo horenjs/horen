@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:00:44
- * @LastEditTime : 2022-01-28 12:06:06
+ * @LastEditTime : 2022-01-28 15:38:06
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\data-center\index.tsx
  * @Description  :
@@ -12,17 +12,23 @@ import { Track, SettingFile } from 'types';
 import { IPC_CODE } from '../../constant';
 
 export class TrackDC {
-  public static async getList(path: string, clear?: boolean) {
-    return await ipcRenderer.invoke(IPC_CODE.file.getList, path, clear);
+  public static async getList(
+    path: string,
+    opts: {
+      rebuild: boolean;
+      fromCache: boolean;
+    }
+  ) {
+    return await ipcRenderer.invoke(IPC_CODE.track.getList, path, opts);
   }
 
   public static async get(p: string): Promise<Track> {
-    return await ipcRenderer.invoke(IPC_CODE.file.get, p);
+    return await ipcRenderer.invoke(IPC_CODE.track.get, p);
   }
 
-  public static async getMsg() :Promise<string> {
+  public static async getMsg(): Promise<string> {
     return new Promise((resolve, reject) => {
-      ipcRenderer.on(IPC_CODE.file.get, (evt, msg) => {
+      ipcRenderer.on(IPC_CODE.track.get, (evt, msg) => {
         resolve(msg);
       });
     });

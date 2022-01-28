@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 01:51:07
- * @LastEditTime : 2022-01-28 13:20:26
+ * @LastEditTime : 2022-01-28 15:46:32
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\constant\index.ts
  * @Description  :
@@ -13,7 +13,7 @@ import myapp from '../main/app';
  * ipc 通信使用的信号字符
  */
 export const IPC_CODE = {
-  file: {
+  track: {
     getList: 'file:getList',
     get: 'file:get',
   },
@@ -46,7 +46,7 @@ export const DEFAULT_SETTING: SettingFile = {
   updateAt: new Date().valueOf(),
   // 修改设置时同步修改版本号
   // 以便生成新的设置文件
-  version: '0.0.5',
+  version: '0.0.6',
   groups: [
     {
       name: 'common',
@@ -80,7 +80,7 @@ export const DEFAULT_SETTING: SettingFile = {
       title: '启动',
       children: [
         {
-          label: 'refreshWhenOpen',
+          label: 'rebuildWhenStart',
           value: false,
           title: '启动时刷新数据库',
         },

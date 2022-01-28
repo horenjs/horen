@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 16:24:28
- * @LastEditTime : 2022-01-27 23:09:09
+ * @LastEditTime : 2022-01-28 13:16:31
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\renderer\components\play-queue\index.tsx
+ * @FilePath     : \Horen\packages\horen\renderer\components\play-queue\index.tsx
  * @Description  : 右侧滑出的歌曲列表
  */
 import React from 'react';
@@ -29,19 +29,41 @@ export interface PlayQueueProps {
 export function PlayQueue(props: PlayQueueProps) {
   const { tracks, track, visible, onPlay, onClose } = props;
 
-  const classname = `component-playlist ${
-    visible ? 'slideInRight' : 'slideOutRight'
-  }`;
+  const [isMounting, setIsMounting] = React.useState(true);
+  const [animation, setAnimation] = React.useState('');
+
+  const classnames = ['component-playlist', `animation-${animation}`];
+
+  const handleClose = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    setAnimation('slideOutRight');
+    onClose();
+  };
+
+  React.useEffect(() => {
+    if (visible) {
+      if (isMounting) setAnimation('hidden');
+      else setAnimation('slideInRight');
+    } else {
+      if (isMounting) setAnimation('hidden');
+      else setAnimation('slideOutRight');
+    }
+  }, [visible]);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setIsMounting(false), 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   return ReactDOM.createPortal(
-    <MyPlayQueue className={classname}>
+    <MyPlayQueue className={classnames.join(' ')}>
       <div className="header">
         <div className="title">播放队列</div>
         <div className="count">{tracks.length} 首歌曲</div>
       </div>
       <Queue track={track} tracks={tracks} onPlay={onPlay} />
       <div className="bottom">
-        <div className="close" role="button" onClick={(e) => onClose()}>
+        <div className="close" role="button" onClick={handleClose}>
           <span>收起队列</span>
         </div>
       </div>
@@ -60,14 +82,16 @@ const MyPlayQueue = styled.div`
   z-index: 999;
   background-color: #414243;
   color: #f1f1f1;
-
-  &.slideOutRight {
+  &.animation-slideOutRight {
     animation: slideOutRight 0.25s;
     animation-fill-mode: forwards;
   }
-  &.slideInRight {
+  &.animation-slideInRight {
     animation: slideInRight 0.25s;
     animation-fill-mode: forwards;
+  }
+  &.animation-hidden {
+    display: none;
   }
   .header {
     font-size: 1.3rem;

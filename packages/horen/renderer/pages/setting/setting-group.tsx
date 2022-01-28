@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-25 11:25:59
- * @LastEditTime : 2022-01-27 23:21:15
+ * @LastEditTime : 2022-01-28 09:38:05
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\renderer\pages\setting\setting-group.tsx
+ * @FilePath     : \Horen\packages\horen\renderer\pages\setting\setting-group.tsx
  * @Description  :
  */
 import React from 'react';
@@ -22,7 +22,7 @@ export default function Group(props: Props) {
   const [settingGroup, setSettingGroup] = React.useState(group);
 
   React.useEffect(() => {
-    console.log(settingGroup);
+    // console.log(settingGroup);
     onChange(settingGroup);
   }, [...settingGroup.children]);
 

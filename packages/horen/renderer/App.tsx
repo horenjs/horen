@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-27 22:42:04
+ * @LastEditTime : 2022-01-28 09:45:21
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\renderer\App.tsx
+ * @FilePath     : \Horen\packages\horen\renderer\App.tsx
  * @Description  :
  */
 import React from 'react';
@@ -22,7 +22,7 @@ import SettingPage from './pages/setting';
 import ControlPanel from './components/control-panel';
 import { PlayQueue } from './components/play-queue';
 import { SettingDC, TrackDC } from './data-center';
-import { SettingFile, SettingGroup, Track } from 'types';
+import { SettingFile, Track } from 'types';
 import { PAGES } from '../constant';
 import Player from 'horen-plugin-player';
 
@@ -32,13 +32,13 @@ export const player = new Player();
 
 export default function App() {
   const [progress, setProgress] = React.useState(0);
-  const [isQueue, setIsQueue] = React.useState(false);
+  const [isQueueVisible, setIsQueueVisible] = React.useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
 
   const setTrackList = useSetRecoilState(trackListState);
-  const setSetting = useSetRecoilState(settingState);
+  const [setting, setSetting] = useRecoilState(settingState);
   const [tracksInQueue, setTracksInQueue] = useRecoilState(tracksInQueueState);
 
   const handleAddTrack = (tracks: Track[]) => {
@@ -63,25 +63,26 @@ export default function App() {
     return () => clearInterval(timer);
   }, [progress]);
 
+  // 组件加载时获取设置并获取所有音频
   React.useEffect(() => {
     (async () => {
       // 获取设置
-      const setting = (await SettingDC.get()) as SettingFile;
+      const st = (await SettingDC.get()) as SettingFile;
       // 填入到 setting state 中
-      setSetting(setting);
-      // 从设置中将曲库位置取出
-      // 设置一个空数组用于存储
-      const tracks: Track[] = [];
-      // 获取设置中的曲库位置列表
-      const collectionPaths = getCollectionPaths(setting.groups) || [];
-      // 遍历列表获取其中的所有音频列表
-      for (const p of collectionPaths) {
-        tracks.push(...(await TrackDC.getList(p)));
-      }
+      setSetting(st);
       // 填入到相应的 state 中
-      setTrackList(tracks);
+      setTrackList(await getAllTracks(st));
     })();
   }, []);
+
+  // 监听：曲库位置变化时 刷新数据库
+  React.useEffect(() => {
+    (async () => {
+      console.log('曲库位置变化 刷新数据库');
+      console.log(getCollectionPaths(setting));
+      setTrackList(await getAllTracks(setting));
+    })();
+  }, [getCollectionPaths(setting)?.length]);
 
   return (
     <MyApp className="app">
@@ -130,7 +131,7 @@ export default function App() {
           <div
             className="control-panel-plugin-queue"
             role="button"
-            onClick={() => setIsQueue(true)}
+            onClick={() => setIsQueueVisible(true)}
           >
             <div>打开队列</div>
             <span>{player.trackList.length} 首歌曲</span>
@@ -141,15 +142,19 @@ export default function App() {
       <PlayQueue
         tracks={player.trackList}
         track={player.currentTrack}
-        visible={isQueue}
+        visible={isQueueVisible}
         onPlay={(track) => (player.currentTrack = track)}
-        onClose={() => setIsQueue(false)}
+        onClose={() => setIsQueueVisible(false)}
       />
     </MyApp>
   );
 }
 
-function getCollectionPaths(groups: SettingGroup[]) {
+function getCollectionPaths(setting: SettingFile) {
+  const groups = setting.groups;
+
+  if (!groups) return [];
+
   for (const group of groups) {
     if (group.name === 'common') {
       for (const c of group.children) {
@@ -159,6 +164,20 @@ function getCollectionPaths(groups: SettingGroup[]) {
       }
     }
   }
+}
+
+async function getAllTracks(setting: SettingFile) {
+  // 从设置中将曲库位置取出
+  // 设置一个空数组用于存储
+  const tracks: Track[] = [];
+  // 获取设置中的曲库位置列表
+  const collectionPaths = getCollectionPaths(setting) || [];
+  // 遍历列表获取其中的所有音频列表
+  for (const p of collectionPaths) {
+    tracks.push(...(await TrackDC.getList(p)));
+  }
+
+  return tracks;
 }
 
 const MyApp = styled.div`

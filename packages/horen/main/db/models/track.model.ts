@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-26 10:46:26
- * @LastEditTime : 2022-01-27 22:48:13
+ * @LastEditTime : 2022-01-28 17:38:18
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\main\db\models\track.model.ts
+ * @FilePath     : \Horen\packages\horen\main\db\models\track.model.ts
  * @Description  :
  */
 import { DataTypes } from 'sequelize';
@@ -44,8 +44,9 @@ const configs = {
 
 const TrackModel = db.define('Track', field, configs);
 
+/*
 (async () => {
   await TrackModel.sync({ force: true });
-})();
+})(); */
 
 export default TrackModel;

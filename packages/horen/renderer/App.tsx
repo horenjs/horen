@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-28 16:04:18
+ * @LastEditTime : 2022-01-28 16:42:50
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -102,17 +102,6 @@ export default function App() {
       );
     })();
   }, []);
-
-  // 监听：曲库位置变化时 刷新数据库
-  React.useEffect(() => {
-    (async () => {
-      setTrackList(
-        await getAllTracks(setting, { rebuild: false, fromCache: false })
-      );
-    })();
-  }, [
-    (getSettingItem(setting, 'common', 'collectionPaths') as string[])?.length,
-  ]);
 
   return (
     <MyApp className="app">

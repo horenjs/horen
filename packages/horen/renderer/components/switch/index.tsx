@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-25 14:19:11
- * @LastEditTime : 2022-01-25 14:59:16
+ * @LastEditTime : 2022-01-28 12:50:07
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\components\switch\index.tsx
  * @Description  :
@@ -18,23 +18,27 @@ export default function (props: Props) {
   const { on, onChange } = props;
 
   const [isOn, setIsOn] = React.useState(on);
+  const [isClick, setIsClick] = React.useState(false);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
+    setIsClick(true);
     const o = !isOn;
     setIsOn(o);
     onChange(o);
+    setTimeout(() => setIsClick(false), 500);
   };
+
+  const cls = `handle ${
+    isClick && (isOn ? 'right-to-left' : 'left-to-right')
+  } pos-${isOn ? 'right' : 'left'}`;
 
   return (
     <Switch
       className="component-switch"
       style={{ backgroundColor: isOn ? '#fff' : '#555' }}
     >
-      <div
-        className={`handle pos-${isOn ? 'right' : 'left'}`}
-        onClick={handleClick}
-      ></div>
+      <div className={cls} onClick={handleClick}></div>
     </Switch>
   );
 }
@@ -58,14 +62,18 @@ const Switch = styled.div`
   .pos {
     &-right {
       left: 17px;
-      animation: rightToLeft 0.5s;
-      animation-fill-mode: forwards;
     }
     &-left {
-      left: 0px;
-      animation: leftToRight 0.5s;
-      animation-fill-mode: forwards;
+      left: 1px;
     }
+  }
+  .left-to-right {
+    animation: leftToRight 0.5s;
+    animation-fill-mode: forwards;
+  }
+  .right-to-left {
+    animation: rightToLeft 0.5s;
+    animation-fill-mode: forwards;
   }
   @keyframes leftToRight {
     from {

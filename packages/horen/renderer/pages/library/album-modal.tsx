@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 12:32:21
- * @LastEditTime : 2022-01-28 11:06:28
+ * @LastEditTime : 2022-01-28 17:25:27
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\pages\library\album-modal.tsx
  * @Description  :
@@ -79,14 +79,18 @@ export function AlbumModal(props: Props) {
     <div className="album-modal-view">
       <div className="album-header">
         <div className="add-all">
-          <span
-            role="button"
-            onClick={(e) => {
-              handleAddTo(e, album.children);
-            }}
-          >
-            ✚ 全部添加
-          </span>
+          {isAllTracksInQueue(album, tracksInQueue) ? (
+            <span>✔ 已全部添加</span>
+          ) : (
+            <span
+              role="button"
+              onClick={(e) => {
+                handleAddTo(e, album.children);
+              }}
+            >
+              ✚ 全部添加
+            </span>
+          )}
         </div>
         <div className="close-button" role="button" onClick={handleClose}>
           ✕
@@ -118,4 +122,18 @@ export function AlbumModal(props: Props) {
       </div>
     </div>
   );
+}
+
+function isAllTracksInQueue(album: Album, tracks?: Track[]) {
+  let i = 0;
+  if (tracks) {
+    for (const track of tracks) {
+      for (const child of album.children) {
+        if (child.md5 === track.md5) {
+          i += 1;
+        }
+      }
+    }
+  }
+  return i === album.children.length;
 }

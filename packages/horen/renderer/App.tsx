@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-28 09:45:21
+ * @LastEditTime : 2022-01-28 10:28:26
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -33,6 +33,10 @@ export const player = new Player();
 export default function App() {
   const [progress, setProgress] = React.useState(0);
   const [isQueueVisible, setIsQueueVisible] = React.useState(false);
+  /**
+   * 音频加载进度
+   */
+  const [trackLoadProgress, setTrackLoadProgress] = React.useState('');
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,6 +52,14 @@ export default function App() {
 
     setTracksInQueue([...tracksInQueue, ...tracksToPlay]);
   };
+
+  // 监听主进程传递过来的音频文件读取进度信息
+  React.useEffect(() => {
+    (async () => {
+      const msg = await TrackDC.getMsg();
+      setTrackLoadProgress(msg as string);
+    })();
+  }, [trackLoadProgress]);
 
   // 音频队列改变时触发
   React.useEffect(() => {
@@ -86,6 +98,9 @@ export default function App() {
 
   return (
     <MyApp className="app">
+      {trackLoadProgress !== 'finished' && (
+        <div className="track-load-progress">{trackLoadProgress}</div>
+      )}
       <div className="pages">
         <div className="page-header">
           {PAGES.map((p) => {
@@ -183,6 +198,18 @@ async function getAllTracks(setting: SettingFile) {
 const MyApp = styled.div`
   margin: 0;
   padding: 0;
+  .track-load-progress {
+    position: fixed;
+    width: 500px;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #717273;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    color: #f1f1f1;
+    text-align: center;
+  }
   .pages {
     background-color: #313233;
     user-select: none;

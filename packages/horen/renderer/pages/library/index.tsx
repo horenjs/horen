@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-27 21:59:13
+ * @LastEditTime : 2022-01-28 09:51:16
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
+ * @FilePath     : \Horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
  */
 import { TrackDC } from '../../data-center';
@@ -25,8 +25,7 @@ const Library: React.FC<LibraryProps> = (props) => {
   const { onAddTo } = props;
 
   const [album, setAlbum] = React.useState<Album>();
-  const [trackLoading, setTrackLoading] = React.useState('');
-
+  
   const tracksInQueue = useRecoilValue(tracksInQueueState);
   const albums = useRecoilValue(albumListState);
 
@@ -40,19 +39,8 @@ const Library: React.FC<LibraryProps> = (props) => {
 
   const handleCloseAlbumModal = () => setAlbum(undefined);
 
-  // 监听主进程传递过来的音频文件读取进度信息
-  React.useEffect(() => {
-    (async () => {
-      const msg = await TrackDC.getMsg();
-      setTrackLoading(msg as string);
-
-      if (msg === 'finished') setTrackLoading('');
-    })();
-  }, [trackLoading]);
-
   return (
     <MyLib className="component-library">
-      <span style={{ fontSize: 12 }}>{trackLoading}</span>
       <div className="albums">
         {albums.length === 0 ? (
           <div>

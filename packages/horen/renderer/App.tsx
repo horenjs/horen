@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-29 21:48:55
+ * @LastEditTime : 2022-01-29 23:01:20
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -37,6 +37,7 @@ export default function App() {
   const [progress, setProgress] = React.useState(0);
   const [isQueueVisible, setIsQueueVisible] = React.useState(false);
   const [playShow, setPlayShow] = React.useState(false);
+  const [isRebuilding, setIsRebuilding] = React.useState(false);
   /**
    * 音频加载进度
    */
@@ -113,7 +114,10 @@ export default function App() {
       const msg = await TrackDC.getMsg();
       setTrackLoadProgress(msg);
       notice.flash(msg);
-      if (msg === 'done') notice.destory();
+      if (msg === 'done') {
+        setIsRebuilding(false);
+        notice.destory();
+      }
     })();
   }, [trackLoadProgress, trackList.length]);
 
@@ -180,17 +184,22 @@ export default function App() {
         progress={progress}
         onOpenQueue={() => setIsQueueVisible(true)}
         onRebuildCache={() => {
-          (async () => {
-            // 抽取设置项：曲库目录
-            const paths = getSettingItem(
-              setting,
-              'common',
-              'collectionPaths'
-            ) as string[];
-            const tracks = await TrackDC.rebuildCache(paths);
-            setTrackList(tracks);
-            setTracksInQueue([]);
-          })();
+          if (!isRebuilding) {
+            (async () => {
+              // 抽取设置项：曲库目录
+              const paths = getSettingItem(
+                setting,
+                'common',
+                'collectionPaths'
+              ) as string[];
+              const tracks = await TrackDC.rebuildCache(paths);
+              setTrackList(tracks);
+              setTracksInQueue([]);
+            })();
+            setIsRebuilding(true);
+          } else {
+            window.alert('正在重建缓存数据库请勿重复点击');
+          }
         }}
       />
       {/* 当前播放队列 */}

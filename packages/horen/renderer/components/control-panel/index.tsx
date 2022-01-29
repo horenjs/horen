@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:12:15
- * @LastEditTime : 2022-01-29 17:41:24
+ * @LastEditTime : 2022-01-29 18:35:34
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\components\control-panel\index.tsx
  * @Description  :
@@ -81,7 +81,6 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
   const handlePlayShow = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    player.playOrPause();
     if (onShow) onShow(e);
   };
 
@@ -95,7 +94,7 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
     e.preventDefault();
     e.stopPropagation();
     if (onRebuildCache) onRebuildCache(e);
-  }
+  };
 
   return (
     <My className="control-panel">
@@ -128,18 +127,24 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
         </div>
         <div className="track-operate">
           <div className="prev" onClick={handlePrev}>
-            上一首
+            ⊻
           </div>
-          <div className="player-or-pause" onClick={handlePlayOrPause}>
-            {playing ? '暂停' : '播放'}
+          <div className="play-or-pause" onClick={handlePlayOrPause}>
+            {playing ? (
+              <span className="to-pause">=</span>
+            ) : (
+              <span className="to-play">⊳</span>
+            )}
           </div>
           <div className="next" onClick={handleNext}>
-            下一首
+            ⊻
           </div>
         </div>
         <div className="track-plugin">
           <div className="rebuild-cache">
-            <span role={'button'} onClick={handleRebuildCache}>↺</span>
+            <span role={'button'} onClick={handleRebuildCache}>
+              ↺
+            </span>
           </div>
           <div className="open-queue" role="button" onClick={handleOpenQueue}>
             <div>打开队列</div>
@@ -272,11 +277,45 @@ const My = styled.div`
       justify-content: center;
       margin-left: -64px;
       .prev,
-      .player-or-pause,
+      .play-or-pause,
       .next {
-        margin: 0 8px;
         cursor: pointer;
         user-select: none;
+      }
+      .prev {
+        font-size: 1.8rem;
+        transform: rotate(90deg);
+        font-weight: 500;
+      }
+      .next {
+        font-size: 1.8rem;
+        transform: rotate(-90deg);
+        font-weight: 500;
+      }
+      .play-or-pause {
+        width: 2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 24px;
+        position: relative;
+        left: 3px;
+        .to-pause {
+          position: relative;
+          left: 4px;
+          display: inline-block;
+          transform: rotate(90deg);
+          font-size: 2.3rem;
+        }
+        .to-play {
+          position: relative;
+          top: -3px;
+          left: 2px;
+          display: inline-block;
+          font-size: 2.5rem;
+          font-weight: 200;
+          transform: scaleX(72%);
+        }
       }
     }
     .track-plugin {

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-30 01:24:32
+ * @LastEditTime : 2022-01-30 02:02:41
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
@@ -256,7 +256,7 @@ const MyLib = styled.div`
   }
 `;
 
-function includeTrack(tracks: Track[], track: Track) {
+export function includeTrack(tracks: Track[], track: Track) {
   let count = 0;
 
   for (const t of tracks) {

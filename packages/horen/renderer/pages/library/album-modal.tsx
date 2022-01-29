@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 12:32:21
- * @LastEditTime : 2022-01-30 00:54:36
+ * @LastEditTime : 2022-01-30 02:06:14
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\album-modal.tsx
  * @Description  :
@@ -9,6 +9,8 @@
 import React from 'react';
 import defaultCover from '@/static/image/default-cover';
 import { Track, Album } from 'types';
+import { includeTrack } from './index';
+import { player } from '@/App';
 
 interface Props {
   album: Album;
@@ -38,6 +40,8 @@ export function AlbumModal(props: Props) {
   };
 
   const renderItem = (item: Track, index: number) => {
+    const isPlaying = player.currentTrack.src === item.src;
+
     let child = (
       <span
         className="add-to"
@@ -48,17 +52,13 @@ export function AlbumModal(props: Props) {
       </span>
     );
 
-    let status;
-
     if (tracksInQueue) {
-      const i = tracksInQueue?.map((track) => track.title).indexOf(item.title);
-      if (i >= 0) {
-        status = tracksInQueue[i].playStatus;
-        if (status === 'in-queue') {
-          child = <span title="已经在播放列表中">✔</span>;
-        } else if (status === 'playing') {
-          child = <span title="正在播放中">♫</span>;
-        }
+      if (includeTrack(tracksInQueue, item)) {
+        child = <span title="已经在播放列表中">✔</span>;
+      }
+
+      if (isPlaying) {
+        child = <span title="正在播放中">♫</span>;
       }
     }
 
@@ -71,7 +71,7 @@ export function AlbumModal(props: Props) {
       >
         <div
           className="title"
-          style={{ color: status === 'playing' ? '#1ece9d' : '#aaa' }}
+          style={{ color: isPlaying ? '#1ece9d' : '#aaa' }}
         >
           <div className="title-order">{index + 1 + '.'}</div>
           <div className="title-text">
@@ -81,7 +81,7 @@ export function AlbumModal(props: Props) {
                 if (onJump) onJump(item);
               }}
               role={'button'}
-              title='双击插队播放歌曲'
+              title="双击插队播放歌曲"
             >
               {item.title}
             </span>

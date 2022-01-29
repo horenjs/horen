@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-23 14:15:38
- * @LastEditTime : 2022-01-29 20:11:01
+ * @LastEditTime : 2022-01-30 01:46:59
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\title-panel\operate.tsx
  * @Description  :
@@ -34,7 +34,7 @@ export default function Operate(props: OperateProps) {
   };
 
   return (
-    <div className="operate">
+    <div className="operate electron-no-drag">
       <div
         className="minimize electron-no-drag"
         role={'button'}

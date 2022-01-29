@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-23 14:15:30
- * @LastEditTime : 2022-01-29 23:54:32
+ * @LastEditTime : 2022-01-30 01:50:01
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\title-panel\index.tsx
  * @Description  :
@@ -20,7 +20,7 @@ export default function (props: Props) {
   const { title, ...restProps } = props;
 
   return ReactDOM.createPortal(
-    <MyTitlePanel className="title-panel electron-drag">
+    <MyTitlePanel className="title-panel electron-no-drag">
       <Title title={title} />
       <Operate {...restProps} />
     </MyTitlePanel>,
@@ -40,11 +40,18 @@ const MyTitlePanel = styled.div`
       position: absolute;
       left: 0;
       top: 0;
-      width: 100%;
+      width: calc(100% - 64px);
+      height: 100%;
       text-align: center;
       color: #c1c2c3;
     }
     .operate {
+      width: 64px;
+      height: 100%;
+      display: inline-block;
+      position: absolute;
+      right: 0;
+      top: 0;
       .minimize,
       .close {
         position: absolute;

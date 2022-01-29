@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:00:44
- * @LastEditTime : 2022-01-29 20:07:18
+ * @LastEditTime : 2022-01-30 01:56:02
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\data-center\index.tsx
  * @Description  :
@@ -12,7 +12,7 @@ import { Track, SettingFile } from 'types';
 import { IPC_CODE } from '../../constant';
 
 export class TrackDC {
-  public static async getListCached() :Promise<Track[]> {
+  public static async getListCached(): Promise<Track[]> {
     return await ipcRenderer.invoke(IPC_CODE.track.getListCached);
   }
 
@@ -20,8 +20,8 @@ export class TrackDC {
     return await ipcRenderer.invoke(IPC_CODE.track.rebuildCache, paths);
   }
 
-  public static async getByUUID(uuid: string): Promise<Track> {
-    return await ipcRenderer.invoke(IPC_CODE.track.getByUUID, uuid);
+  public static async getBySrc(src: string): Promise<Track> {
+    return await ipcRenderer.invoke(IPC_CODE.track.getBySrc, src);
   }
 
   public static async getMsg(): Promise<string> {
@@ -38,7 +38,7 @@ export class SettingDC {
     return await ipcRenderer.invoke(IPC_CODE.setting.get);
   }
 
-  public static async set(setting: SettingFile) :Promise<boolean> {
+  public static async set(setting: SettingFile): Promise<boolean> {
     return await ipcRenderer.invoke(IPC_CODE.setting.set, setting);
   }
 }

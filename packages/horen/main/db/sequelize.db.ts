@@ -1,17 +1,17 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-26 10:46:26
- * @LastEditTime : 2022-01-27 10:36:39
+ * @LastEditTime : 2022-01-30 01:37:39
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\main\db\sequelize.db.ts
+ * @FilePath     : \horen\packages\horen\main\db\sequelize.db.ts
  * @Description  : 
  */
 import { Sequelize, Options } from 'sequelize';
-import debug from 'debug';
+import debug from '../logger';
 import path from 'path';
 import { APP_DATA_PATH, APP_NAME } from '../../constant';
 
-const mydebug = debug('horen:db');
+const mydebug = debug('db');
 
 const dbConfig: Options = {
   dialect: 'sqlite',
@@ -24,9 +24,9 @@ const sql = new Sequelize(dbConfig);
 (async () => {
   try {
     await sql.authenticate();
-    mydebug('成功连接 sqlite 数据库');
+    mydebug.info('成功连接 sqlite 数据库');
   } catch (err) {
-    mydebug('连接 sqlite 数据库失败');
+    mydebug.error('连接 sqlite 数据库失败');
   }
 })();
 

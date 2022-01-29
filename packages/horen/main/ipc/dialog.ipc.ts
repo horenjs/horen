@@ -1,17 +1,17 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-28 15:01:30
- * @LastEditTime : 2022-01-28 16:09:59
+ * @LastEditTime : 2022-01-30 01:31:28
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\main\ipc\dialog.ipc.ts
+ * @FilePath     : \horen\packages\horen\main\ipc\dialog.ipc.ts
  * @Description  :
  */
 import { ipcMain, dialog } from 'electron';
 import { IPC_CODE } from '../../constant';
-import debug from 'debug';
+import debug from '../logger';
 import myapp from '../app';
 
-const mydebug = debug('horen:ipc:dialog');
+const mydebug = debug('ipc:dialog');
 /**
  * 监听对话框打开
  */
@@ -21,6 +21,6 @@ ipcMain.handle(IPC_CODE.dialog.open, async (evt, flag = 'dir') => {
       properties: ['openDirectory', 'multiSelections'],
     });
   } else {
-    mydebug('主窗口不存在 无法打开对话框');
+    mydebug.warning('主窗口不存在 无法打开对话框');
   }
 });

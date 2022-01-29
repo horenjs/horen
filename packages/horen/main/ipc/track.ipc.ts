@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-28 14:55:06
- * @LastEditTime : 2022-01-29 00:09:05
+ * @LastEditTime : 2022-01-30 01:55:29
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\main\ipc\track.ipc.ts
  * @Description  :
@@ -11,25 +11,25 @@ import fs from 'fs/promises';
 import crypto from 'crypto';
 import { ipcMain } from 'electron';
 import { TRACK_FORMAT, IPC_CODE } from '../../constant';
-import debug from 'debug';
+import debug from '../logger';
 import { readDir, arrayBufferToBase64 } from 'horen-util';
 import { Track } from '../../types';
 import { TrackModel } from '../db/models';
 import myapp from '../app';
 import mm from 'music-metadata';
 
-const mydebug = debug('horen:ipc:track');
+const mydebug = debug('ipc:track');
 /**
  * 从缓存中获取音频文件列表
  */
 ipcMain.handle(IPC_CODE.track.getListCached, async (evt) => {
-  mydebug('从缓存数据库中读取');
+  mydebug.info('从缓存数据库中读取');
   try {
     const allTracks = (await TrackModel.findAll()).map((t) => t.get());
-    mydebug('从缓存数据库读取成功');
+    mydebug.info('从缓存数据库读取成功');
     return allTracks;
   } catch (err) {
-    mydebug('从数据库中读取失败');
+    mydebug.error('从数据库中读取失败');
   }
 });
 
@@ -40,28 +40,28 @@ ipcMain.handle(IPC_CODE.track.rebuildCache, async (evt, paths: string[]) => {
   const rawFilePaths: string[] = [];
 
   for (const p of paths) {
-    mydebug('从给定的目录读取所有文件: ' + p);
+    mydebug.info('从给定的目录读取所有文件: ' + p);
     rawFilePaths.push(...(await readDir(p)));
   }
 
-  mydebug('过滤出音频文件');
+  mydebug.info('过滤出音频文件');
   const audioFilePaths = getAudioFiles(rawFilePaths);
 
-  mydebug('清空数据库并重新生成');
+  mydebug.info('清空数据库并重新生成');
   try {
     await TrackModel.destroy({ truncate: true });
-    mydebug('清空数据库成功');
+    mydebug.info('清空数据库成功');
   } catch (err) {
     throw new Error('清空数据库失败');
   }
 
-  mydebug('从音频文件中解析相关信息');
+  mydebug.info('从音频文件中解析相关信息');
   const allTracks = await getAudioFilesMeta(
     audioFilePaths,
     audioFilePaths.length
   );
 
-  mydebug('等待写入数据库');
+  mydebug.info('等待写入数据库');
   await saveToDB(allTracks);
 
   myapp.mainWindow?.webContents.send(IPC_CODE.track.msg, 'done');
@@ -69,18 +69,18 @@ ipcMain.handle(IPC_CODE.track.rebuildCache, async (evt, paths: string[]) => {
   return allTracks;
 });
 
-ipcMain.handle(IPC_CODE.track.getByUUID, async (evt, uuid: string) => {
+ipcMain.handle(IPC_CODE.track.getBySrc, async (evt, src: string) => {
   try {
-    const result = await TrackModel.findOne({ where: { uuid } });
+    const result = await TrackModel.findOne({ where: { src } });
     if (result) {
-      mydebug('获取音频成功: ' + uuid);
+      mydebug.info('获取音频成功: ' + src);
       return result.toJSON();
     } else {
-      mydebug('获取音频失败: ' + uuid);
+      mydebug.error('获取音频失败: ' + src);
     }
   } catch (err) {
     console.error(err);
-    mydebug('获取音频失败: ' + uuid);
+    mydebug.error('获取音频失败: ' + src);
   }
 });
 
@@ -141,10 +141,10 @@ async function saveToDB(tracks: Track[]) {
   for (let i = 0; i < tracks.length; i += chunkSize) {
     try {
       await TrackModel.bulkCreate(tracksToSave.slice(i, i + chunkSize));
-      mydebug('写入数据库成功', i, '-', i + chunkSize);
+      mydebug.info('写入数据库成功' + i + '-' + i + chunkSize);
     } catch (err) {
       console.error(err);
-      mydebug('写入数据库失败', i, '-', i + chunkSize);
+      mydebug.info('写入数据库失败' + i + '-' + i + chunkSize);
     }
   }
 }
@@ -183,7 +183,7 @@ async function readMusicMeta(p: string) {
   } catch (err) {
     meta = null;
     console.error(err);
-    mydebug('文件名: ' + p);
+    mydebug.info('文件名: ' + p);
   }
 
   const picture = meta ? meta.common?.picture : '';

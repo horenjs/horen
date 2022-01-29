@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-30 00:26:45
+ * @LastEditTime : 2022-01-30 01:56:19
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -56,7 +56,7 @@ export default function App() {
   const savePlaylist = async () => {
     return await SettingDC.set({
       ...setting,
-      playList: tracksInQueue.map((t) => t.uuid || ''),
+      playList: tracksInQueue.map((t) => t.src || ''),
     });
   };
 
@@ -87,7 +87,7 @@ export default function App() {
     const playList = [];
     for (const u of st.playList) {
       if (u !== '') {
-        const t = await TrackDC.getByUUID(u);
+        const t = await TrackDC.getBySrc(u);
         if (t) playList.push(t);
       }
     }
@@ -264,7 +264,7 @@ const MyApp = styled.div`
     background-color: #313233;
     user-select: none;
     .page-header {
-      margin: 0 32px;
+      margin: 0 64px 0 32px;
       padding: 40px 0 0 0;
       display: flex;
       align-items: flex-end;

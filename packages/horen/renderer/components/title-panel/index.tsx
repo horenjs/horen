@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-23 14:15:30
- * @LastEditTime : 2022-01-29 16:12:21
+ * @LastEditTime : 2022-01-29 17:28:30
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\components\title-panel\index.tsx
  * @Description  :
@@ -31,10 +31,18 @@ export default function (props: Props) {
 const MyTitlePanel = styled.div`
   &.title-panel {
     position: fixed;
-    left: 0;
+    left: 44px;
     top: 0;
-    width: 100%;
+    width: calc(100% - 44px);
     height: 40px;
+    .title {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      text-align: center;
+      color: #c1c2c3;
+    }
     .operate {
       .minimize,
       .close {

@@ -1,12 +1,12 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 01:51:07
- * @LastEditTime : 2022-01-29 15:36:41
+ * @LastEditTime : 2022-01-29 16:29:53
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\constant\index.ts
  * @Description  :
  */
-import { SettingFile } from '../types';
+import { SettingFile, Page } from '../types';
 import myapp from '../main/app';
 
 /**
@@ -29,7 +29,7 @@ export const IPC_CODE = {
   mainwindow: {
     close: 'mainwindow:close',
     minimize: 'manwindow:mini',
-  }
+  },
 };
 
 /**
@@ -129,7 +129,7 @@ export const TRACK_FORMAT = [
 /**
  * 页面
  */
-export const PAGES = [
+export const PAGES: Page[] = [
   {
     name: 'Library',
     path: '/library',
@@ -148,5 +148,5 @@ export const PAGES = [
 export const ANIMATION_DELAY = {
   slow: 500,
   normal: 250,
-  fast: 100
-}
+  fast: 100,
+};

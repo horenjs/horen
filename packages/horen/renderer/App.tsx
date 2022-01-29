@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-29 16:10:49
+ * @LastEditTime : 2022-01-29 17:42:01
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -14,7 +14,7 @@ import {
   Navigate,
   useLocation,
 } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { settingState, trackListState, tracksInQueueState } from '@/store';
 import styled from 'styled-components';
 import Library from './pages/library';
@@ -24,7 +24,7 @@ import { PlayQueue } from './components/play-queue';
 import PlayShow from './components/play-show';
 import TitlePanel from './components/title-panel';
 import { SettingDC, TrackDC } from './data-center';
-import { SettingFile, Track } from 'types';
+import { Page, SettingFile } from 'types';
 import { PAGES } from '../constant';
 import Player from 'horen-plugin-player';
 
@@ -48,26 +48,63 @@ export default function App() {
   const [setting, setSetting] = useRecoilState(settingState);
   const [tracksInQueue, setTracksInQueue] = useRecoilState(tracksInQueueState);
 
-  const isTrackLoaded =
-    trackList.length > 0 ||
-    trackLoadProgress === 'done' ||
-    trackLoadProgress === '';
-
-  const handleAddTrack = (tracks: Track[]) => {
-    const tracksToPlay = tracks.map((track) => {
-      return { ...track, playStatus: 'in-queue' };
-    }) as Track[];
-
-    setTracksInQueue([...tracksInQueue, ...tracksToPlay]);
+  /**
+   * 保存当前播放列表到设置项中
+   */
+  const savePlaylist = () => {
+    (async () => {
+      await SettingDC.set({
+        ...setting,
+        playList: tracksInQueue.map((t) => t.uuid || ''),
+      });
+    })();
   };
 
-  const savePlaylist = async () => {
-    // 保存播放列表到文件
-    await SettingDC.set({
-      ...setting,
-      playList: tracksInQueue.map((t) => t.uuid || ''),
-    });
+  /**
+   * 渲染页面的标题
+   * @param p 页面
+   * @returns 渲染后的页面
+   */
+  const renderPageHeader = (p: Page) => {
+    const cls = location.pathname === p.path ? 'title actived' : 'title';
+    return (
+      <div className={cls} key={p.name} onClick={() => navigate(p.path)}>
+        {p.title}
+      </div>
+    );
   };
+
+  /**
+   * 从设置项中获取上次的播放列表
+   * 并加载到状态库中
+   * @param st 设置项
+   */
+  const getAndSetSavedPlaylist = async (st: SettingFile) => {
+    const playList = [];
+    for (const u of st.playList) playList.push(await TrackDC.getByUUID(u));
+    setTracksInQueue(playList);
+  };
+
+  /**
+   * 从设置项中获取曲库列表和相关信息
+   * 并加载到状态库中
+   * @param st 设置项
+   */
+  const getAndSetTrackList = async (st: SettingFile) => {
+    // 抽取设置项：组件加载时是否刷新
+    const rebuild = getSettingItem(st, 'start', 'rebuildWhenStart') as boolean;
+    // 抽取设置项：曲库目录
+    const paths = getSettingItem(st, 'common', 'collectionPaths') as string[];
+
+    if (rebuild) setTrackList(await TrackDC.rebuildCache(paths));
+    else setTrackList(await TrackDC.getListCached());
+  };
+
+  //
+  //
+  // 以下在特定状态变更时触发
+  //
+  //
 
   // 监听主进程传递过来的音频文件读取进度信息
   React.useEffect(() => {
@@ -91,70 +128,41 @@ export default function App() {
     return () => clearInterval(timer);
   }, [progress]);
 
-  // 组件加载时获取设置并获取所有音频
+  //
+  //
+  // 以下在组件加载时触发
+  //
+  //
   React.useEffect(() => {
     (async () => {
       // 获取设置
       const st = (await SettingDC.get()) as SettingFile;
       setSetting(st);
-      // 抽取设置项：组件加载时是否刷新
-      const rebuild = getSettingItem(
-        st,
-        'start',
-        'rebuildWhenStart'
-      ) as boolean;
-      // 抽取设置项：曲库目录
-      const paths = getSettingItem(st, 'common', 'collectionPaths') as string[];
-
-      if (rebuild) {
-        setTrackList(await TrackDC.rebuildCache(paths));
-      } else {
-        setTrackList(await TrackDC.getListCached());
-      }
-
-      const playList = [];
-      // console.log(st);
-      for (const u of st.playList) {
-        // console.log(u);
-        playList.push(await TrackDC.getByUUID(u));
-      }
-      setTracksInQueue(playList);
+      // 获取音频列表
+      await getAndSetSavedPlaylist(st);
+      // 获取存储的音频播放列表
+      await getAndSetTrackList(st);
     })();
   }, []);
 
   return (
     <MyApp className="app">
-      <TitlePanel />
-      {!isTrackLoaded && (
-        <div className="track-load-progress">{trackLoadProgress}</div>
-      )}
+      <TitlePanel
+        onClose={() => {
+          if (confirm('是否保存当前播放列表?')) savePlaylist();
+        }}
+      />
       <div className="pages">
-        <div className="page-header">
-          {PAGES.map((p) => {
-            const cls =
-              location.pathname === p.path ? 'title actived' : 'title';
-            return (
-              <div
-                className={cls}
-                key={p.name}
-                onClick={() => navigate(p.path)}
-              >
-                {p.title}
-              </div>
-            );
-          })}
-        </div>
+        <div className="page-header">{PAGES.map(renderPageHeader)}</div>
         <div className="page-container perfect-scrollbar">
           <Routes>
             <Route path="/">
+              {/* 歌曲库页面 */}
               <Route index element={<Navigate to="library" />} />
-              {/* 歌曲库 */}
-              <Route
-                path="library"
-                element={<Library onAddTo={handleAddTrack} />}
-              />
-              {/* setting page */}
+              <Route path="library" element={<Library />} />
+              {/* 设置页面 */}
               <Route path="setting" element={<SettingPage />} />
+              {/* 未匹配到路由时自动跳转到曲库页面 */}
               <Route path="*" element={<Navigate to="library" />} />
             </Route>
           </Routes>
@@ -163,24 +171,22 @@ export default function App() {
 
       {/* 歌曲控制中心 */}
       <ControlPanel
-        track={player.currentTrack}
-        playing={player.playing}
-        onPrev={() => player.skip('prev')}
-        onPlayOrPause={() => player.playOrPause()}
-        onNext={() => player.skip('next')}
         onSeek={(per) => (player.seek = per * player.duration)}
         onShow={() => setPlayShow(true)}
         progress={progress}
-        plugin={
-          <div
-            className="control-panel-plugin-queue"
-            role="button"
-            onClick={() => setIsQueueVisible(true)}
-          >
-            <div>打开队列</div>
-            <span>{player.trackList.length} 首歌曲</span>
-          </div>
-        }
+        onOpenQueue={() => setIsQueueVisible(true)}
+        onRebuildCache={() => {
+          (async () => {
+            // 抽取设置项：曲库目录
+            const paths = getSettingItem(
+              setting,
+              'common',
+              'collectionPaths'
+            ) as string[];
+            const tracks = await TrackDC.rebuildCache(paths);
+            setTrackList(tracks);
+          })();
+        }}
       />
       {/* 当前播放队列 */}
       <PlayQueue
@@ -229,20 +235,6 @@ function getSettingItem(
 const MyApp = styled.div`
   margin: 0;
   padding: 0;
-
-  .track-load-progress {
-    position: fixed;
-    min-width: 800px;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #717273;
-    padding: 4px 8px;
-    font-size: 0.8rem;
-    color: #f1f1f1;
-    text-align: center;
-    border-radius: 4px;
-  }
   .pages {
     background-color: #313233;
     user-select: none;
@@ -271,17 +263,6 @@ const MyApp = styled.div`
       margin-top: 24px;
       height: calc(100vh - 192px);
       overflow-y: auto;
-    }
-  }
-  .control-panel-plugin-queue {
-    cursor: pointer;
-    user-select: none;
-    text-align: center;
-    div {
-      font-size: 0.8rem;
-    }
-    span {
-      font-size: 0.6rem;
     }
   }
 `;

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:12:15
- * @LastEditTime : 2022-01-28 19:43:39
+ * @LastEditTime : 2022-01-29 17:41:24
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\components\control-panel\index.tsx
  * @Description  :
@@ -11,6 +11,145 @@ import styled from 'styled-components';
 import defaultCover from '../../static/image/default-cover';
 import { Track } from 'types';
 import { Loader } from '../loader';
+import { player } from '../../App';
+
+export interface ControlPanelProps {
+  track?: Track;
+  playing?: boolean;
+  progress?: number | string;
+  onPrev?(e?: React.MouseEvent<HTMLElement>): void;
+  onNext?(e?: React.MouseEvent<HTMLElement>): void;
+  onPlayOrPause?(e?: React.MouseEvent<HTMLElement>): void;
+  onSeek?(per: number): void;
+  onShow?(e?: React.MouseEvent<HTMLElement>): void;
+  onOpenQueue?(e?: React.MouseEvent<HTMLElement>): void;
+  onRebuildCache?(e?: React.MouseEvent<HTMLElement>): void;
+}
+
+const ControlPanel: React.FC<ControlPanelProps> = (props) => {
+  const {
+    track = player.currentTrack as Track,
+    playing = player.playing,
+    progress = 0,
+    onPrev,
+    onPlayOrPause,
+    onNext,
+    onSeek,
+    onShow,
+    onOpenQueue,
+    onRebuildCache,
+  } = props;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ref: any = React.useRef();
+
+  const trackTitle =
+    track?.title || track?.src?.split('.').slice(-2, -1)[0] || 'Unkown track';
+
+  const handlePrev = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    player.skip('prev');
+    if (onPrev) onPrev(e);
+  };
+
+  const handlePlayOrPause = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    player.playOrPause();
+    if (onPlayOrPause) onPlayOrPause(e);
+  };
+
+  const handleNext = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    player.skip('next');
+    if (onNext) onNext(e);
+  };
+
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const target = e.target as any;
+    // 进度条距离可视区域左边的距离
+    const left = target.getBoundingClientRect().left;
+    // 进度条的宽度
+    const width = ref.current ? ref.current.offsetWidth : target.offsetWidth;
+    // 鼠标点击的位置 只需要 X 轴的位置即可
+    const x = e.clientX;
+    if (onSeek) onSeek((x - left) / width);
+  };
+
+  const handlePlayShow = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    player.playOrPause();
+    if (onShow) onShow(e);
+  };
+
+  const handleOpenQueue = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onOpenQueue) onOpenQueue(e);
+  };
+
+  const handleRebuildCache = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onRebuildCache) onRebuildCache(e);
+  }
+
+  return (
+    <My className="control-panel">
+      <div className="progress" onClick={handleSeek} ref={ref}>
+        <div className="back"></div>
+        <div className="front" style={{ width: `${progress}%` }}>
+          <span className="pointer"></span>
+        </div>
+      </div>
+      <div className="panel">
+        <div className="track-cover">
+          <img
+            src={`data:image/png;base64,${track?.picture || defaultCover}`}
+            alt={track?.title || 'unkown-track'}
+          />
+          <div className="up-arrow" onClick={handlePlayShow} role="button">
+            ︿
+          </div>
+          {playing && (
+            <div className="loader">
+              <Loader style="pulse" />
+            </div>
+          )}
+        </div>
+        <div className="track-info">
+          <div className="title" title={trackTitle}>
+            {trackTitle}
+          </div>
+          <div className="artist">{track?.artist || 'Unkown Artist'}</div>
+        </div>
+        <div className="track-operate">
+          <div className="prev" onClick={handlePrev}>
+            上一首
+          </div>
+          <div className="player-or-pause" onClick={handlePlayOrPause}>
+            {playing ? '暂停' : '播放'}
+          </div>
+          <div className="next" onClick={handleNext}>
+            下一首
+          </div>
+        </div>
+        <div className="track-plugin">
+          <div className="rebuild-cache">
+            <span role={'button'} onClick={handleRebuildCache}>↺</span>
+          </div>
+          <div className="open-queue" role="button" onClick={handleOpenQueue}>
+            <div>打开队列</div>
+            <span>{player.trackList.length} 首歌曲</span>
+          </div>
+        </div>
+      </div>
+    </My>
+  );
+};
 
 const My = styled.div`
   height: 80px;
@@ -140,119 +279,36 @@ const My = styled.div`
         user-select: none;
       }
     }
+    .track-plugin {
+      display: flex;
+      align-items: center;
+      .rebuild-cache {
+        font-size: 2rem;
+        font-weight: 400;
+        margin: 0 16px 0 0;
+        cursor: pointer;
+        color: #515253;
+        &:hover {
+          color: #919293;
+        }
+      }
+      .open-queue {
+        cursor: pointer;
+        user-select: none;
+        text-align: center;
+        color: #717273;
+        &:hover {
+          color: #919293;
+        }
+        div {
+          font-size: 0.8rem;
+        }
+        span {
+          font-size: 0.6rem;
+        }
+      }
+    }
   }
 `;
-
-export interface ControlPanelProps {
-  track?: Track;
-  playing: boolean;
-  progress: number | string;
-  onPrev(): void;
-  onNext(): void;
-  onPlayOrPause(): void;
-  onSeek(per: number): void;
-  onShow(): void;
-  plugin?: React.ReactNode;
-}
-
-const ControlPanel: React.FC<ControlPanelProps> = (props) => {
-  const {
-    track,
-    playing = false,
-    progress = 0,
-    onPrev,
-    onPlayOrPause,
-    onNext,
-    onSeek,
-    onShow,
-    plugin,
-  } = props;
-
-  const ref: any = React.useRef();
-
-  const trackTitle =
-    track?.title || track?.src?.split('.').slice(-2, -1)[0] || 'Unkown track';
-
-  const handlePrev = (e: React.MouseEvent<HTMLElement>) => {
-    e.preventDefault();
-    onPrev();
-  };
-
-  const handlePlayOrPause = (e: React.MouseEvent<HTMLElement>) => {
-    e.preventDefault();
-    onPlayOrPause();
-  };
-
-  const handleNext = (e: React.MouseEvent<HTMLElement>) => {
-    e.preventDefault();
-    onNext();
-  };
-
-  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const target = e.target as any;
-    // 进度条距离可视区域左边的距离
-    const left = target.getBoundingClientRect().left;
-    // 进度条的宽度
-    const width = ref.current ? ref.current.offsetWidth : target.offsetWidth;
-    // 鼠标点击的位置 只需要 X 轴的位置即可
-    const x = e.clientX;
-    onSeek((x - left) / width);
-  };
-
-  return (
-    <My className="control-panel">
-      <div className="progress" onClick={handleSeek} ref={ref}>
-        <div className="back"></div>
-        <div className="front" style={{ width: `${progress}%` }}>
-          <span className="pointer"></span>
-        </div>
-      </div>
-      <div className="panel">
-        <div className="track-cover">
-          <img
-            src={`data:image/png;base64,${track?.picture || defaultCover}`}
-            alt={track?.title || 'unkown-track'}
-          />
-          <div
-            className="up-arrow"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onShow();
-            }}
-            role="button"
-          >
-            ︿
-          </div>
-          {playing && (
-            <div className="loader">
-              <Loader style="pulse" />
-            </div>
-          )}
-        </div>
-        <div className="track-info">
-          <div className="title" title={trackTitle}>
-            {trackTitle}
-          </div>
-          <div className="artist">{track?.artist || 'Unkown Artist'}</div>
-        </div>
-        <div className="track-operate">
-          <div className="prev" onClick={handlePrev}>
-            上一首
-          </div>
-          <div className="player-or-pause" onClick={handlePlayOrPause}>
-            {playing ? '暂停' : '播放'}
-          </div>
-          <div className="next" onClick={handleNext}>
-            下一首
-          </div>
-        </div>
-        <div className="track-plugin">{plugin}</div>
-      </div>
-    </My>
-  );
-};
 
 export default ControlPanel;

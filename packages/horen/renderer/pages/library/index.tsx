@@ -1,14 +1,14 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-28 11:22:19
+ * @LastEditTime : 2022-01-29 16:24:43
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
  */
 import React from 'react';
 import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
 import { albumListState, tracksInQueueState } from '@/store';
 import { Track, Album } from 'types';
 import { AlbumModal } from './album-modal';
@@ -16,24 +16,22 @@ import { AlbumView } from './album-viewer';
 import { Loader } from '@/components/loader';
 import { player } from '@/App';
 
-export interface LibraryProps {
-  onAddTo?(t: Track[]): void;
-}
-
-const Library: React.FC<LibraryProps> = (props) => {
-  const { onAddTo } = props;
-
+export function Library() {
   const [album, setAlbum] = React.useState<Album>();
-  
-  const tracksInQueue = useRecoilValue(tracksInQueueState);
+
+  const [tracksInQueue, setTracksInQueue] = useRecoilState(tracksInQueueState);
   const albums = useRecoilValue(albumListState);
 
   const handleOpenAlbum = (a: Album) => {
     setAlbum(a);
   };
 
-  const handleAddTo = (ts: Track[]) => {
-    if (onAddTo) onAddTo([...ts]);
+  const handleAddTrack = (tracks: Track[]) => {
+    const tracksToPlay = tracks.map((track) => {
+      return { ...track, playStatus: 'in-queue' };
+    }) as Track[];
+
+    setTracksInQueue([...tracksInQueue, ...tracksToPlay]);
   };
 
   const handleCloseAlbumModal = () => setAlbum(undefined);
@@ -65,7 +63,7 @@ const Library: React.FC<LibraryProps> = (props) => {
             else return track;
           })}
           album={album}
-          onAddTo={handleAddTo}
+          onAddTo={handleAddTrack}
           onClose={handleCloseAlbumModal}
         />
       )}
@@ -73,7 +71,7 @@ const Library: React.FC<LibraryProps> = (props) => {
       {album && <div className="mask"></div>}
     </MyLib>
   );
-};
+}
 
 const MyLib = styled.div`
   height: 100%;
@@ -98,7 +96,8 @@ const MyLib = styled.div`
         .name {
           color: #f1f1f1;
         }
-        .track-count,.artist {
+        .track-count,
+        .artist {
           color: #aaa;
           font-size: 0.8rem;
           margin: 4px 0;

@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:00:44
- * @LastEditTime : 2022-01-29 15:37:38
+ * @LastEditTime : 2022-01-29 20:07:18
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\data-center\index.tsx
+ * @FilePath     : \horen\packages\horen\renderer\data-center\index.tsx
  * @Description  :
  */
 const electron = window.require('electron');
@@ -38,7 +38,7 @@ export class SettingDC {
     return await ipcRenderer.invoke(IPC_CODE.setting.get);
   }
 
-  public static async set(setting: SettingFile) {
+  public static async set(setting: SettingFile) :Promise<boolean> {
     return await ipcRenderer.invoke(IPC_CODE.setting.set, setting);
   }
 }

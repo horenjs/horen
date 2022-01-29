@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-29 17:42:01
+ * @LastEditTime : 2022-01-29 20:11:47
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\App.tsx
+ * @FilePath     : \horen\packages\horen\renderer\App.tsx
  * @Description  :
  */
 import React from 'react';
@@ -51,13 +51,11 @@ export default function App() {
   /**
    * 保存当前播放列表到设置项中
    */
-  const savePlaylist = () => {
-    (async () => {
-      await SettingDC.set({
-        ...setting,
-        playList: tracksInQueue.map((t) => t.uuid || ''),
-      });
-    })();
+  const savePlaylist = async () => {
+    return await SettingDC.set({
+      ...setting,
+      playList: tracksInQueue.map((t) => t.uuid || ''),
+    });
   };
 
   /**
@@ -148,8 +146,8 @@ export default function App() {
   return (
     <MyApp className="app">
       <TitlePanel
-        onClose={() => {
-          if (confirm('是否保存当前播放列表?')) savePlaylist();
+        onClose={async () => {
+          if (confirm('是否保存当前播放列表?')) return await savePlaylist();
         }}
       />
       <div className="pages">

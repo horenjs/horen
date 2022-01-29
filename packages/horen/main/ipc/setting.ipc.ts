@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-28 15:03:33
- * @LastEditTime : 2022-01-28 16:09:00
+ * @LastEditTime : 2022-01-29 20:07:00
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\main\ipc\setting.ipc.ts
+ * @FilePath     : \horen\packages\horen\main\ipc\setting.ipc.ts
  * @Description  :
  */
 import path from 'path';
@@ -29,8 +29,10 @@ ipcMain.handle(IPC_CODE.setting.set, async (evt, setting) => {
       JSON.stringify(setting, null, 2)
     );
     mydebug('设置更新成功' + new Date());
+    return true;
   } catch (err) {
     mydebug('设置更新失败');
+    return false;
   }
 });
 

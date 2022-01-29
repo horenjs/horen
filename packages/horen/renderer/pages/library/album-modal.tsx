@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 12:32:21
- * @LastEditTime : 2022-01-30 00:28:38
+ * @LastEditTime : 2022-01-30 00:54:36
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\album-modal.tsx
  * @Description  :
@@ -14,11 +14,12 @@ interface Props {
   album: Album;
   onClose(): void;
   onAddTo(tracks: Track[]): void;
+  onJump?(track: Track): void;
   tracksInQueue?: Track[];
 }
 
 export function AlbumModal(props: Props) {
-  const { album, onClose, onAddTo, tracksInQueue } = props;
+  const { album, onClose, onAddTo, onJump, tracksInQueue } = props;
 
   const publishDate = album.children[0].year || album.children[0].date;
   const artist = album.children[0].artist;
@@ -73,7 +74,18 @@ export function AlbumModal(props: Props) {
           style={{ color: status === 'playing' ? '#1ece9d' : '#aaa' }}
         >
           <div className="title-order">{index + 1 + '.'}</div>
-          <div className="title-text">{item.title}</div>
+          <div className="title-text">
+            <span
+              onDoubleClick={(e) => {
+                e.preventDefault();
+                if (onJump) onJump(item);
+              }}
+              role={'button'}
+              title='双击插队播放歌曲'
+            >
+              {item.title}
+            </span>
+          </div>
         </div>
         <div className="operator">{child}</div>
       </div>

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-28 18:20:34
- * @LastEditTime : 2022-01-30 00:24:16
+ * @LastEditTime : 2022-01-30 00:39:25
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\play-show\index.tsx
  * @Description  :
@@ -122,6 +122,7 @@ const MyPlayShow = styled.div`
   display: flex;
   z-index: 998;
   flex-wrap: wrap;
+  border-radius: 8px;
   &.ani-hidden {
     display: none;
   }

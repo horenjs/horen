@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-29 23:56:10
+ * @LastEditTime : 2022-01-30 00:52:46
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
@@ -36,6 +36,10 @@ export function Library() {
 
   const handleCloseAlbumModal = () => setAlbum(undefined);
 
+  const handleJump = (t: Track) => {
+    player.currentTrack = t;
+  }
+
   return (
     <MyLib className="component-library">
       <div className="albums">
@@ -64,6 +68,7 @@ export function Library() {
           })}
           album={album}
           onAddTo={handleAddTrack}
+          onJump={handleJump}
           onClose={handleCloseAlbumModal}
         />
       )}

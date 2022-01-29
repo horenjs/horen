@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-30 01:07:53
+ * @LastEditTime : 2022-01-30 01:24:32
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
@@ -31,9 +31,11 @@ export function Library() {
       return { ...track, playStatus: 'in-queue' };
     }) as Track[];
 
-    setTracksInQueue([...tracksInQueue, ...tracksToPlay.filter(t => {
+    const filtered = tracksToPlay.filter((t) => {
       return !includeTrack(tracksInQueue, t);
-    })]);
+    });
+
+    setTracksInQueue([...tracksInQueue, ...filtered]);
   };
 
   const handleCloseAlbumModal = () => setAlbum(undefined);
@@ -257,7 +259,9 @@ const MyLib = styled.div`
 function includeTrack(tracks: Track[], track: Track) {
   let count = 0;
 
-  for (const t of tracks) if (t.uuid === track.uuid) count += 1;
+  for (const t of tracks) {
+    if (t.src === track.src) count += 1;
+  }
 
   return count > 0;
 }

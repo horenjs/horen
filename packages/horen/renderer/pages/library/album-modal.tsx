@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 12:32:21
- * @LastEditTime : 2022-01-28 17:25:27
+ * @LastEditTime : 2022-01-29 22:22:11
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\pages\library\album-modal.tsx
+ * @FilePath     : \horen\packages\horen\renderer\pages\library\album-modal.tsx
  * @Description  :
  */
 import React from 'react';
@@ -62,7 +62,7 @@ export function AlbumModal(props: Props) {
     }
 
     return (
-      <div className="album-child" key={item.title} data-title={item.title}>
+      <div className="album-child" key={item.uuid} data-title={item.title}>
         <div
           className="title"
           style={{ color: status === 'playing' ? '#1ece9d' : '#aaa' }}

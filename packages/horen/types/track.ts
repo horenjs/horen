@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 22:24:48
- * @LastEditTime : 2022-01-29 00:03:28
+ * @LastEditTime : 2022-01-29 22:45:53
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\types\track.ts
  * @Description  :
@@ -23,16 +23,18 @@ export interface Base {
 }
 
 export interface MyTrack extends Base {
-  uuid?: string,
+  uuid?: string;
   date?: MyDate;
   picture?: string;
   common?: ICommonTagsResult;
   format?: IFormat;
   trackInfo?: ITrackInfo;
+  year?: number | string,
+  genre?: string,
   native?: INativeTags;
-  duration?: number,
-  playStatus?: 'in-queue' | 'playing' | 'paused' | 'stop',
-  md5?: string,
+  duration?: number;
+  playStatus?: 'in-queue' | 'playing' | 'paused' | 'stop';
+  md5?: string;
 }
 
 export interface Album {

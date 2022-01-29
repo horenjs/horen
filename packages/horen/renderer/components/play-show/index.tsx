@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-28 18:20:34
- * @LastEditTime : 2022-01-29 17:21:25
+ * @LastEditTime : 2022-01-29 22:29:20
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\components\play-show\index.tsx
+ * @FilePath     : \horen\packages\horen\renderer\components\play-show\index.tsx
  * @Description  :
  */
 import React from 'react';
@@ -144,14 +144,15 @@ const MyPlayShow = styled.div`
     }
   }
   .left {
-    width: 40%;
+    width: 50%;
     height: calc(100% - 32px);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    padding: 100px 0 0 0;
   }
   .right {
-    width: 60%;
+    width: 50%;
     height: calc(100% - 32px);
     display: flex;
     justify-content: center;

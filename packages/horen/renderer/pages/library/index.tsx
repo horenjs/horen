@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-30 00:52:46
+ * @LastEditTime : 2022-01-30 01:07:53
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
@@ -31,14 +31,19 @@ export function Library() {
       return { ...track, playStatus: 'in-queue' };
     }) as Track[];
 
-    setTracksInQueue([...tracksInQueue, ...tracksToPlay]);
+    setTracksInQueue([...tracksInQueue, ...tracksToPlay.filter(t => {
+      return !includeTrack(tracksInQueue, t);
+    })]);
   };
 
   const handleCloseAlbumModal = () => setAlbum(undefined);
 
   const handleJump = (t: Track) => {
+    if (!includeTrack(tracksInQueue, t)) {
+      setTracksInQueue([t, ...tracksInQueue]);
+    }
     player.currentTrack = t;
-  }
+  };
 
   return (
     <MyLib className="component-library">
@@ -248,5 +253,13 @@ const MyLib = styled.div`
     }
   }
 `;
+
+function includeTrack(tracks: Track[], track: Track) {
+  let count = 0;
+
+  for (const t of tracks) if (t.uuid === track.uuid) count += 1;
+
+  return count > 0;
+}
 
 export default Library;

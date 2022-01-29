@@ -5,12 +5,14 @@
 body {
   padding: 0;
   margin: 0;
+  background-color: transparent;
 }
 
 #root {
   padding: 0;
   height: 100vh;
   overflow: hidden;
+  border-radius: 8px;
 }
 
 .pages {

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-28 18:20:34
- * @LastEditTime : 2022-01-29 22:29:20
+ * @LastEditTime : 2022-01-30 00:24:16
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\play-show\index.tsx
  * @Description  :
@@ -25,7 +25,7 @@ export default function PlayShow(props: Props) {
   const [isMounting, setIsMounting] = React.useState(true);
   const [ani, setAni] = React.useState('hidden');
 
-  const cls = ['play-show', `ani-${ani}`];
+  const cls = ['play-show', `ani-${ani}`, 'electron-no-drag'];
 
   const handleClose = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -53,12 +53,16 @@ export default function PlayShow(props: Props) {
 
   return ReactDOM.createPortal(
     <MyPlayShow className={cls.join(' ')}>
-      <div className="header">
-        <div onClick={handleClose} role="button" className="close">
+      <div className="header electron-no-drag">
+        <div
+          onClick={handleClose}
+          role="button"
+          className="close electron-no-drag"
+        >
           ﹀
         </div>
       </div>
-      <div className="left">
+      <div className="left electron-no-drag">
         <TrackInfo track={playingTrack} />
       </div>
       <div className="right">
@@ -116,7 +120,7 @@ const MyPlayShow = styled.div`
   height: 100vh;
   background-color: #313233;
   display: flex;
-  z-index: 999;
+  z-index: 998;
   flex-wrap: wrap;
   &.ani-hidden {
     display: none;
@@ -133,6 +137,7 @@ const MyPlayShow = styled.div`
     width: 100%;
     height: 32px;
     .close {
+      display: inline-block;
       font-size: 1.5rem;
       font-weight: 600;
       color: #717273;
@@ -148,8 +153,7 @@ const MyPlayShow = styled.div`
     height: calc(100% - 32px);
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding: 100px 0 0 0;
+    align-items: center;
   }
   .right {
     width: 50%;

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-25 11:25:59
- * @LastEditTime : 2022-01-28 22:30:01
+ * @LastEditTime : 2022-01-30 00:30:37
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\setting\setting-group.tsx
  * @Description  :
@@ -121,7 +121,7 @@ export default function Group(props: Props) {
   };
 
   return (
-    <div className="setting-group">
+    <div className="setting-group electron-no-drag">
       {group?.children.length > 0 &&
         group?.children.map((child, index) => {
           return (

@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-29 23:01:20
+ * @LastEditTime : 2022-01-30 00:26:45
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -68,7 +68,11 @@ export default function App() {
   const renderPageHeader = (p: Page) => {
     const cls = location.pathname === p.path ? 'title actived' : 'title';
     return (
-      <div className={cls} key={p.name} onClick={() => navigate(p.path)}>
+      <div
+        className={cls + ' electron-no-drag'}
+        key={p.name}
+        onClick={() => navigate(p.path)}
+      >
         {p.title}
       </div>
     );
@@ -82,7 +86,10 @@ export default function App() {
   const getAndSetSavedPlaylist = async (st: SettingFile) => {
     const playList = [];
     for (const u of st.playList) {
-      if (u !== '') playList.push(await TrackDC.getByUUID(u));
+      if (u !== '') {
+        const t = await TrackDC.getByUUID(u);
+        if (t) playList.push(t);
+      }
     }
     setTracksInQueue(playList);
   };
@@ -161,8 +168,10 @@ export default function App() {
         }}
       />
       <div className="pages">
-        <div className="page-header">{PAGES.map(renderPageHeader)}</div>
-        <div className="page-container perfect-scrollbar">
+        <div className="page-header electron-drag">
+          {PAGES.map(renderPageHeader)}
+        </div>
+        <div className="page-container perfect-scrollbar electron-drag">
           <Routes>
             <Route path="/">
               {/* 歌曲库页面 */}
@@ -184,21 +193,23 @@ export default function App() {
         progress={progress}
         onOpenQueue={() => setIsQueueVisible(true)}
         onRebuildCache={() => {
-          if (!isRebuilding) {
-            (async () => {
-              // 抽取设置项：曲库目录
-              const paths = getSettingItem(
-                setting,
-                'common',
-                'collectionPaths'
-              ) as string[];
-              const tracks = await TrackDC.rebuildCache(paths);
-              setTrackList(tracks);
-              setTracksInQueue([]);
-            })();
-            setIsRebuilding(true);
-          } else {
-            window.alert('正在重建缓存数据库请勿重复点击');
+          if (window.confirm('确定要重建缓存数据库吗?')) {
+            if (!isRebuilding) {
+              (async () => {
+                // 抽取设置项：曲库目录
+                const paths = getSettingItem(
+                  setting,
+                  'common',
+                  'collectionPaths'
+                ) as string[];
+                const tracks = await TrackDC.rebuildCache(paths);
+                setTrackList(tracks);
+                setTracksInQueue([]);
+              })();
+              setIsRebuilding(true);
+            } else {
+              window.alert('正在重建缓存数据库请勿重复点击');
+            }
           }
         }}
       />
@@ -253,8 +264,8 @@ const MyApp = styled.div`
     background-color: #313233;
     user-select: none;
     .page-header {
-      margin: 0;
-      padding: 40px 0 0 32px;
+      margin: 0 32px;
+      padding: 40px 0 0 0;
       display: flex;
       align-items: flex-end;
       .title {

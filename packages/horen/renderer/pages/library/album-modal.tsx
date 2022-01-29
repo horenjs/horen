@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 12:32:21
- * @LastEditTime : 2022-01-29 22:22:11
+ * @LastEditTime : 2022-01-30 00:28:38
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\album-modal.tsx
  * @Description  :
@@ -20,7 +20,7 @@ interface Props {
 export function AlbumModal(props: Props) {
   const { album, onClose, onAddTo, tracksInQueue } = props;
 
-  const publishDate = album.children[0].date;
+  const publishDate = album.children[0].year || album.children[0].date;
   const artist = album.children[0].artist;
   const filesPath = album.children[0].src;
 
@@ -62,7 +62,12 @@ export function AlbumModal(props: Props) {
     }
 
     return (
-      <div className="album-child" key={item.uuid} data-title={item.title}>
+      <div
+        className="album-child"
+        key={item?.uuid || item?.md5 || index}
+        data-title={item.title}
+        data-key={item?.uuid || item?.md5 || index}
+      >
         <div
           className="title"
           style={{ color: status === 'playing' ? '#1ece9d' : '#aaa' }}
@@ -76,7 +81,7 @@ export function AlbumModal(props: Props) {
   };
 
   return (
-    <div className="album-modal-view">
+    <div className="album-modal-view electron-no-drag">
       <div className="album-header">
         <div className="add-all">
           {isAllTracksInQueue(album, tracksInQueue) ? (

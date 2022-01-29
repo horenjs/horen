@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-29 21:47:44
+ * @LastEditTime : 2022-01-29 23:56:10
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
@@ -119,7 +119,7 @@ const MyLib = styled.div`
     color: #aaa;
     box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.5);
     border-radius: 8px;
-    z-index: 9999;
+    z-index: 998;
     .album-header {
       width: 100%;
       padding: 16px 4px 12px 4px;

@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-23 14:15:30
- * @LastEditTime : 2022-01-29 17:28:30
+ * @LastEditTime : 2022-01-29 23:54:32
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\components\title-panel\index.tsx
+ * @FilePath     : \horen\packages\horen\renderer\components\title-panel\index.tsx
  * @Description  :
  */
 import React from 'react';
@@ -35,6 +35,7 @@ const MyTitlePanel = styled.div`
     top: 0;
     width: calc(100% - 44px);
     height: 40px;
+    z-index: 999;
     .title {
       position: absolute;
       left: 0;

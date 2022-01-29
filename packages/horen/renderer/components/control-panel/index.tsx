@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:12:15
- * @LastEditTime : 2022-01-29 21:39:33
+ * @LastEditTime : 2022-01-30 00:22:05
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\control-panel\index.tsx
  * @Description  :
@@ -97,7 +97,7 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
   };
 
   return (
-    <My className="control-panel">
+    <My className="control-panel electron-drag">
       <div className="progress" onClick={handleSeek} ref={ref}>
         <div className="back"></div>
         <div className="front" style={{ width: `${progress}%` }}>
@@ -105,7 +105,7 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
         </div>
       </div>
       <div className="panel">
-        <div className="track-cover">
+        <div className="track-cover electron-no-drag">
           <img
             src={`data:image/png;base64,${track?.picture || defaultCover}`}
             alt={track?.title || 'unkown-track'}
@@ -120,27 +120,40 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
           )}
         </div>
         <div className="track-info">
-          <div className="title" title={trackTitle}>
+          <div className="title electron-no-drag" title={trackTitle}>
             {trackTitle}
           </div>
-          <div className="artist">{track?.artist || 'Unkown Artist'}</div>
+          <div className="artist electron-no-drag">
+            {track?.artist || 'Unkown Artist'}
+          </div>
         </div>
-        <div className="track-operate">
-          <div className="prev" onClick={handlePrev} title='上一首'>
+        <div className="track-operate electron-no-drag">
+          <div className="prev" onClick={handlePrev} title="上一首">
             ⊻
           </div>
-          <div className="play-or-pause" onClick={handlePlayOrPause}>
+          <div
+            className="play-or-pause electron-no-drag"
+            onClick={handlePlayOrPause}
+          >
             {playing ? (
-              <span className="to-pause" title='暂停'>=</span>
+              <span className="to-pause" title="暂停">
+                =
+              </span>
             ) : (
-              <span className="to-play" title='播放'>⊳</span>
+              <span className="to-play" title="播放">
+                ⊳
+              </span>
             )}
           </div>
-          <div className="next" onClick={handleNext} title='下一首'>
+          <div
+            className="next electron-no-drag"
+            onClick={handleNext}
+            title="下一首"
+          >
             ⊻
           </div>
         </div>
-        <div className="track-plugin">
+        <div className="track-plugin electron-no-drag">
           <div className="rebuild-cache">
             <span
               role={'button'}
@@ -234,6 +247,7 @@ const My = styled.div`
       }
       img {
         width: 100%;
+        height: 52px;
         object-fit: cover;
       }
       .up-arrow {
@@ -285,6 +299,9 @@ const My = styled.div`
       .next {
         cursor: pointer;
         user-select: none;
+        &:hover {
+          color: #f1f1f1;
+        }
       }
       .prev {
         font-size: 1.8rem;
@@ -303,7 +320,8 @@ const My = styled.div`
         align-items: center;
         margin: 0 24px;
         position: relative;
-        left: 3px;
+        left: 1px;
+        top: 0px;
         .to-pause {
           position: relative;
           left: 4px;

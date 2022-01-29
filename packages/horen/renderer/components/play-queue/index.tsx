@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 16:24:28
- * @LastEditTime : 2022-01-28 13:23:10
+ * @LastEditTime : 2022-01-30 00:29:12
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\components\play-queue\index.tsx
+ * @FilePath     : \horen\packages\horen\renderer\components\play-queue\index.tsx
  * @Description  : 右侧滑出的歌曲列表
  */
 import React from 'react';
@@ -11,6 +11,7 @@ import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import { Track } from 'types';
 import Queue from './queue';
+import Mask from '../mask';
 import { ANIMATION_DELAY } from '../../../constant';
 
 export interface PlayQueueProps {
@@ -33,7 +34,11 @@ export function PlayQueue(props: PlayQueueProps) {
   const [isMounting, setIsMounting] = React.useState(true);
   const [animation, setAnimation] = React.useState('');
 
-  const classnames = ['component-playlist', `animation-${animation}`];
+  const classnames = [
+    'electron-no-drag',
+    'component-playlist',
+    `animation-${animation}`,
+  ];
 
   const handleClose = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -71,6 +76,7 @@ export function PlayQueue(props: PlayQueueProps) {
           <span>收起队列</span>
         </div>
       </div>
+      {visible && <Mask />}
     </MyPlayQueue>,
     document.getElementById('root') || document.body
   );
@@ -83,7 +89,7 @@ const MyPlayQueue = styled.div`
   position: fixed;
   top: 0;
   right: 0;
-  z-index: 999;
+  z-index: 998;
   background-color: #414243;
   color: #f1f1f1;
   &.animation-slideOutRight {
@@ -103,6 +109,7 @@ const MyPlayQueue = styled.div`
     .count {
       font-size: 0.8rem;
       padding: 8px 0;
+      color: #777879;
     }
   }
   .queue {
@@ -114,16 +121,21 @@ const MyPlayQueue = styled.div`
       background: #666;
     }
     padding: 16px 0;
-    height: calc(100vh - 180px);
+    height: calc(100vh - 170px);
     overflow-y: auto;
     .queue-item {
-      padding: 8px 16px 8px 32px;
+      padding: 8px 16px 8px 20px;
       cursor: pointer;
       display: flex;
       align-items: center;
       overflow-x: hidden;
       &:hover {
         background-color: #555;
+      }
+      .no {
+        width: 28px;
+        margin: 0 8px 0 0;
+        text-align: center;
       }
       .info {
         flex-grow: 1;
@@ -151,11 +163,11 @@ const MyPlayQueue = styled.div`
     cursor: pointer;
     display: flex;
     align-items: center;
-    height: 80px;
-    padding: 0 32px;
+    height: 76px;
+    padding: 0;
     background-color: #414243;
     .close {
-      height: 60px;
+      height: 100%;
       text-align: center;
       width: 100%;
       display: flex;

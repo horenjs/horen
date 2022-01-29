@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 01:51:07
- * @LastEditTime : 2022-01-29 00:38:17
+ * @LastEditTime : 2022-01-29 15:36:41
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\constant\index.ts
+ * @FilePath     : \Horen\packages\horen\constant\index.ts
  * @Description  :
  */
 import { SettingFile } from '../types';
@@ -28,6 +28,7 @@ export const IPC_CODE = {
   },
   mainwindow: {
     close: 'mainwindow:close',
+    minimize: 'manwindow:mini',
   }
 };
 

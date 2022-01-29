@@ -1,55 +1,67 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-23 14:15:30
- * @LastEditTime : 2022-01-23 14:43:46
+ * @LastEditTime : 2022-01-29 16:12:21
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\renderer\components\title-panel\index.tsx
+ * @FilePath     : \Horen\packages\horen\renderer\components\title-panel\index.tsx
  * @Description  :
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
-import Operate from './operate';
+import Operate, { OperateProps } from './operate';
 import Title from './title';
-import { OperateItem } from './operate';
 
-export interface OperateProps {
-  title: string;
-  operates: OperateItem[],
-}
+export type Props = {
+  title?: string;
+} & OperateProps;
 
-export default function (props: OperateProps) {
-  const { title, operates } = props;
+export default function (props: Props) {
+  const { title, ...restProps } = props;
 
   return ReactDOM.createPortal(
-    <MyTitlePanel className="title-panel">
+    <MyTitlePanel className="title-panel electron-drag">
       <Title title={title} />
-      <Operate items={operates} />
+      <Operate {...restProps} />
     </MyTitlePanel>,
     document.getElementById('root') || document.body
   );
 }
 
 const MyTitlePanel = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 30px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  .title-panel-title {
-    flex-grow: 1;
-    display: flex;
-    justify-content: center;
-  }
-  .title-panel-operate {
-    display: flex;
-    align-items: center;
-    .setting,.minimize,.zoom,.close {
-      margin: 0 4px;
-      color: #f1f1f1;
-      cursor: pointer;
+  &.title-panel {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 40px;
+    .operate {
+      .minimize,
+      .close {
+        position: absolute;
+        width: 32px;
+        height: 32px;
+        color: #999;
+        line-height: 32px;
+        font-size: 1rem;
+        cursor: pointer;
+        text-align: center;
+      }
+      .minimize {
+        right: 32px;
+        font-size: 1.4rem;
+        &:hover {
+          background-color: #212223;
+          color: #ffffff;
+        }
+      }
+      .close {
+        right: 0;
+        &:hover {
+          background-color: #c41313;
+          color: #ffffff;
+        }
+      }
     }
   }
 `;

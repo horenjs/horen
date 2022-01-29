@@ -30,3 +30,11 @@ body {
   border-radius: 10px;
   background: #4a4b4c;
 }
+
+.electron-drag {
+  -webkit-app-region: drag;
+}
+
+.electron-no-drag {
+  -webkit-app-region: no-drag;
+}

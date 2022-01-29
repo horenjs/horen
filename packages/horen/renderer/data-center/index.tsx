@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:00:44
- * @LastEditTime : 2022-01-29 00:41:14
+ * @LastEditTime : 2022-01-29 15:37:38
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\renderer\data-center\index.tsx
+ * @FilePath     : \Horen\packages\horen\renderer\data-center\index.tsx
  * @Description  :
  */
 const electron = window.require('electron');
@@ -52,5 +52,9 @@ export class DialogDC {
 export class MainwindowDC {
   public static async close() {
     return await ipcRenderer.invoke(IPC_CODE.mainwindow.close);
+  }
+
+  public static async minimize() {
+    return await ipcRenderer.invoke(IPC_CODE.mainwindow.minimize);
   }
 }

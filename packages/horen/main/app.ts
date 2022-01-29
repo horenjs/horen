@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 10:34:25
- * @LastEditTime : 2022-01-28 21:34:24
+ * @LastEditTime : 2022-01-29 15:50:57
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\main\app.ts
+ * @FilePath     : \Horen\packages\horen\main\app.ts
  * @Description  :
  */
 import { app, BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
@@ -84,6 +84,7 @@ export function createWindow(opts?: BrowserWindowConstructorOptions) {
     // minWidth: opts?.minWidth || 1024,
     // minHeight: opts?.minHeight || 764,
     resizable: false,
+    frame: false,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,

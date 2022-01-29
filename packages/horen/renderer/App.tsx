@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-29 20:11:47
+ * @LastEditTime : 2022-01-29 21:48:55
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -23,6 +23,7 @@ import ControlPanel from './components/control-panel';
 import { PlayQueue } from './components/play-queue';
 import PlayShow from './components/play-show';
 import TitlePanel from './components/title-panel';
+import { notice } from './components/notification';
 import { SettingDC, TrackDC } from './data-center';
 import { Page, SettingFile } from 'types';
 import { PAGES } from '../constant';
@@ -79,7 +80,9 @@ export default function App() {
    */
   const getAndSetSavedPlaylist = async (st: SettingFile) => {
     const playList = [];
-    for (const u of st.playList) playList.push(await TrackDC.getByUUID(u));
+    for (const u of st.playList) {
+      if (u !== '') playList.push(await TrackDC.getByUUID(u));
+    }
     setTracksInQueue(playList);
   };
 
@@ -109,6 +112,8 @@ export default function App() {
     (async () => {
       const msg = await TrackDC.getMsg();
       setTrackLoadProgress(msg);
+      notice.flash(msg);
+      if (msg === 'done') notice.destory();
     })();
   }, [trackLoadProgress, trackList.length]);
 
@@ -140,6 +145,7 @@ export default function App() {
       await getAndSetSavedPlaylist(st);
       // 获取存储的音频播放列表
       await getAndSetTrackList(st);
+      //
     })();
   }, []);
 
@@ -183,6 +189,7 @@ export default function App() {
             ) as string[];
             const tracks = await TrackDC.rebuildCache(paths);
             setTrackList(tracks);
+            setTracksInQueue([]);
           })();
         }}
       />

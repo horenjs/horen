@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 12:12:32
- * @LastEditTime : 2022-01-27 23:06:27
+ * @LastEditTime : 2022-01-29 20:16:58
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\play-queue\queue.tsx
  * @Description  :
@@ -24,26 +24,26 @@ const Queue: React.FC<QueueProps> = (props) => {
   };
 
   const renderItem = (item: Track) => {
-    const isPlaying = item.title === track.title;
+    const isPlaying = item?.title === track?.title;
 
     return (
       <div
         className="queue-item"
         onClick={(e) => handlePlay(e, item)}
-        key={item.src}
+        key={item?.src}
       >
         <div className="info">
           <div
             className="title"
             style={{ color: isPlaying ? '#1ece9d' : '#fcfcfc' }}
           >
-            <div className="title-text">{item.title || 'Unkown Song'}</div>
+            <div className="title-text">{item?.title || 'Unkown Song'}</div>
           </div>
           <div
             className="artist"
             style={{ color: isPlaying ? '#1ece9d' : '#aaa' }}
           >
-            {item.artist || 'Unkown Artist'}
+            {item?.artist || 'Unkown Artist'}
           </div>
         </div>
         <div className="operate"></div>
@@ -52,7 +52,7 @@ const Queue: React.FC<QueueProps> = (props) => {
             <Loader style="pulse" />
           </div>
         )}
-        <div className="duration">{formatSecond(item.duration || 0)}</div>
+        <div className="duration">{formatSecond(item?.duration || 0)}</div>
       </div>
     );
   };

@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-29 16:24:43
+ * @LastEditTime : 2022-01-29 21:47:44
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\pages\library\index.tsx
+ * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
  */
 import React from 'react';
@@ -58,7 +58,7 @@ export function Library() {
         <AlbumModal
           tracksInQueue={tracksInQueue.map((track) => {
             // 判断歌曲是否在播放中
-            if (track.title === player.currentTrack?.title)
+            if (track?.title === player.currentTrack?.title)
               return { ...track, playStatus: 'playing' };
             else return track;
           })}

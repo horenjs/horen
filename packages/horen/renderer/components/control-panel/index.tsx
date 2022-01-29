@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:12:15
- * @LastEditTime : 2022-01-29 18:35:34
+ * @LastEditTime : 2022-01-29 21:39:33
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\components\control-panel\index.tsx
+ * @FilePath     : \horen\packages\horen\renderer\components\control-panel\index.tsx
  * @Description  :
  */
 import React from 'react';
@@ -126,23 +126,27 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
           <div className="artist">{track?.artist || 'Unkown Artist'}</div>
         </div>
         <div className="track-operate">
-          <div className="prev" onClick={handlePrev}>
+          <div className="prev" onClick={handlePrev} title='上一首'>
             ⊻
           </div>
           <div className="play-or-pause" onClick={handlePlayOrPause}>
             {playing ? (
-              <span className="to-pause">=</span>
+              <span className="to-pause" title='暂停'>=</span>
             ) : (
-              <span className="to-play">⊳</span>
+              <span className="to-play" title='播放'>⊳</span>
             )}
           </div>
-          <div className="next" onClick={handleNext}>
+          <div className="next" onClick={handleNext} title='下一首'>
             ⊻
           </div>
         </div>
         <div className="track-plugin">
           <div className="rebuild-cache">
-            <span role={'button'} onClick={handleRebuildCache}>
+            <span
+              role={'button'}
+              onClick={handleRebuildCache}
+              title="重建缓存数据库"
+            >
               ↺
             </span>
           </div>

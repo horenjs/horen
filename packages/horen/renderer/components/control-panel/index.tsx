@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:12:15
- * @LastEditTime : 2022-01-30 00:22:05
+ * @LastEditTime : 2022-01-30 13:58:40
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\renderer\components\control-panel\index.tsx
+ * @FilePath     : \Horen\packages\horen\renderer\components\control-panel\index.tsx
  * @Description  :
  */
 import React from 'react';
@@ -12,6 +12,7 @@ import defaultCover from '../../static/image/default-cover';
 import { Track } from 'types';
 import { Loader } from '../loader';
 import { player } from '../../App';
+import Slider from '../slider';
 
 export interface ControlPanelProps {
   track?: Track;
@@ -40,9 +41,6 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
     onRebuildCache,
   } = props;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const ref: any = React.useRef();
-
   const trackTitle =
     track?.title || track?.src?.split('.').slice(-2, -1)[0] || 'Unkown track';
 
@@ -64,18 +62,8 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
     if (onNext) onNext(e);
   };
 
-  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const target = e.target as any;
-    // 进度条距离可视区域左边的距离
-    const left = target.getBoundingClientRect().left;
-    // 进度条的宽度
-    const width = ref.current ? ref.current.offsetWidth : target.offsetWidth;
-    // 鼠标点击的位置 只需要 X 轴的位置即可
-    const x = e.clientX;
-    if (onSeek) onSeek((x - left) / width);
+  const handleSeek = (per: number) => {
+    if (onSeek) onSeek(per);
   };
 
   const handlePlayShow = (e: React.MouseEvent<HTMLElement>) => {
@@ -98,11 +86,8 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
 
   return (
     <My className="control-panel electron-drag">
-      <div className="progress" onClick={handleSeek} ref={ref}>
-        <div className="back"></div>
-        <div className="front" style={{ width: `${progress}%` }}>
-          <span className="pointer"></span>
-        </div>
+      <div className="progress">
+        <Slider progress={progress} onChange={handleSeek} />
       </div>
       <div className="panel">
         <div className="track-cover electron-no-drag">
@@ -184,48 +169,8 @@ const My = styled.div`
   .progress {
     width: 100%;
     position: absolute;
-    top: -2px;
+    top: -4px;
     left: 0;
-    padding: 4px 0;
-    &:hover {
-      top: -3px;
-      .back {
-        height: 5px;
-        background-color: #616263;
-      }
-      .front {
-        height: 5px;
-        .pointer {
-          visibility: visible;
-        }
-      }
-    }
-    .back {
-      width: 100%;
-      background-color: #414243;
-      height: 4px;
-      position: absolute;
-      z-index: 0;
-      top: 2px;
-    }
-    .front {
-      width: 0%;
-      background-color: #25b184;
-      height: 4px;
-      position: absolute;
-      top: 2px;
-      z-index: 1;
-      .pointer {
-        position: absolute;
-        height: 12px;
-        width: 12px;
-        background-color: #1ece9d;
-        border-radius: 6px;
-        right: -6px;
-        top: -4px;
-        visibility: hidden;
-      }
-    }
   }
   .panel {
     width: 100%;

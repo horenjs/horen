@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 01:51:07
- * @LastEditTime : 2022-01-30 01:55:42
+ * @LastEditTime : 2022-01-30 13:23:55
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\constant\index.ts
+ * @FilePath     : \Horen\packages\horen\constant\index.ts
  * @Description  :
  */
 import { SettingFile, Page } from '../types';
@@ -140,6 +140,11 @@ export const PAGES: Page[] = [
     path: '/setting',
     title: '设置',
   },
+  {
+    name: 'home',
+    path: '/home',
+    title: 'test',
+  },
 ];
 
 /**
@@ -149,4 +154,23 @@ export const ANIMATION_DELAY = {
   slow: 500,
   normal: 250,
   fast: 100,
+};
+
+/**
+ * colors
+ */
+export const THEME = {
+  color: {
+    primary: '#4CAF50',
+    primaryTint: '#81C784',
+    error: '#F44336',
+    warning: '#FFC107',
+    success: '#4CAF50',
+    backgroundColorDeep: '#212529',
+    backgroundColor: '#313539',
+    backgroundColorTint: '#515557',
+    frontColorDeep: 'd1f5f9',
+    frontColor: '#f1f5f9',
+    frontColorTint: '#fff',
+  },
 };

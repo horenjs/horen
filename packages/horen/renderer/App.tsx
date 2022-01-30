@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-30 01:56:19
+ * @LastEditTime : 2022-01-30 11:02:25
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\renderer\App.tsx
+ * @FilePath     : \Horen\packages\horen\renderer\App.tsx
  * @Description  :
  */
 import React from 'react';
@@ -19,6 +19,7 @@ import { settingState, trackListState, tracksInQueueState } from '@/store';
 import styled from 'styled-components';
 import Library from './pages/library';
 import SettingPage from './pages/setting';
+import HomePage from './pages/home';
 import ControlPanel from './components/control-panel';
 import { PlayQueue } from './components/play-queue';
 import PlayShow from './components/play-show';
@@ -179,6 +180,7 @@ export default function App() {
               <Route path="library" element={<Library />} />
               {/* 设置页面 */}
               <Route path="setting" element={<SettingPage />} />
+              <Route path="home" element={<HomePage />}></Route>
               {/* 未匹配到路由时自动跳转到曲库页面 */}
               <Route path="*" element={<Navigate to="library" />} />
             </Route>

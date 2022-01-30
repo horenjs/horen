@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 12:32:21
- * @LastEditTime : 2022-01-30 02:06:14
+ * @LastEditTime : 2022-01-30 10:13:25
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\renderer\pages\library\album-modal.tsx
+ * @FilePath     : \Horen\packages\horen\renderer\pages\library\album-modal.tsx
  * @Description  :
  */
 import React from 'react';
@@ -40,7 +40,7 @@ export function AlbumModal(props: Props) {
   };
 
   const renderItem = (item: Track, index: number) => {
-    const isPlaying = player.currentTrack.src === item.src;
+    const isPlaying = player.currentTrack?.src === item.src;
 
     let child = (
       <span

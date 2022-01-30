@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-20 23:05:39
- * @LastEditTime : 2022-01-27 21:31:47
+ * @LastEditTime : 2022-01-30 14:52:20
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen-plugin-player\index.ts
+ * @FilePath     : \Horen\packages\horen-plugin-player\index.ts
  * @Description  : a player for AlO
  */
 import { Howl, Howler } from 'howler';
@@ -70,9 +70,9 @@ export default class HowlPlayer {
    */
   protected _enabled = false;
   /**
-   * volume of the track, 1 ~ 100
+   * volume of the track, 0 ~ 1
    */
-  protected _volume = 30;
+  protected _volume = 0.8;
   /**
    * play mode
    */
@@ -190,6 +190,20 @@ export default class HowlPlayer {
     this._mode = m;
   }
 
+  /**
+   * set the volume;
+   */
+  public set volume(vol: number) {
+    this._howler?.volume(vol);
+  }
+
+  /**
+   * get the volume;
+   */
+  public get volume() {
+    return this._howler?.volume() || this._volume;
+  }
+
   // There are many methods below to operate the TRACK.
   //
   //
@@ -280,6 +294,14 @@ export default class HowlPlayer {
     else this._play();
   }
 
+  public mute() {
+    Howler.mute(true);
+  }
+
+  public unmute() {
+    Howler.mute(false);
+  }
+
   /**
    * play the audio from source given
    * @param src : src of track;
@@ -292,6 +314,7 @@ export default class HowlPlayer {
       src: [src],
       format: ['flac', 'mp3'],
       html5: true,
+      volume: this.volume,
     });
 
     if (autoplay) {

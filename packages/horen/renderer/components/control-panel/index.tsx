@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:12:15
- * @LastEditTime : 2022-01-30 13:58:40
+ * @LastEditTime : 2022-01-30 15:04:20
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\components\control-panel\index.tsx
  * @Description  :
@@ -18,6 +18,8 @@ export interface ControlPanelProps {
   track?: Track;
   playing?: boolean;
   progress?: number | string;
+  volume?: number;
+  muted?: boolean,
   onPrev?(e?: React.MouseEvent<HTMLElement>): void;
   onNext?(e?: React.MouseEvent<HTMLElement>): void;
   onPlayOrPause?(e?: React.MouseEvent<HTMLElement>): void;
@@ -25,6 +27,8 @@ export interface ControlPanelProps {
   onShow?(e?: React.MouseEvent<HTMLElement>): void;
   onOpenQueue?(e?: React.MouseEvent<HTMLElement>): void;
   onRebuildCache?(e?: React.MouseEvent<HTMLElement>): void;
+  onVolume?(vol: number): void;
+  onMute?(): void;
 }
 
 const ControlPanel: React.FC<ControlPanelProps> = (props) => {
@@ -32,6 +36,8 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
     track = player.currentTrack as Track,
     playing = player.playing,
     progress = 0,
+    volume = 1,
+    muted = false,
     onPrev,
     onPlayOrPause,
     onNext,
@@ -39,6 +45,8 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
     onShow,
     onOpenQueue,
     onRebuildCache,
+    onVolume,
+    onMute,
   } = props;
 
   const trackTitle =
@@ -83,6 +91,17 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
     e.stopPropagation();
     if (onRebuildCache) onRebuildCache(e);
   };
+
+  const handleVolmue = (vol: number) => {
+    console.log(vol);
+    if (onVolume) onVolume(vol);
+  };
+
+  const handleMute = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onMute) onMute();
+  }
 
   return (
     <My className="control-panel electron-drag">
@@ -137,7 +156,16 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
           >
             ⊻
           </div>
+          <div className="volume electron-no-drag">
+            <div className="volume-icon" onClick={handleMute}>
+              {muted ? '🕨' : volume > 0.5 ? '🕪' : '🕩'}
+            </div>
+            <div className="adjust-volume">
+              <Slider progress={volume * 100} onChange={handleVolmue} />
+            </div>
+          </div>
         </div>
+
         <div className="track-plugin electron-no-drag">
           <div className="rebuild-cache">
             <span
@@ -282,6 +310,34 @@ const My = styled.div`
           font-size: 2.5rem;
           font-weight: 200;
           transform: scaleX(72%);
+        }
+      }
+      .volume {
+        font-size: 1.6rem;
+        margin: 0 8px 0 32px;
+        top: 2px;
+        position: relative;
+        height: 80px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        &:hover {
+          color: #f1f1f1;
+        }
+        .volume-icon {
+          width: 32px;
+          display: block;
+          transform: rotate(180deg);
+          line-height: 24px;
+          text-align: center;
+        }
+        .adjust-volume {
+          display: block;
+          width: 50px;
+          margin: 0 0 0 8px;
+          position: relative;
+          top: -1px;
         }
       }
     }

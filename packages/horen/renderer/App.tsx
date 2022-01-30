@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-30 11:02:25
+ * @LastEditTime : 2022-01-30 14:58:27
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -35,6 +35,7 @@ import Player from 'horen-plugin-player';
 export const player = new Player();
 
 export default function App() {
+  const [isMuted, setIsMuted] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
   const [isQueueVisible, setIsQueueVisible] = React.useState(false);
   const [playShow, setPlayShow] = React.useState(false);
@@ -191,8 +192,16 @@ export default function App() {
       {/* 歌曲控制中心 */}
       <ControlPanel
         onSeek={(per) => (player.seek = per * player.duration)}
+        onVolume={(vol) => (player.volume = vol)}
         onShow={() => setPlayShow(true)}
         progress={progress}
+        volume={player.volume}
+        muted={isMuted}
+        onMute={() => {
+          if (!isMuted) player.mute();
+          else player.unmute();
+          setIsMuted(!isMuted);
+        }}
         onOpenQueue={() => setIsQueueVisible(true)}
         onRebuildCache={() => {
           if (window.confirm('确定要重建缓存数据库吗?')) {

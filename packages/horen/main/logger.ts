@@ -1,15 +1,15 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-30 01:28:14
- * @LastEditTime : 2022-01-30 01:39:47
+ * @LastEditTime : 2022-01-30 17:32:04
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\packages\horen\main\logger.ts
+ * @FilePath     : \Horen\packages\horen\main\logger.ts
  * @Description  :
  */
 import chalk from 'chalk';
 import ddebug from 'debug';
 
-function logger(extend: string = '') {
+function logger(extend = '') {
   const dbrDebug = ddebug('horen');
 
   let myDebug: debug.Debugger;

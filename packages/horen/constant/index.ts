@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 01:51:07
- * @LastEditTime : 2022-01-30 13:23:55
+ * @LastEditTime : 2022-01-30 17:36:28
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\constant\index.ts
  * @Description  :
@@ -174,3 +174,5 @@ export const THEME = {
     frontColorTint: '#fff',
   },
 };
+
+export const API_LRC = ['https://music.163.com/api/song/lyric'];

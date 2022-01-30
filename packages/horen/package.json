@@ -15,6 +15,7 @@
   "license": "MIT",
   "dependencies": {
     "electron": "16.0.0",
+    "horen-plugin-lyric": "workspace:^0.0.1",
     "horen-plugin-player": "workspace:^0.0.1",
     "horen-util": "workspace:^0.0.1",
     "music-metadata": "^7.11.7",

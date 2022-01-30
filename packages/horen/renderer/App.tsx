@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-30 14:58:27
+ * @LastEditTime : 2022-01-30 17:06:41
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -29,6 +29,8 @@ import { SettingDC, TrackDC } from './data-center';
 import { Page, SettingFile } from 'types';
 import { PAGES } from '../constant';
 import Player from 'horen-plugin-player';
+import lrcParser from 'horen-plugin-lyric';
+import { mockLyricStr } from './mocks';
 
 // 初始化一个播放器
 // 这个播放器是全局唯一的播放器
@@ -235,6 +237,8 @@ export default function App() {
       <PlayShow
         playingTrack={player.currentTrack}
         visible={playShow}
+        lyric={lrcParser(mockLyricStr).scripts}
+        seek={player.seek}
         onClose={() => {
           setPlayShow(false);
         }}

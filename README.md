@@ -1,9 +1,9 @@
 <!--
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-19 23:40:05
- * @LastEditTime : 2022-01-30 15:06:51
+ * @LastEditTime : 2022-02-01 17:58:15
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\README.md
+ * @FilePath     : \horen\README.md
  * @Description  : 
 -->
 # Horen
@@ -28,6 +28,10 @@ Horen 是一个用 React 和 electron 打造的本地音乐播放器，正在不
 
 ![preview-queue](./screen-shoots/preview-queue.jpg)
 
+### 正在播放（歌词显示）
+
+![preview-play-show](./screen-shoots/preview-play-show.jpg)
+
 ## 功能进度
 
 - [x] 主体界面
@@ -36,7 +40,7 @@ Horen 是一个用 React 和 electron 打造的本地音乐播放器，正在不
 - [x] 控制播放进度
 - [x] 设置界面
 - [x] 控制音量
-- [ ] 歌词显示
+- [X] 歌词显示
 - [ ] 调音器
 - [x] 播放主界面
 

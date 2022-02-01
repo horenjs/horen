@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 12:32:21
- * @LastEditTime : 2022-01-30 10:13:25
+ * @LastEditTime : 2022-02-01 17:52:02
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\pages\library\album-modal.tsx
+ * @FilePath     : \horen\packages\horen\renderer\pages\library\album-modal.tsx
  * @Description  :
  */
 import React from 'react';
@@ -26,6 +26,7 @@ export function AlbumModal(props: Props) {
   const publishDate = album.children[0].year || album.children[0].date;
   const artist = album.children[0].artist;
   const filesPath = album.children[0].src;
+  const albumPath = filesPath?.split('\\').slice(0, -1);
 
   const handleClose = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -133,8 +134,8 @@ export function AlbumModal(props: Props) {
         <div className="artists">
           <span>艺术家</span> {artist}
         </div>
-        <div className="path" title={filesPath}>
-          <span>专辑路径</span> {filesPath}
+        <div className="path" title={albumPath?.join('\\')}>
+          <span>专辑路径</span> {albumPath?.join('\\')}
         </div>
       </div>
     </div>

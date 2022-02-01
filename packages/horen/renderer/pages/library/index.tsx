@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-02-01 17:32:21
+ * @LastEditTime : 2022-02-01 17:53:09
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
@@ -162,7 +162,7 @@ const MyLib = styled.div`
     }
     .album-children {
       width: calc(100% - 280px);
-      max-height: calc(480px - 100px);
+      max-height: calc(480px - 60px);
       margin: 16px 48px 0 0;
       padding-right: 8px;
       flex-wrap: wrap;
@@ -229,7 +229,7 @@ const MyLib = styled.div`
       }
       .cover img {
         width: 192px;
-        height: 192px;
+        // height: 192px;
         object-fit: cover;
         border-radius: 4px;
       }

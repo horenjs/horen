@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-28 18:21:04
- * @LastEditTime : 2022-01-29 23:48:48
+ * @LastEditTime : 2022-02-01 17:43:20
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\play-show\track-info.tsx
  * @Description  :
@@ -54,19 +54,19 @@ export default function TrackInfo(props: Props) {
 }
 
 const MyTrackInfo = styled.div`
-  width: 400px;
+  width: 360px;
   img {
     width: 100%;
     border-radius: 8px;
   }
   .track-info {
-    margin: 32px 0 0 0;
+    margin: 4px 0 0 0;
     padding: 0 0 0 16px;
     color: #f1f1f1;
     .title-duration {
       display: flex;
       align-items: flex-end;
-      margin: 0 0 24px 0;
+      margin: 0 0 8px 0;
       .title {
         font-size: 2rem;
       }
@@ -78,12 +78,12 @@ const MyTrackInfo = styled.div`
       }
     }
     .year {
-      margin: 8px 0;
+      margin: 4px 0;
       color: #717273;
       font-size: 0.8rem;
     }
     .artist-album {
-      margin: 8px 0;
+      margin: 4px 0;
       color: #717273;
     }
     .genre {

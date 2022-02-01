@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-28 18:20:34
- * @LastEditTime : 2022-02-01 17:35:22
+ * @LastEditTime : 2022-02-01 17:42:18
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\play-show\index.tsx
  * @Description  :
@@ -117,7 +117,7 @@ const MyPlayShow = styled.div`
   }
   .left {
     width: 50%;
-    height: calc(100% - 32px);
+    height: calc(100% - 44px);
     display: flex;
     justify-content: center;
     align-items: center;

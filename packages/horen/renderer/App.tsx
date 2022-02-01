@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-02-01 17:15:06
+ * @LastEditTime : 2022-02-01 17:34:48
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\App.tsx
  * @Description  :
@@ -206,7 +206,7 @@ export default function App() {
         <ControlPanel
           onSeek={(per) => (player.seek = per * player.duration)}
           onVolume={(vol) => (player.volume = vol)}
-          onShow={() => setPlayShow(true)}
+          onShow={() => setPlayShow(!playShow)}
           progress={progress}
           volume={player.volume}
           muted={isMuted}

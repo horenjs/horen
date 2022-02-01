@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 16:24:28
- * @LastEditTime : 2022-01-30 00:56:12
+ * @LastEditTime : 2022-02-01 17:23:09
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\play-queue\index.tsx
  * @Description  : 右侧滑出的歌曲列表
@@ -76,7 +76,7 @@ export function PlayQueue(props: PlayQueueProps) {
           <span>收起队列</span>
         </div>
       </div>
-      {visible && <Mask onClick={handleClose} />}
+      {visible && <Mask onClick={handleClose} depth={999999} />}
     </MyPlayQueue>,
     document.getElementById('root') || document.body
   );
@@ -89,7 +89,7 @@ const MyPlayQueue = styled.div`
   position: fixed;
   top: 0;
   right: 0;
-  z-index: 998;
+  z-index: 9999999;
   background-color: #414243;
   color: #f1f1f1;
   border-radius: 0 8px 8px 0;

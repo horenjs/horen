@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-30 00:04:08
- * @LastEditTime : 2022-01-30 00:56:10
+ * @LastEditTime : 2022-02-01 17:22:46
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\mask\index.tsx
  * @Description  :
@@ -14,14 +14,20 @@ interface Props {
   backgroundColor?: string;
   opacity?: number;
   onClick?(e: React.MouseEvent<HTMLElement>): void;
+  depth?: number;
 }
 
 export default function Mask(props: Props) {
-  const { backgroundColor = '#000', opacity = 0.75, ...rest } = props;
+  const {
+    backgroundColor = '#000',
+    opacity = 0.75,
+    depth = 999,
+    ...rest
+  } = props;
 
   return ReactDOM.createPortal(
     <MyMask
-      style={{ backgroundColor, opacity }}
+      style={{ backgroundColor, opacity, zIndex: depth }}
       className="electron-no-drag component-mask"
       {...rest}
     />,

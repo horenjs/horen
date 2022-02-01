@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-30 15:16:38
- * @LastEditTime : 2022-02-01 17:10:54
+ * @LastEditTime : 2022-02-01 17:36:39
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\components\lyric-panel\lyric.tsx
  * @Description  :
@@ -25,7 +25,7 @@ export function LyricPanel(props: LyricPanelProps) {
   console.log(lyrics);
 
   const isApproximateEqual = (s: number, time: number) => {
-    return Math.abs(s - time) < 0.2;
+    return Math.abs(s - time) < 0.5;
   };
 
   React.useEffect(() => {

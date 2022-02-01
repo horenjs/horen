@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 02:19:07
- * @LastEditTime : 2022-01-30 02:02:41
+ * @LastEditTime : 2022-02-01 17:32:21
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\pages\library\index.tsx
  * @Description  :
@@ -14,6 +14,7 @@ import { Track, Album } from 'types';
 import { AlbumModal } from './album-modal';
 import { AlbumView } from './album-viewer';
 import { Loader } from '@/components/loader';
+import Mask from '@/components/mask';
 import { player } from '@/App';
 
 export function Library() {
@@ -80,7 +81,9 @@ export function Library() {
         />
       )}
 
-      {album && <div className="mask"></div>}
+      {album && (
+        <Mask depth={999} opacity={0.9} onClick={() => setAlbum(undefined)} />
+      )}
     </MyLib>
   );
 }
@@ -121,8 +124,8 @@ const MyLib = styled.div`
     display: flex;
     flex-wrap: wrap;
     position: fixed;
-    width: 620px;
-    max-height: 480px;
+    width: 680px;
+    max-height: 520px;
     top: 35%;
     left: 50%;
     transform: translate(-50%, -35%);
@@ -131,7 +134,7 @@ const MyLib = styled.div`
     color: #aaa;
     box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.5);
     border-radius: 8px;
-    z-index: 998;
+    z-index: 9999;
     .album-header {
       width: 100%;
       padding: 16px 4px 12px 4px;

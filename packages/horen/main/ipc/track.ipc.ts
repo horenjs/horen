@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-28 14:55:06
- * @LastEditTime : 2022-02-01 17:05:55
+ * @LastEditTime : 2022-02-01 17:28:48
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\main\ipc\track.ipc.ts
  * @Description  :
@@ -18,6 +18,7 @@ import { TrackModel } from '../db/models';
 import myapp from '../app';
 import mm from 'music-metadata';
 import { request } from '../utils/request';
+import { simplized } from '../utils/words';
 import lrcParser from 'horen-plugin-lyric';
 
 const mydebug = debug('ipc:track');
@@ -106,7 +107,7 @@ ipcMain.handle(IPC_CODE.track.lyric, async (evt, src: string) => {
 
       mydebug.debug(`从互联网获取歌词: ${title}, ${artist}`);
 
-      const api = new NeteaseApi(title, artist);
+      const api = new NeteaseApi(simplized(title), simplized(artist));
       const lrc = await api.lyric();
       mydebug.info('获取歌词成功');
       mydebug.debug('保存歌词到文件: ' + audioExtToLrc(src));

@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 01:51:07
- * @LastEditTime : 2022-01-30 17:36:28
+ * @LastEditTime : 2022-02-01 15:53:16
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\constant\index.ts
+ * @FilePath     : \horen\packages\horen\constant\index.ts
  * @Description  :
  */
 import { SettingFile, Page } from '../types';
@@ -18,6 +18,7 @@ export const IPC_CODE = {
     rebuildCache: 'track:rebuild-list',
     msg: 'track:msg',
     getBySrc: 'track:get-by-uuid',
+    lyric: 'track:lyric',
   },
   setting: {
     get: 'setting:get',
@@ -175,4 +176,9 @@ export const THEME = {
   },
 };
 
-export const API_LRC = ['https://music.163.com/api/song/lyric'];
+const NETEASE_API_URL = {
+  lrc: 'https://music.163.com/api/song/lyric',
+  search: 'https://music.163.com/api/search/get/web',
+};
+
+export const API_URL = NETEASE_API_URL;

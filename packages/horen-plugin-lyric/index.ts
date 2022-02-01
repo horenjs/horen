@@ -1,18 +1,12 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-30 16:37:21
- * @LastEditTime : 2022-01-30 17:08:28
+ * @LastEditTime : 2022-02-01 16:43:35
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen-plugin-lyric\index.ts
+ * @FilePath     : \horen\packages\horen-plugin-lyric\index.ts
  * @Description  :
  */
 let EOL = '\n';
-
-import os = require('os');
-
-if (typeof window === 'undefined') {
-  EOL = os.EOL;
-}
 
 interface Lyric {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

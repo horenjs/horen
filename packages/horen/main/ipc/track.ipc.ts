@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-28 14:55:06
- * @LastEditTime : 2022-01-30 01:55:29
+ * @LastEditTime : 2022-02-01 17:05:55
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\main\ipc\track.ipc.ts
  * @Description  :
@@ -10,13 +10,15 @@ import path from 'path';
 import fs from 'fs/promises';
 import crypto from 'crypto';
 import { ipcMain } from 'electron';
-import { TRACK_FORMAT, IPC_CODE } from '../../constant';
+import { TRACK_FORMAT, IPC_CODE, API_URL } from '../../constant';
 import debug from '../logger';
 import { readDir, arrayBufferToBase64 } from 'horen-util';
-import { Track } from '../../types';
+import { Track, LyricScript } from '../../types';
 import { TrackModel } from '../db/models';
 import myapp from '../app';
 import mm from 'music-metadata';
+import { request } from '../utils/request';
+import lrcParser from 'horen-plugin-lyric';
 
 const mydebug = debug('ipc:track');
 /**
@@ -79,14 +81,49 @@ ipcMain.handle(IPC_CODE.track.getBySrc, async (evt, src: string) => {
       mydebug.error('获取音频失败: ' + src);
     }
   } catch (err) {
-    console.error(err);
     mydebug.error('获取音频失败: ' + src);
+  }
+});
+
+/**
+ * 获取歌词
+ */
+ipcMain.handle(IPC_CODE.track.lyric, async (evt, src: string) => {
+  mydebug.info('获取歌词: ' + src);
+
+  try {
+    const file = await fs.readFile(audioExtToLrc(src), { encoding: 'utf-8' });
+    mydebug.info('找到本地歌词文件');
+    return lrcParser(file).scripts;
+  } catch (err) {
+    mydebug.warning('无法找到本地歌词文件');
+  }
+
+  try {
+    const result = await TrackModel.findOne({ where: { src } });
+    if (result) {
+      const { title, artist } = result?.toJSON();
+
+      mydebug.debug(`从互联网获取歌词: ${title}, ${artist}`);
+
+      const api = new NeteaseApi(title, artist);
+      const lrc = await api.lyric();
+      mydebug.info('获取歌词成功');
+      mydebug.debug('保存歌词到文件: ' + audioExtToLrc(src));
+      await fs.writeFile(audioExtToLrc(src), lrc, { encoding: 'utf-8' });
+
+      return lrcParser(lrc).scripts;
+    }
+  } catch (err) {
+    mydebug.error('获取歌词失败: ' + src);
   }
 });
 
 //
 //
 //
+//
+// 以下为工具函数
 //
 //
 //
@@ -234,4 +271,70 @@ async function isCached(track: Track) {
   });
   if (result) return true;
   else return false;
+}
+
+/**
+ * 音频文件地址转换为歌词文件地址
+ * @param src : 音频文件;
+ * @returns
+ */
+function audioExtToLrc(src: string) {
+  const parts = src.split('.');
+  const newparts = parts.slice(0, -1);
+  newparts.push('lrc');
+  return newparts.join('.');
+}
+
+/**
+ *
+ */
+class NeteaseApi {
+  protected kw: string;
+
+  constructor(protected title: string, protected artist: string) {
+    this.kw = title + artist;
+  }
+
+  async search() {
+    const payload = {
+      s: this.kw,
+      type: 1,
+      offset: 0,
+      total: true,
+      limit: 10,
+    };
+    const res = await request(API_URL.search, payload);
+    return res as string;
+  }
+
+  async uid() {
+    const jsonStr = JSON.parse(await this.search());
+    if (jsonStr.result) {
+      const songList = jsonStr.result.songs;
+      for (const song of songList) {
+        if (song.name === this.title) {
+          const artists = song.artists;
+          for (const artist of artists) {
+            if (artist.name === this.artist) {
+              mydebug.info('搜索的歌曲 id: ' + song.id);
+              return song.id;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  async lyric(): Promise<string> {
+    const uid = await this.uid();
+    const payload = {
+      id: uid,
+      lv: -1,
+    };
+    const res = JSON.parse((await request(API_URL.lrc, payload)) as string);
+    if (res.code === 200) {
+      // mydebug.debug(res.lrc.lyric);
+      return res.lrc.lyric;
+    } else return '';
+  }
 }

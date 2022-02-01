@@ -1,14 +1,14 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:00:44
- * @LastEditTime : 2022-01-30 01:56:02
+ * @LastEditTime : 2022-02-01 16:30:20
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\renderer\data-center\index.tsx
  * @Description  :
  */
 const electron = window.require('electron');
 const { ipcRenderer } = electron;
-import { Track, SettingFile } from 'types';
+import { Track, SettingFile, LyricScript } from 'types';
 import { IPC_CODE } from '../../constant';
 
 export class TrackDC {
@@ -30,6 +30,10 @@ export class TrackDC {
         resolve(msg);
       });
     });
+  }
+
+  public static async lyric(src: string): Promise<LyricScript[]> {
+    return await ipcRenderer.invoke(IPC_CODE.track.lyric, src);
   }
 }
 

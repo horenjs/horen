@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 22:24:48
- * @LastEditTime : 2022-01-30 16:07:29
+ * @LastEditTime : 2022-02-01 16:21:36
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\types\track.ts
+ * @FilePath     : \horen\packages\horen\types\track.ts
  * @Description  :
  */
 import {
@@ -12,9 +12,7 @@ import {
   INativeTags,
   IFormat,
 } from 'music-metadata/lib/type';
-import { Track as ITrack } from 'horen-plugin-player';
-
-export type MyDate = string | number | Date;
+import { Track as ITrack, MyDate } from 'horen-plugin-player';
 
 export interface Base {
   createAt?: MyDate;
@@ -23,16 +21,10 @@ export interface Base {
 }
 
 export interface MyTrack extends Base {
-  uuid?: string;
-  date?: MyDate;
-  picture?: string;
   common?: ICommonTagsResult;
   format?: IFormat;
   trackInfo?: ITrackInfo;
-  year?: number | string;
-  genre?: string;
   native?: INativeTags;
-  duration?: number;
   playStatus?: 'in-queue' | 'playing' | 'paused' | 'stop';
   md5?: string;
 }
@@ -46,8 +38,8 @@ export interface Album {
 
 export type Track = MyTrack & ITrack;
 
-export type Lyric = {
-  start: number,
-  text: string,
-  end: number,
+export type LyricScript = {
+  start: number;
+  text: string;
+  end: number;
 };

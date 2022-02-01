@@ -1,22 +1,22 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-28 18:20:34
- * @LastEditTime : 2022-01-30 16:30:52
+ * @LastEditTime : 2022-02-01 17:16:45
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\components\play-show\index.tsx
+ * @FilePath     : \horen\packages\horen\renderer\components\play-show\index.tsx
  * @Description  :
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
-import { Lyric, Track } from 'types';
+import { LyricScript, Track } from 'types';
 import TrackInfo from './track-info';
 import { ANIMATION_DELAY } from '../../../constant';
 import { LyricPanel } from '@/components/lyric-panel';
 
 interface Props {
   playingTrack?: Track;
-  lyric: Lyric[];
+  lyric: LyricScript[];
   seek: number;
   visible: boolean;
   onClose(): void;
@@ -83,6 +83,7 @@ const MyPlayShow = styled.div`
   inset: 0;
   width: 100vw;
   height: 100vh;
+  padding: 0 0 64px 0;
   background-color: #313233;
   display: flex;
   z-index: 998;

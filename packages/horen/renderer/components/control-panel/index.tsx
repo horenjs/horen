@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-15 01:12:15
- * @LastEditTime : 2022-01-30 15:04:20
+ * @LastEditTime : 2022-02-01 17:15:55
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\components\control-panel\index.tsx
+ * @FilePath     : \horen\packages\horen\renderer\components\control-panel\index.tsx
  * @Description  :
  */
 import React from 'react';
@@ -194,6 +194,7 @@ const My = styled.div`
   align-items: center;
   padding: 0 32px;
   color: #aaa;
+  border-radius: inherit;
   .progress {
     width: 100%;
     position: absolute;

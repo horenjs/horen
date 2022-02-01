@@ -1,12 +1,12 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-21 22:24:43
- * @LastEditTime : 2022-01-30 15:36:39
+ * @LastEditTime : 2022-02-01 16:23:14
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\types\index.ts
+ * @FilePath     : \horen\packages\horen\types\index.ts
  * @Description  : 
  */
-export { Track, Album, Lyric } from './track';
+export { Track, Album, LyricScript } from './track';
 export { SettingFile, SettingGroup, SettingItem } from './setting';
 
 export interface Page {

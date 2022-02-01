@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-20 23:05:39
- * @LastEditTime : 2022-01-30 14:52:20
+ * @LastEditTime : 2022-02-01 16:22:15
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen-plugin-player\index.ts
+ * @FilePath     : \horen\packages\horen-plugin-player\index.ts
  * @Description  : a player for AlO
  */
 import { Howl, Howler } from 'howler';
@@ -16,8 +16,15 @@ if (typeof window === 'undefined')
     `Howl Player can only run on the browser, not NodeJs Runtime.`
   );
 
+export type MyDate = string | number | Date;
+
 export interface Track {
-  id?: number;
+  uuid?: string;
+  date?: MyDate;
+  picture?: string;
+  year?: number | string;
+  genre?: string;
+  duration?: number;
   src?: string;
   title?: string;
   artist?: string;

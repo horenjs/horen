@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-01-30 17:06:41
+ * @LastEditTime : 2022-02-01 17:15:06
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\packages\horen\renderer\App.tsx
+ * @FilePath     : \horen\packages\horen\renderer\App.tsx
  * @Description  :
  */
 import React from 'react';
@@ -26,11 +26,9 @@ import PlayShow from './components/play-show';
 import TitlePanel from './components/title-panel';
 import { notice } from './components/notification';
 import { SettingDC, TrackDC } from './data-center';
-import { Page, SettingFile } from 'types';
+import { Page, SettingFile, LyricScript } from 'types';
 import { PAGES } from '../constant';
 import Player from 'horen-plugin-player';
-import lrcParser from 'horen-plugin-lyric';
-import { mockLyricStr } from './mocks';
 
 // 初始化一个播放器
 // 这个播放器是全局唯一的播放器
@@ -46,6 +44,7 @@ export default function App() {
    * 音频加载进度
    */
   const [trackLoadProgress, setTrackLoadProgress] = React.useState<string>('');
+  const [lyrics, setLyrics] = React.useState<LyricScript[]>([]);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -146,6 +145,17 @@ export default function App() {
     return () => clearInterval(timer);
   }, [progress]);
 
+  // 在当前播放音频变化时触发
+  React.useEffect(() => {
+    (async () => {
+      if (player.currentTrack) {
+        const { src = '' } = player.currentTrack;
+        const lrcs = await TrackDC.lyric(src);
+        setLyrics(lrcs);
+      }
+    })();
+  }, [player.currentTrack]);
+
   //
   //
   // 以下在组件加载时触发
@@ -192,40 +202,42 @@ export default function App() {
       </div>
 
       {/* 歌曲控制中心 */}
-      <ControlPanel
-        onSeek={(per) => (player.seek = per * player.duration)}
-        onVolume={(vol) => (player.volume = vol)}
-        onShow={() => setPlayShow(true)}
-        progress={progress}
-        volume={player.volume}
-        muted={isMuted}
-        onMute={() => {
-          if (!isMuted) player.mute();
-          else player.unmute();
-          setIsMuted(!isMuted);
-        }}
-        onOpenQueue={() => setIsQueueVisible(true)}
-        onRebuildCache={() => {
-          if (window.confirm('确定要重建缓存数据库吗?')) {
-            if (!isRebuilding) {
-              (async () => {
-                // 抽取设置项：曲库目录
-                const paths = getSettingItem(
-                  setting,
-                  'common',
-                  'collectionPaths'
-                ) as string[];
-                const tracks = await TrackDC.rebuildCache(paths);
-                setTrackList(tracks);
-                setTracksInQueue([]);
-              })();
-              setIsRebuilding(true);
-            } else {
-              window.alert('正在重建缓存数据库请勿重复点击');
+      <div className="page-bottom">
+        <ControlPanel
+          onSeek={(per) => (player.seek = per * player.duration)}
+          onVolume={(vol) => (player.volume = vol)}
+          onShow={() => setPlayShow(true)}
+          progress={progress}
+          volume={player.volume}
+          muted={isMuted}
+          onMute={() => {
+            if (!isMuted) player.mute();
+            else player.unmute();
+            setIsMuted(!isMuted);
+          }}
+          onOpenQueue={() => setIsQueueVisible(true)}
+          onRebuildCache={() => {
+            if (window.confirm('确定要重建缓存数据库吗?')) {
+              if (!isRebuilding) {
+                (async () => {
+                  // 抽取设置项：曲库目录
+                  const paths = getSettingItem(
+                    setting,
+                    'common',
+                    'collectionPaths'
+                  ) as string[];
+                  const tracks = await TrackDC.rebuildCache(paths);
+                  setTrackList(tracks);
+                  setTracksInQueue([]);
+                })();
+                setIsRebuilding(true);
+              } else {
+                window.alert('正在重建缓存数据库请勿重复点击');
+              }
             }
-          }
-        }}
-      />
+          }}
+        />
+      </div>
       {/* 当前播放队列 */}
       <PlayQueue
         tracks={player.trackList}
@@ -237,8 +249,8 @@ export default function App() {
       <PlayShow
         playingTrack={player.currentTrack}
         visible={playShow}
-        lyric={lrcParser(mockLyricStr).scripts}
         seek={player.seek}
+        lyric={lyrics}
         onClose={() => {
           setPlayShow(false);
         }}
@@ -304,5 +316,13 @@ const MyApp = styled.div`
       height: calc(100vh - 192px);
       overflow-y: auto;
     }
+  }
+  .page-bottom {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    z-index: 999;
+    border-radius: 0 0 8px 8px;
   }
 `;

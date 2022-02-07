@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-28 14:55:06
- * @LastEditTime : 2022-02-01 17:28:48
+ * @LastEditTime : 2022-02-04 13:03:55
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \horen\packages\horen\main\ipc\track.ipc.ts
  * @Description  :
@@ -10,13 +10,13 @@ import path from 'path';
 import fs from 'fs/promises';
 import crypto from 'crypto';
 import { ipcMain } from 'electron';
+import mm from 'music-metadata';
+import { readDir, arrayBufferToBase64 } from 'mintin-util';
 import { TRACK_FORMAT, IPC_CODE, API_URL } from '../../constant';
 import debug from '../logger';
-import { readDir, arrayBufferToBase64 } from 'horen-util';
 import { Track, LyricScript } from '../../types';
 import { TrackModel } from '../db/models';
 import myapp from '../app';
-import mm from 'music-metadata';
 import { request } from '../utils/request';
 import { simplized } from '../utils/words';
 import lrcParser from 'horen-plugin-lyric';
@@ -103,7 +103,7 @@ ipcMain.handle(IPC_CODE.track.lyric, async (evt, src: string) => {
   try {
     const result = await TrackModel.findOne({ where: { src } });
     if (result) {
-      const { title, artist } = result?.toJSON();
+      const { title, artist } = result.toJSON();
 
       mydebug.debug(`从互联网获取歌词: ${title}, ${artist}`);
 

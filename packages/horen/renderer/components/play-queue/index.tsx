@@ -12,7 +12,7 @@ import styled from 'styled-components';
 import { Track } from 'types';
 import Queue from './queue';
 import Mask from '../mask';
-import { ANIMATION_DELAY } from '../../../constant';
+import { ANIMATION_DELAY, THEME } from '../../../constant';
 
 export interface PlayQueueProps {
   /**
@@ -25,11 +25,13 @@ export interface PlayQueueProps {
   track: Track;
   visible: boolean;
   onPlay(track: Track): void;
+  onDelete(track: Track): void;
+  onEmpty?(): void;
   onClose(): void;
 }
 
 export function PlayQueue(props: PlayQueueProps) {
-  const { tracks, track, visible, onPlay, onClose } = props;
+  const { tracks, track, visible, onPlay, onDelete, onEmpty, onClose } = props;
 
   const [isMounting, setIsMounting] = React.useState(true);
   const [animation, setAnimation] = React.useState('');
@@ -67,10 +69,17 @@ export function PlayQueue(props: PlayQueueProps) {
   return ReactDOM.createPortal(
     <MyPlayQueue className={classnames.join(' ')}>
       <div className="header">
-        <div className="title">播放队列</div>
+        <div className="title">
+          <span>播放队列</span>
+          <span role="button" className="empty" onClick={e => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (onEmpty) onEmpty();
+          }}>清空列表</span>
+        </div>
         <div className="count">{tracks.length} 首歌曲</div>
       </div>
-      <Queue track={track} tracks={tracks} onPlay={onPlay} />
+      <Queue track={track} tracks={tracks} onPlay={onPlay} onDelete={onDelete} />
       <div className="bottom">
         <div className="close" role="button" onClick={handleClose}>
           <span>收起队列</span>
@@ -83,7 +92,7 @@ export function PlayQueue(props: PlayQueueProps) {
 }
 
 const MyPlayQueue = styled.div`
-  width: 320px;
+  width: 340px;
   height: 100vh;
   padding: 32px 0 0 0;
   position: fixed;
@@ -93,6 +102,7 @@ const MyPlayQueue = styled.div`
   background-color: #414243;
   color: #f1f1f1;
   border-radius: 0 8px 8px 0;
+  
   &.animation-slideOutRight {
     animation: slideOutRight ${ANIMATION_DELAY.normal / 1000}s;
     animation-fill-mode: forwards;
@@ -107,6 +117,16 @@ const MyPlayQueue = styled.div`
   .header {
     font-size: 1.3rem;
     padding: 0 32px;
+    .title {
+      .empty {
+        margin: 0 8px;
+        padding: 4px 8px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        background-color: #333;
+        border-radius: 4px;
+      }
+    }
     .count {
       font-size: 0.8rem;
       padding: 8px 0;
@@ -114,6 +134,9 @@ const MyPlayQueue = styled.div`
     }
   }
   .queue {
+    padding: 16px 0;
+    height: calc(100vh - 170px);
+    overflow: auto;
     &::-webkit-scrollbar {
       width: 6px;
     }
@@ -121,17 +144,23 @@ const MyPlayQueue = styled.div`
       border-radius: 10px;
       background: #666;
     }
-    padding: 16px 0;
-    height: calc(100vh - 170px);
-    overflow-y: auto;
     .queue-item {
-      padding: 8px 16px 8px 20px;
+      padding: 8px 16px 8px 12px;
       cursor: pointer;
       display: flex;
       align-items: center;
       overflow-x: hidden;
+      transition: all .25s ease-in-out;
       &:hover {
         background-color: #555;
+        .delete {
+          visibility: visible;
+        }
+      }
+      .delete {
+        margin-right: 4px;
+        color: ${THEME.color.error};
+        visibility: hidden;
       }
       .no {
         width: 28px;

@@ -47,6 +47,7 @@ importers:
       horen-plugin-player: workspace:^0.0.1
       horen-util: workspace:^0.0.1
       html-webpack-plugin: ^5.5.0
+      mintin-util: 1.0.10
       music-metadata: ^7.11.7
       react: ^17.0.2
       react-dom: ^17.0.2
@@ -72,6 +73,7 @@ importers:
       horen-plugin-lyric: link:../horen-plugin-lyric
       horen-plugin-player: link:../horen-plugin-player
       horen-util: link:../horen-util
+      mintin-util: 1.0.10
       music-metadata: 7.11.7
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
@@ -4671,6 +4673,10 @@ packages:
       minipass: 3.1.6
       yallist: 4.0.0
     dev: true
+
+  /mintin-util/1.0.10:
+    resolution: {integrity: sha512-6JyzYZUKD+Z4fgEk28PPmeFSEPySjr1DW0D8XIDIcYWLBe/uAX/3A4xCxsO2YIQbn5UIfDtYrmZafsM2pIfm4A==}
+    dev: false
 
   /mkdirp/0.5.5:
     resolution: {integrity: sha1-2Rzv1i0UNsoPQWIOJRKI1CAJne8=, tarball: mkdirp/download/mkdirp-0.5.5.tgz}

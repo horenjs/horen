@@ -26,7 +26,7 @@ import PlayShow from './components/play-show';
 import TitlePanel from './components/title-panel';
 import { notice } from './components/notification';
 import { SettingDC, TrackDC } from './data-center';
-import { Page, SettingFile, LyricScript } from 'types';
+import { Page, SettingFile, LyricScript, Track } from 'types';
 import { PAGES } from '../constant';
 import Player from 'horen-plugin-player';
 
@@ -129,7 +129,7 @@ export default function App() {
         notice.destory();
       }
     })();
-  }, [trackLoadProgress, trackList.length]);
+  }, [trackLoadProgress]);
 
   // 音频队列改变时触发
   React.useEffect(() => {
@@ -193,7 +193,7 @@ export default function App() {
               <Route path="library" element={<Library />} />
               {/* 设置页面 */}
               <Route path="setting" element={<SettingPage />} />
-              <Route path="home" element={<HomePage />}></Route>
+              <Route path="home" element={<HomePage />} />
               {/* 未匹配到路由时自动跳转到曲库页面 */}
               <Route path="*" element={<Navigate to="library" />} />
             </Route>
@@ -244,6 +244,13 @@ export default function App() {
         track={player.currentTrack}
         visible={isQueueVisible}
         onPlay={(track) => (player.currentTrack = track)}
+        onEmpty={() => {
+          player.trackList = [];
+          setTracksInQueue([]);
+        }}
+        onDelete={(track) => {
+          player.trackList = delTrack(player.trackList, track) as Track[];
+        }}
         onClose={() => setIsQueueVisible(false)}
       />
       <PlayShow
@@ -262,6 +269,8 @@ export default function App() {
 /**
  * 从设置中找到曲库目录
  * @param setting SettingFile
+ * @param groupName
+ * @param itemLabel
  * @returns collection paths
  */
 function getSettingItem(
@@ -282,6 +291,14 @@ function getSettingItem(
       }
     }
   }
+}
+
+function delTrack(ts: Track[], track: Track) {
+  const tracks = [];
+  for (let i = 0; i < ts.length; i++) {
+    if (ts[i].src !== track.src) tracks.push(ts[i]);
+  }
+  return tracks;
 }
 
 const MyApp = styled.div`

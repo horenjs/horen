@@ -19,8 +19,8 @@
   "author": "Kevin Jobs (kevinjobs.com)",
   "license": "MIT",
   "dependencies": {
-    "horen-util": "workspace:^0.0.1",
     "howler": "^2.2.3",
+    "mintin-util": "1.3.0",
     "underscore": "^1.13.2"
   },
   "devDependencies": {

@@ -7,7 +7,7 @@
  * @Description  : a player for AlO
  */
 import { Howl, Howler } from 'howler';
-import { randomInt, shift } from 'horen-util';
+import { randomInt, shift } from 'mintin-util';
 import _ from 'underscore';
 
 // 判断是否为浏览器环境

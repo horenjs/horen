@@ -7,7 +7,7 @@
  * @Description  :
  */
 import { ipcMain, dialog } from 'electron';
-import { IPC_CODE } from '../../../shared/constant';
+import { IPC_CODE } from '../../shared/constant';
 import debug from '../logger';
 import myapp from '../app';
 

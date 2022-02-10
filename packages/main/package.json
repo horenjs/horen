@@ -4,7 +4,7 @@
   "description": "A Music Player",
   "main": "index.js",
   "scripts": {
-    "build:main": "rimraf ./dist && tsc -p ./main/tsconfig.json",
+    "build:main": "rimraf ./dist && tsc -p tsconfig.json",
     "build:renderer": "rimraf ./dist/renderer && webpack --config ../renderer/webpack/config.js",
     "start": "cross-env NODE_ENV=development DEBUG='horen:*' concurrently \"pnpm start:main\" \"pnpm start:renderer\"",
     "start:main": "wait-on tcp:8080 && pnpm build:main && electron ./dist/main/index.js",

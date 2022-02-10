@@ -15,8 +15,8 @@ import {
   APP_DATA_PATH,
   APP_NAME,
   DEFAULT_SETTING,
-} from '../../../shared/constant';
-import { SettingFile } from '../../../shared/types';
+} from '../../shared/constant';
+import { SettingFile } from '../../shared/types';
 
 const mydebug = debug('ipc:setting');
 /**

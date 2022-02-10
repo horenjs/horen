@@ -1,10 +1,10 @@
 {
-  "extends": "../../shared/tsconfig.base.json",
+  "extends": "../shared/tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "../",
     "outDir": "../dist",
     "declaration": true,
-    "declarationDir": "../typings/main",
+    "declarationDir": "../typings/main"
     // "emitDeclarationOnly": true,
   },
   "include": [

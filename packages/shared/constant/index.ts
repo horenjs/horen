@@ -7,7 +7,7 @@
  * @Description  :
  */
 import { SettingFile, Page } from '../types';
-import myapp from '../../main/main/app';
+import myapp from '../../main/app';
 
 /**
  * ipc 通信使用的信号字符

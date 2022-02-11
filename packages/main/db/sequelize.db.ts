@@ -9,7 +9,7 @@
 import { Sequelize, Options } from 'sequelize';
 import debug from '../logger';
 import path from 'path';
-import { APP_DATA_PATH, APP_NAME } from '../../shared/constant';
+import { APP_DATA_PATH, APP_NAME } from 'constant';
 
 const mydebug = debug('db');
 

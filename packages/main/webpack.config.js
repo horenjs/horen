@@ -28,7 +28,7 @@ module.exports = {
       'types': path.resolve(__dirname, '../shared/types'),
       'constant': path.resolve(__dirname, '../shared/constant'),
     },
-    extensions: ['.ts'],
+    extensions: ['.ts', '.js'],
     fallback: {
       fs: false,
       crypto: false,
@@ -44,6 +44,6 @@ module.exports = {
       },
     ],
   },
-  externals: [nodeExternals()]
+  // externals: [nodeExternals()]
 };
 

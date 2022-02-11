@@ -4,6 +4,7 @@
     "rootDir": "../",
     "outDir": "./dist",
     "declaration": false,
+    "moduleResolution": "node",
     // "declarationDir": "../typings/main",
     // "emitDeclarationOnly": true,
     "paths": {

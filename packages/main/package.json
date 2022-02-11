@@ -4,7 +4,7 @@
   "description": "A Music Player",
   "main": "index.js",
   "scripts": {
-    "build": "rimraf ./dist && webpack --config webpack.config.js",
+    "build": "rimraf ./dist && webpack --config webpack.config.js --stats-error-details",
     "dev": "cross-env NODE_ENV=development wait-on tcp:8080 && pnpm build && electron ./dist/index.js",
     "prod": "cross-env NODE_ENV=production pnpm build && electron ./dist/index.js",
     "rebuild": "electron-rebuild"
@@ -12,22 +12,22 @@
   "author": "Kevin Jobs (kevinjobs.com)",
   "license": "MIT",
   "dependencies": {
+    "chalk": "^4.0.0",
+    "debug": "^4.3.3",
     "electron": "16.0.0",
     "horen-plugin-lyric": "workspace:^0.0.1",
     "mintin-util": "1.3.0",
     "music-metadata": "^7.11.7",
     "request": "^2.88.2",
     "sequelize": "^6.14.1",
-    "sqlite3": "^5.0.2"
+    "sqlite3": "^5.0.2",
+    "pg-hstore": "^2.3.4"
   },
   "devDependencies": {
     "@types/node": "^17.0.10",
     "@types/request": "^2.48.8",
-    "chalk": "^4.0.0",
     "concurrently": "^7.0.0",
     "cross-env": "^7.0.3",
-    "css-loader": "^6.5.1",
-    "debug": "^4.3.3",
     "electron-rebuild": "^3.2.7",
     "rimraf": "^3.0.2",
     "ts-loader": "^9.2.6",
@@ -41,6 +41,7 @@
   },
   "peerDependencies": {
     "@types/node": "^17.0.10",
+    "pg-hstore": "^2.3.4",
     "typescript": "^4.5.5",
     "webpack": "^5.66.0"
   }

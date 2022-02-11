@@ -4,8 +4,7 @@
   "description": "horen is a Music Player powered by Electron and React",
   "author": "Kevin Jobs",
   "license": "ISC",
-  "homepage": "https://kevinjobs.github.io/horen",
-  "main": "./packages/main/dist/index.js",
+  "homepage": "https://kevinjobs.github.io/horenjs/horen",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kevinjobs/horen"
@@ -18,28 +17,18 @@
     "howl"
   ],
   "scripts": {
-    "lint": "eslint -c .eslintrc.js --ext .ts",
-    "dev": "cross-env NODE_ENV=development DEBUG='horen:*' concurrently \"pnpm dev --filter renderer\" \"pnpm dev --filter main\"",
-    "build": "cross-env NODE_ENV=production DEBUG='horen:*' concurrently \"pnpm build --filter renderer\" \"pnpm build --filter main\"",
-    "dist": "electron-builder --win --x64"
+    "lint": "eslint -c .eslintrc.js --ext .ts"
   },
   "devDependencies": {
-    "concurrently": "^7.0.0",
-    "cross-env": "^7.0.3",
-    "electron": "16.0.0",
-    "electron-builder": "^22.14.13",
+    "@typescript-eslint/eslint-plugin": "^5.11.0",
+    "@typescript-eslint/parser": "5.0.0",
     "eslint": "^8.7.0",
-    "tslib": "^2.3.1"
+    "tslib": "^2.3.1",
+    "typescript": "^4.5.5"
   },
   "peerDependencies": {
-    "tslib": "^2.3.1"
-  },
-  "build": {
-    "appId": "com.kevinjobs.horen",
-    "win": {
-      "target": [
-        "zip"
-      ]
-    }
+    "@typescript-eslint/parser": "5.0.0",
+    "tslib": "^2.3.1",
+    "typescript": "^4.5.5"
   }
 }

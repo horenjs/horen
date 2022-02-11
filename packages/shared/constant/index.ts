@@ -140,11 +140,6 @@ export const PAGES: Page[] = [
     path: '/setting',
     title: '设置',
   },
-  {
-    name: 'home',
-    path: '/home',
-    title: 'test',
-  },
 ];
 
 /**

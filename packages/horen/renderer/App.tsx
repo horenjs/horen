@@ -28,7 +28,7 @@ import { notice } from './components/notification';
 import { SettingDC, TrackDC } from './data-center';
 import { Page, SettingFile, LyricScript, Track } from 'types';
 import { PAGES } from 'constant';
-import Player from '../horen-plugin-player';
+import Player from '../../horen-plugin-player/dist';
 
 // 初始化一个播放器
 // 这个播放器是全局唯一的播放器

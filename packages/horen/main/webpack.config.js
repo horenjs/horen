@@ -13,20 +13,21 @@ const nodeExternals = require('webpack-node-externals');
 module.exports = {
   target: "electron-main",
   devtool: "inline-source-map",
+  mode: process.env.NODE_ENV || 'production',
   entry: {
     index: path.resolve(__dirname, './index.ts'),
   },
   output: {
-    path: path.resolve(__dirname, './dist'),
-    filename: 'index.js',
+    path: path.resolve(__dirname, '../dist/main'),
+    filename: '[name].js',
     clean: true, // clean the old files when build every time.
   },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './'),
       '~': path.resolve(__dirname, './node_modules'),
-      'types': path.resolve(__dirname, '../shared/types'),
-      'constant': path.resolve(__dirname, '../shared/constant'),
+      'types': path.resolve(__dirname, '../../shared/types'),
+      'constant': path.resolve(__dirname, '../../shared/constant'),
     },
     extensions: ['.ts', '.js'],
     fallback: {
@@ -44,6 +45,6 @@ module.exports = {
       },
     ],
   },
-  // externals: [nodeExternals()]
+  externals: [nodeExternals()]
 };
 

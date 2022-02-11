@@ -7,7 +7,6 @@
  * @Description  :
  */
 import { SettingFile, Page } from '../types';
-import myapp from '../../main/app';
 
 /**
  * ipc 通信使用的信号字符
@@ -37,7 +36,7 @@ export const IPC_CODE = {
  * 用户目录
  */
 export const APP_DATA_PATH =
-  process.env.APPDATA || myapp.app.getPath('appData') || '.';
+  process.env.APPDATA || '.';
 
 /**
  * 应用名

@@ -12,7 +12,9 @@ import {
   INativeTags,
   IFormat,
 } from 'music-metadata/lib/type';
-import { Track as ITrack, MyDate } from 'packages/horen-plugin-player';
+import { Track as ITrack } from 'horen-plugin-player';
+
+type MyDate = string | number | Date;
 
 export interface Base {
   createAt?: MyDate;

@@ -11,7 +11,7 @@ const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-const distPath = path.resolve(__dirname, '../../dist/renderer')
+const distPath = path.resolve(__dirname, '../dist')
 
 const htmlWebpackPlugin = new HtmlWebPackPlugin({
   template: path.resolve(__dirname, '../public/index.html'),
@@ -43,7 +43,8 @@ module.exports = {
     alias: {
       '@': path.resolve(__dirname, '../'),
       '~': path.resolve(__dirname, '../node_modules'),
-      'types': path.resolve(__dirname, '../../types'),
+      'types': path.resolve(__dirname, '../../shared/types'),
+      'constant': path.resolve(__dirname, '../../shared/constant')
     },
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
   },

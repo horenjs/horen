@@ -27,7 +27,13 @@ export interface ISettingItem {
 export default function SettingPage() {
   const [setting, setSetting] = useRecoilState(settingState);
 
-  const handleChange = () => {};
+  const handleSettingChange = async () => {
+    await SettingDC.set(setting);
+  }
+
+  React.useEffect(() => {
+    (async () => await handleSettingChange())();
+  }, [setting]);
   
   const renderSettingItem = (st: SettingFile) => {
     const items: ISettingItem[] = [];

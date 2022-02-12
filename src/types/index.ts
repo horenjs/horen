@@ -7,7 +7,7 @@
  * @Description  : 
  */
 export { Track, Album, LyricScript, MyDate } from './track';
-export { SettingFile, SettingGroup, SettingItem } from './setting';
+export { SettingFile, PlayList, PlayListItem } from './setting';
 
 export interface Page {
   name: string,

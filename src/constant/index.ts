@@ -6,7 +6,9 @@
  * @FilePath     : \horen\src\horen\constant\lyric.ts
  * @Description  :
  */
-import { SettingFile, Page } from '../types';
+export { DEFAULT_SETTING } from './setting';
+export { default as LANG } from './lang';
+import { Page } from '../types';
 
 /**
  * ipc 通信使用的信号字符
@@ -43,58 +45,6 @@ export const APP_DATA_PATH =
  * todo: 应当从 package.json 读取
  */
 export const APP_NAME = 'horen';
-
-/**
- * 默认设置
- */
-export const DEFAULT_SETTING: SettingFile = {
-  createAt: new Date().valueOf(),
-  updateAt: new Date().valueOf(),
-  // 修改设置时同步修改版本号
-  // 以便生成新的设置文件
-  version: '0.0.7',
-  playList: [],
-  groups: [
-    {
-      name: 'common',
-      title: '通用选项',
-      children: [
-        {
-          label: 'collectionPaths',
-          value: [],
-          title: '曲库路径',
-        },
-      ],
-    },
-    {
-      name: 'apperance',
-      title: '外观',
-      children: [
-        {
-          label: 'themeColor',
-          value: '',
-          title: '主题色',
-        },
-        {
-          label: 'language',
-          value: 'Chinese (Simplified)',
-          title: '语言',
-        },
-      ],
-    },
-    {
-      name: 'start',
-      title: '启动',
-      children: [
-        {
-          label: 'rebuildWhenStart',
-          value: false,
-          title: '启动时刷新数据库',
-        },
-      ],
-    },
-  ],
-};
 
 /**
  * 可以解析的音频文件格式
@@ -164,7 +114,7 @@ export const THEME = {
     backgroundColorDeep: '#212529',
     backgroundColor: '#313539',
     backgroundColorTint: '#515557',
-    frontColorDeep: 'd1f5f9',
+    frontColorDeep: '#a1a2a3',
     frontColor: '#f1f5f9',
     frontColorTint: '#fff',
   },

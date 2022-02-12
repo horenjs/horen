@@ -8,70 +8,101 @@
  */
 import React from 'react';
 import styled from 'styled-components';
-import { Loader } from '@/components/loader';
-import SettingGroup from './setting-group';
 import { settingState } from '@/store';
 import { useRecoilState } from 'recoil';
-import { SettingDC } from '@/data-center';
-import { SettingGroup as ISettingGroup } from 'types';
+import { SettingDC, DialogDC } from '@/data-center';
+import {SettingFile } from 'types';
+import {LANG, THEME} from 'constant';
+import Switch from "@/components/switch";
+import { Loader } from '@/components/loader';
+import SettingItem from "./setting-item";
+
+export interface ISettingItem {
+  key: string,
+  group: string,
+  label: string,
+  value: string | string[] | number | number[] | boolean,
+}
 
 export default function SettingPage() {
   const [setting, setSetting] = useRecoilState(settingState);
 
-  const handleSettingGroupChange = async (
-    newGroup: ISettingGroup,
-    index: number
-  ) => {
-    const groups = [...setting.groups];
-    groups[index] = newGroup;
-
-    setSetting({
-      ...setting,
-      updateAt: new Date().valueOf(),
-      groups,
-    });
+  const handleChange = () => {};
+  
+  const renderSettingItem = (st: SettingFile) => {
+    const items: ISettingItem[] = [];
     
-    await SettingDC.set({
-      ...setting,
-      updateAt: new Date().valueOf(),
-      groups,
-    });
-  };
+    for (const key in st) {
+      const parts = key.split('.');
+      if (parts.length === 2) items.push({
+        key: key,
+        group: parts[0],
+        label: parts[1],
+        value: st[key],
+      })
+    }
+    
+    return (
+      <div className={'setting-container electron-no-drag'}>
+        {items.map(item => {
+          let el: React.ReactNode;
+          
+          if (item.value instanceof Array) {
+            el = (
+              <div className={'setting-item-value'}>
+                {item.value.map((v, index) => {
+                  return (
+                    <div key={v}>
+                      <span>{v}</span>
+                      <span
+                        role={'button'}
+                        style={{marginLeft:8, color: THEME.color.error}}
+                        onClick={e => {
+                          e.preventDefault();
+                          const newSt = {...setting};
+                          const value = [...(item.value as string[])];
+                          value.splice(index, 1);
+                          newSt[item.key] = value;
+                          setSetting(newSt);
+                        }}>✖</span>
+                    </div>
+                  )
+                })}
+                <div
+                  className={'add-value'}
+                  style={{fontSize:'1.4rem'}}
+                  role={'button'}
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    const res = await DialogDC.open();
+                    const filePaths = res.filePaths;
+                    const newSt = {...setting};
+                    newSt[item.key] = [...item.value as string[], ...filePaths];
+                    setSetting(newSt);
+                  }}>{ LANG.operate['add'] }</div>
+              </div>
+            )
+          }
+          
+          if (typeof item.value === 'string' || typeof item.value === 'number') el = <span>{ item.value }</span>;
+          
+          if (typeof item.value === 'boolean') {
+            el = <Switch on={item.value} onChange={(on) => {
+              const newSt = {...setting};
+              newSt[item.key] = on;
+              setSetting(newSt);
+            }}/>;
+          }
+          
+          return <SettingItem group={item.group} label={item.label} element={el} />
+        })}
+      </div>
+    )
+  }
 
   return (
     <MySetting className="setting-page">
-      {setting?.groups ? (
-        <div className="setting-container">
-          {setting.groups.map((group, index) => {
-            return (
-              <div
-                className={`setting-groups setting-group-${group.name}`}
-                key={group.name}
-              >
-                {/* 将标题模拟为一个设置项 以使得对齐更加标准 */}
-                <div className="setting-group">
-                  <div className="setting-item">
-                    <span className="label">
-                      <div style={{ fontSize: '1.5rem', fontWeight: 600 }}>
-                        {group.title}
-                      </div>
-                    </span>
-                  </div>
-                </div>
-                <SettingGroup
-                  group={group}
-                  onChange={async (newGroup) => {
-                    console.log('im change');
-                    await handleSettingGroupChange(newGroup, index);
-                  }}
-                />
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        <Loader style="square" />
-      )}
+      {setting ? renderSettingItem(setting): <Loader style="square" />}
     </MySetting>
   );
 }
@@ -79,36 +110,18 @@ export default function SettingPage() {
 const MySetting = styled.div`
   color: #c1c2c3;
   .setting-container {
-    .setting-groups {
-      padding: 8px 0;
-      position: relative;
-      &::after {
-        content: '';
-        position: absolute;
-        left: 50%;
-        bottom: 0;
-        width: 90%;
-        transform: translateX(-50%);
-        border-top: 1px solid #444;
+    .setting-item {
+      display: flex;
+      align-items: center;
+      margin: 16px 0;
+      .label {
+        width: 150px;
+        text-align: right;
       }
-      .setting-item {
-        display: flex;
-        align-items: center;
-        margin: 16px 0;
-        flex-wrap: wrap;
-        span {
-          display: inline-block;
-          &.label {
-            width: 180px;
-            font-size: 0.9rem;
-            text-align: right;
-            margin-right: 32px;
-          }
-          &.value {
-            font-size: 0.8rem;
-            color: #a1a2a3;
-          }
-        }
+      .value {
+        margin-left: 24px;
+        font-size: 0.8rem;
+        color: ${THEME.color.frontColorDeep}
       }
     }
   }

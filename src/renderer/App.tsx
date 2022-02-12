@@ -38,7 +38,7 @@ export default function App() {
   const [isMuted, setIsMuted] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
   const [isQueueVisible, setIsQueueVisible] = React.useState(false);
-  const [playShow, setPlayShow] = React.useState(false);
+  const [isPlayShowVisible, setIsPlayShowVisible] = React.useState(false);
   const [isRebuilding, setIsRebuilding] = React.useState(false);
   /**
    * 音频加载进度
@@ -57,10 +57,7 @@ export default function App() {
    * 保存当前播放列表到设置项中
    */
   const savePlaylist = async () => {
-    return await SettingDC.set({
-      ...setting,
-      playList: tracksInQueue.map((t) => t.src || ''),
-    });
+    // to-do
   };
 
   /**
@@ -87,14 +84,7 @@ export default function App() {
    * @param st 设置项
    */
   const getAndSetSavedPlaylist = async (st: SettingFile) => {
-    const playList = [];
-    for (const u of st.playList) {
-      if (u !== '') {
-        const t = await TrackDC.getBySrc(u);
-        if (t) playList.push(t);
-      }
-    }
-    setTracksInQueue(playList);
+    // to-do
   };
 
   /**
@@ -104,9 +94,9 @@ export default function App() {
    */
   const getAndSetTrackList = async (st: SettingFile) => {
     // 抽取设置项：组件加载时是否刷新
-    const rebuild = getSettingItem(st, 'start', 'rebuildWhenStart') as boolean;
+    const rebuild = st['common.rebuildWhenStart'];
     // 抽取设置项：曲库目录
-    const paths = getSettingItem(st, 'common', 'collectionPaths') as string[];
+    const paths = st['common.collectionPaths'];
 
     if (rebuild) setTrackList(await TrackDC.rebuildCache(paths));
     else setTrackList(await TrackDC.getListCached());
@@ -206,7 +196,7 @@ export default function App() {
         <ControlPanel
           onSeek={(per) => (player.seek = per * player.duration)}
           onVolume={(vol) => (player.volume = vol)}
-          onShow={() => setPlayShow(!playShow)}
+          onShow={() => setIsPlayShowVisible(!isPlayShowVisible)}
           progress={progress}
           volume={player.volume}
           muted={isMuted}
@@ -220,13 +210,7 @@ export default function App() {
             if (window.confirm('确定要重建缓存数据库吗?')) {
               if (!isRebuilding) {
                 (async () => {
-                  // 抽取设置项：曲库目录
-                  const paths = getSettingItem(
-                    setting,
-                    'common',
-                    'collectionPaths'
-                  ) as string[];
-                  const tracks = await TrackDC.rebuildCache(paths);
+                  const tracks = await TrackDC.rebuildCache(setting['common.collectionPaths']);
                   setTrackList(tracks);
                   setTracksInQueue([]);
                 })();
@@ -253,44 +237,16 @@ export default function App() {
         }}
         onClose={() => setIsQueueVisible(false)}
       />
+      {/* 正在播放展示页面 */}
       <PlayShow
         playingTrack={player.currentTrack}
-        visible={playShow}
+        visible={isPlayShowVisible}
         seek={player.seek}
         lyric={lyrics}
-        onClose={() => {
-          setPlayShow(false);
-        }}
+        onClose={() => setIsPlayShowVisible(false)}
       />
     </MyApp>
   );
-}
-
-/**
- * 从设置中找到曲库目录
- * @param setting SettingFile
- * @param groupName
- * @param itemLabel
- * @returns collection paths
- */
-function getSettingItem(
-  setting: SettingFile,
-  groupName: string,
-  itemLabel: string
-) {
-  const groups = setting.groups;
-
-  if (!groups) return [];
-
-  for (const group of groups) {
-    if (group.name === groupName) {
-      for (const c of group.children) {
-        if (c.label === itemLabel) {
-          return c.value;
-        }
-      }
-    }
-  }
 }
 
 function delTrack(ts: Track[], track: Track) {

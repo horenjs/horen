@@ -6,26 +6,27 @@
  * @FilePath     : \horen\src\horen\types\setting.ts
  * @Description  :
  */
-export type SettingItemValue = string | boolean | number | string[] | number[];
-
-export interface SettingItem {
-  label: string;
-  value: SettingItemValue;
-  title: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
-}
-
-export interface SettingGroup {
-  name: string;
-  children: SettingItem[];
-  title: string,
-}
-
 export interface SettingFile {
   createAt: string | number;
   updateAt: string | number;
   version: string;
-  groups: SettingGroup[];
-  playList: string[];
+  "common.collectionPaths": string[];
+  "common.rebuildWhenStart": boolean;
+  "appearance.theme": string;
+  "appearance.lang": string;
+  [key: string]: string | string[] | number | number[] | boolean;
+}
+
+export interface PlayListItem {
+  src: string,
+  status: 'playing' | 'paused';
+}
+
+export interface PlayList {
+  createAt: string | number;
+  updateAt: string | number;
+  version: string;
+  title: string;
+  name: string;
+  children: PlayListItem[];
 }

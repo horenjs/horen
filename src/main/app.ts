@@ -13,7 +13,7 @@ type Mode = 'development' | 'production' | undefined;
 export class App {
   protected _mainWindow?: BrowserWindow;
   protected _url = 'http://localhost:8080';
-  protected _path = './index.html';
+  protected _path = './dist/index.html';
   protected _mode: Mode;
   protected _app = app;
 

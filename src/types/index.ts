@@ -6,7 +6,7 @@
  * @FilePath     : \horen\src\horen\types\lyric.ts
  * @Description  : 
  */
-export { Track, Album, LyricScript } from './track';
+export { Track, Album, LyricScript, MyDate } from './track';
 export { SettingFile, SettingGroup, SettingItem } from './setting';
 
 export interface Page {

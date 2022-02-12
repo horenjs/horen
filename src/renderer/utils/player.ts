@@ -9,28 +9,13 @@
 import { Howl, Howler } from 'howler';
 import { randomInt, shift } from 'mintin-util';
 import _ from 'underscore';
+import { Track } from 'types';
 
 // 判断是否为浏览器环境
 if (typeof window === 'undefined')
   throw new Error(
     `Howl Player can only run on the browser, not NodeJs Runtime.`
   );
-
-export type MyDate = string | number | Date;
-
-export interface Track {
-  uuid?: string;
-  date?: MyDate;
-  picture?: string;
-  year?: number | string;
-  genre?: string;
-  duration?: number;
-  src?: string;
-  title?: string;
-  artist?: string;
-  artistList?: string[];
-  album?: string;
-}
 
 export type PlayMode = 'repeat' | 'single' | 'shuffle';
 

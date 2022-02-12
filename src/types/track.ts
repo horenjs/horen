@@ -12,9 +12,8 @@ import {
   INativeTags,
   IFormat,
 } from 'music-metadata/lib/type';
-import { Track as ITrack } from '../renderer/utils/player';
 
-type MyDate = string | number | Date;
+export type MyDate = string | number | Date;
 
 export interface Base {
   createAt?: MyDate;
@@ -22,7 +21,18 @@ export interface Base {
   modifiedAt?: MyDate;
 }
 
-export interface MyTrack extends Base {
+export interface Track extends Base {
+  uuid?: string;
+  date?: MyDate;
+  picture?: string;
+  year?: number | string;
+  genre?: string;
+  duration?: number;
+  src?: string;
+  title?: string;
+  artist?: string;
+  artistList?: string[];
+  album?: string;
   common?: ICommonTagsResult;
   format?: IFormat;
   trackInfo?: ITrackInfo;
@@ -37,8 +47,6 @@ export interface Album {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
-
-export type Track = MyTrack & ITrack;
 
 export type LyricScript = {
   start: number;

@@ -9,19 +9,39 @@
 import React from 'react';
 import defaultCover from '@/static/image/default-cover';
 import { Track, Album } from 'types';
-import { includeTrack } from './index';
-import { player } from '@/App';
+import { isInTracks } from './index';
 
 interface Props {
+  /**
+   * 专辑
+   */
   album: Album;
+  
+  /**
+   * 点击关闭专辑预览
+   */
   onClose(): void;
-  onAddTo(tracks: Track[]): void;
-  onJump?(track: Track): void;
-  tracksInQueue?: Track[];
+  
+  /**
+   * 挑选一个或多个 track
+   * @param tracks
+   * @param mode 添加到队列或切歌
+   */
+  onPick(tracks: Track[], mode: 'add' | 'cut'): void;
+  
+  /**
+   * 播放队列
+   */
+  tracksInQueue: Track[];
+  
+  /**
+   * 正在播放的 track
+   */
+  currentTrack?: Track;
 }
 
 export function AlbumModal(props: Props) {
-  const { album, onClose, onAddTo, onJump, tracksInQueue } = props;
+  const { album, onClose, onPick, tracksInQueue, currentTrack } = props;
 
   const publishDate = album.children[0].year || album.children[0].date;
   const artist = album.children[0].artist;
@@ -37,11 +57,11 @@ export function AlbumModal(props: Props) {
   const handleAddTo = (e: React.MouseEvent<HTMLSpanElement>, ts: Track[]) => {
     e.preventDefault();
     e.stopPropagation();
-    onAddTo([...ts]);
+    onPick([...ts], 'add');
   };
 
   const renderItem = (item: Track, index: number) => {
-    const isPlaying = player.currentTrack?.src === item.src;
+    const isPlaying = currentTrack?.src === item.src;
 
     let child = (
       <span
@@ -52,15 +72,13 @@ export function AlbumModal(props: Props) {
         ✚
       </span>
     );
-
-    if (tracksInQueue) {
-      if (includeTrack(tracksInQueue, item)) {
-        child = <span title="已经在播放列表中">✔</span>;
-      }
-
-      if (isPlaying) {
-        child = <span title="正在播放中">♫</span>;
-      }
+  
+    if (isInTracks(tracksInQueue, item)) {
+      child = <span title="已经在播放列表中">✔</span>;
+    }
+  
+    if (isPlaying) {
+      child = <span title="正在播放中">♫</span>;
     }
 
     return (
@@ -79,7 +97,7 @@ export function AlbumModal(props: Props) {
             <span
               onDoubleClick={(e) => {
                 e.preventDefault();
-                if (onJump) onJump(item);
+                onPick([item], 'cut');
               }}
               role={'button'}
               title="双击插队播放歌曲"

@@ -10,42 +10,54 @@ import React from 'react';
 import styled from 'styled-components';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { albumListState, tracksInQueueState } from '@/store';
+import { player } from '@/App';
+import { Loader } from '@/components/loader';
+import Mask from '@/components/mask';
 import { Track, Album } from 'types';
 import { AlbumModal } from './album-modal';
 import { AlbumView } from './album-viewer';
-import { Loader } from '@/components/loader';
-import Mask from '@/components/mask';
-import { player } from '@/App';
+
 
 export function Library() {
   const [album, setAlbum] = React.useState<Album>();
 
   const [tracksInQueue, setTracksInQueue] = useRecoilState(tracksInQueueState);
   const albums = useRecoilValue(albumListState);
-
-  const handleOpenAlbum = (a: Album) => {
-    setAlbum(a);
-  };
-
-  const handleAddTrack = (tracks: Track[]) => {
-    const tracksToPlay = tracks.map((track) => {
-      return { ...track, playStatus: 'in-queue' };
-    }) as Track[];
-
-    const filtered = tracksToPlay.filter((t) => {
-      return !includeTrack(tracksInQueue, t);
-    });
-
-    setTracksInQueue([...tracksInQueue, ...filtered]);
-  };
-
+  
+  /**
+   * 点击专辑（打开专辑预览）
+   * @param a 专辑
+   */
+  const handleOpenAlbum = (a: Album) => setAlbum(a);
+  
+  /**
+   * 关闭专辑预览
+   */
   const handleCloseAlbumModal = () => setAlbum(undefined);
-
-  const handleJump = (t: Track) => {
-    if (!includeTrack(tracksInQueue, t)) {
-      setTracksInQueue([t, ...tracksInQueue]);
+  
+  /**
+   * 挑选 track
+   * @param tracks 添加的 track 列表
+   * @param mode 添加或切歌
+   */
+  const handlePickTrack = (tracks: Track[], mode: 'cut' | 'add') => {
+    const filtered = tracks.filter((t) => {
+      return !isInTracks(tracksInQueue, t);
+    });
+    
+    switch (mode) {
+      case 'cut':
+        // 切歌则将歌曲放到播放队列首位
+        setTracksInQueue([...filtered, ...tracksInQueue]);
+        break;
+      case 'add':
+        // 添加则将歌曲放到播放队列尾部
+        setTracksInQueue([...tracksInQueue, ...filtered]);
+        break;
+      default:
+        // 默认为添加
+        setTracksInQueue([...tracksInQueue, ...filtered]);
     }
-    player.currentTrack = t;
   };
 
   return (
@@ -74,9 +86,9 @@ export function Library() {
               return { ...track, playStatus: 'playing' };
             else return track;
           })}
+          currentTrack={player.currentTrack}
           album={album}
-          onAddTo={handleAddTrack}
-          onJump={handleJump}
+          onPick={handlePickTrack}
           onClose={handleCloseAlbumModal}
         />
       )}
@@ -259,7 +271,12 @@ const MyLib = styled.div`
   }
 `;
 
-export function includeTrack(tracks: Track[], track: Track) {
+/**
+ * 通过 src 判断 track 是否在 track 列表中
+ * @param tracks
+ * @param track
+ */
+export function isInTracks(tracks: Track[], track: Track) {
   let count = 0;
 
   for (const t of tracks) {

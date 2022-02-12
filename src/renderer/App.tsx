@@ -165,6 +165,10 @@ export default function App() {
   // 音频队列改变时触发
   React.useEffect(() => {
     player.trackList = tracksInQueue;
+    // 队列改变时立即保存当前播放列表
+    if (player.trackList.length !== 0) {
+      (async () => savePlaylist())();
+    }
   }, [tracksInQueue.length]);
 
   // 每隔一秒刷新播放进度

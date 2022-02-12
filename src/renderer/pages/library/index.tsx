@@ -49,6 +49,7 @@ export function Library() {
       case 'cut':
         // 切歌则将歌曲放到播放队列首位
         setTracksInQueue([...filtered, ...tracksInQueue]);
+        player.currentTrack = tracks[0];
         break;
       case 'add':
         // 添加则将歌曲放到播放队列尾部

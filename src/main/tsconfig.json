@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "../",
+    "outDir": "../../dist",
+    "declaration": false,
+    "moduleResolution": "node",
+    // "declarationDir": "../typings/main",
+    // "emitDeclarationOnly": true,
+    "paths": {
+      "types": ["../types"],
+      "constant": ["../constant"]
+    }
+  },
+  "include": [
+    "./**/*.ts",
+    "../constant/**/*.ts",
+    "../types/**/*.ts"
+  ]
+}

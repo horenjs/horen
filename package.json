@@ -1,5 +1,5 @@
 {
-  "name": "horen-monorepo",
+  "name": "horen",
   "version": "0.0.1",
   "description": "horen is a Music Player powered by Electron and React",
   "author": "Kevin Jobs",
@@ -16,19 +16,100 @@
     "electron",
     "howl"
   ],
+  "main": "./dist/main.js",
   "scripts": {
-    "lint": "eslint -c .eslintrc.js --ext .ts"
+    "lint": "eslint -c .eslintrc.js --ext .ts",
+    "start:main": "wait-on tcp:8080 && pnpm build:main && electron ./dist/main.js",
+    "start:renderer": "webpack serve --config ./src/renderer/webpack/config.dev.js",
+    "build:main": "webpack --config ./src/main/webpack.config.js --stats-error-details",
+    "build:renderer": "webpack --config ./src/renderer/webpack/config.js --stats-error-details",
+    "start": "cross-env NODE_ENV=development DEBUG='horen:*' concurrently \"pnpm start:renderer\" \"pnpm start:main\"",
+    "build": "cross-env NODE_ENV=production DEBUG='horen:*' rimraf ./dist && concurrently \"pnpm build:renderer\" \"pnpm build:main\"",
+    "run:test": ".\\node_modules\\electron\\dist\\electron.exe .\\dist\\main.js",
+    "dist": "electron-builder --win --x64"
+  },
+  "dependencies": {
+    "chalk": "^4.0.0",
+    "debug": "^4.3.3",
+    "howler": "^2.2.3",
+    "mintin-util": "1.3.0",
+    "music-metadata": "^7.11.7",
+    "pg-hstore": "^2.3.4",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^6.2.1",
+    "recoil": "^0.5.2",
+    "request": "^2.88.2",
+    "sequelize": "^6.14.1",
+    "sqlite3": "^5.0.0",
+    "styled-components": "^5.3.3",
+    "underscore": "^1.13.2"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.11.0",
-    "@typescript-eslint/parser": "5.0.0",
-    "eslint": "^8.7.0",
+    "@babel/core": "^7.16.10",
+    "@babel/plugin-transform-runtime": "^7.16.10",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.16.7",
+    "@babel/preset-typescript": "^7.16.7",
+    "@babel/runtime": "^7.17.2",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.4",
+    "@types/howler": "^2.2.4",
+    "@types/node": "^17.0.10",
+    "@types/react": "^17.0.38",
+    "@types/react-dom": "^17.0.11",
+    "@types/request": "^2.48.8",
+    "@types/styled-components": "^5.1.20",
+    "@types/underscore": "^1.11.4",
+    "babel-loader": "^8.2.3",
+    "concurrently": "^7.0.0",
+    "copy-webpack-plugin": "^10.2.1",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.5.1",
+    "electron": "16.0.0",
+    "electron-builder": "^22.14.13",
+    "electron-rebuild": "^3.2.7",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.5.0",
+    "react-fresh": "^0.1.4",
+    "react-is": "^17.0.2",
+    "react-refresh": "^0.10.0",
+    "rimraf": "^3.0.2",
+    "style-loader": "^3.3.1",
+    "ts-loader": "^9.2.6",
+    "ts-node": "^10.5.0",
     "tslib": "^2.3.1",
-    "typescript": "^4.5.5"
+    "typescript": "^4.5.5",
+    "wait-on": "^6.0.0",
+    "webpack": "^5.66.0",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.7.3",
+    "webpack-node-externals": "^3.0.0"
   },
   "peerDependencies": {
-    "@typescript-eslint/parser": "5.0.0",
+    "@babel/runtime": "^7.17.2",
+    "@types/node": "^17.0.10",
+    "pg-hstore": "^2.3.4",
+    "react-is": "^17.0.2",
+    "react-refresh": "^0.10.0",
     "tslib": "^2.3.1",
-    "typescript": "^4.5.5"
+    "typescript": "^4.5.5",
+    "webpack": "^5.66.0"
+  },
+  "build": {
+    "appId": "com.kevinjobs.horen",
+    "asar": false,
+    "directories": {
+      "output": "build"
+    },
+    "files": [
+      "dist/",
+      "node_modules/",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "zip"
+      ]
+    }
   }
 }

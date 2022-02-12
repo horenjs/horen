@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react",
+    "declaration": false,
+    // "declarationDir": "../horen/typings",
+    // "emitDeclarationOnly": true,
+    "paths": {
+      "types": ["../types"],
+      "constant": ["../constant"],
+      "@/*": ["./*"]
+    }
+  },
+  "include": [
+    "./**/*",
+    "../types/**/*",
+    "../constant/**/*"
+  ]
+}

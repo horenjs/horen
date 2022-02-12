@@ -14,7 +14,7 @@ import {
   Navigate,
   useLocation,
 } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { settingState, trackListState, tracksInQueueState } from '@/store';
 import styled from 'styled-components';
 import Library from './pages/library';
@@ -25,8 +25,15 @@ import { PlayQueue } from './components/play-queue';
 import PlayShow from './components/play-show';
 import TitlePanel from './components/title-panel';
 import { notice } from './components/notification';
-import { SettingDC, TrackDC } from './data-center';
-import { Page, SettingFile, LyricScript, Track } from 'types';
+import { SettingDC, TrackDC, PlayListDC } from './data-center';
+import {
+  Page,
+  SettingFile,
+  LyricScript,
+  Track,
+  PlayListItem,
+  PlayList
+} from 'types';
 import { PAGES } from 'constant';
 import Player from '@/utils/player';
 
@@ -49,7 +56,7 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [trackList, setTrackList] = useRecoilState(trackListState);
+  const setTrackList = useSetRecoilState(trackListState);
   const [setting, setSetting] = useRecoilState(settingState);
   const [tracksInQueue, setTracksInQueue] = useRecoilState(tracksInQueueState);
 
@@ -57,7 +64,30 @@ export default function App() {
    * 保存当前播放列表到设置项中
    */
   const savePlaylist = async () => {
-    // to-do
+    let currentIndex = 0;
+
+    const children = [];
+    let i = 0;
+
+    for (const t of tracksInQueue) {
+      let seek = 0;
+      if (t.src === player.currentTrack?.src) {
+        seek = progress;
+        currentIndex = i;
+      }
+      children.push({src: t.src, status: t.playStatus, seek} as PlayListItem);
+      i += 1;
+    }
+
+    const pyl: PlayList = {
+      updateAt: new Date().valueOf(),
+      title: 'default',
+      name: '默认列表',
+      currentIndex,
+      children,
+    }
+
+    await PlayListDC.set(pyl);
   };
 
   /**
@@ -81,10 +111,21 @@ export default function App() {
   /**
    * 从设置项中获取上次的播放列表
    * 并加载到状态库中
-   * @param st 设置项
+   * @param pyls
    */
-  const getAndSetSavedPlaylist = async (st: SettingFile) => {
-    // to-do
+  const getAndSetSavedPlaylist = async (pyls: PlayList[]) => {
+    const defaultPlaylist = [];
+
+    for (const pyl of pyls) {
+      if (pyl.title === 'default') {
+        for (const c of pyl.children) {
+          const result = await TrackDC.getBySrc(c.src);
+          defaultPlaylist.push(result);
+        }
+      }
+    }
+
+    setTracksInQueue(defaultPlaylist);
   };
 
   /**
@@ -155,11 +196,10 @@ export default function App() {
     (async () => {
       // 获取设置
       const st = (await SettingDC.get()) as SettingFile;
+      const pyls = await PlayListDC.getList();
       setSetting(st);
-      // 获取音频列表
-      await getAndSetSavedPlaylist(st);
-      // 获取存储的音频播放列表
-      await getAndSetTrackList(st);
+      await getAndSetSavedPlaylist(pyls); // 获取播放列表（存储为文件的）
+      await getAndSetTrackList(st);       // 获取所有音频列表
       //
     })();
   }, []);
@@ -168,7 +208,7 @@ export default function App() {
     <MyApp className="app">
       <TitlePanel
         onClose={async () => {
-          if (confirm('是否保存当前播放列表?')) return await savePlaylist();
+          return await savePlaylist();
         }}
       />
       <div className="pages">

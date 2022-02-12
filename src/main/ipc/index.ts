@@ -9,4 +9,5 @@
 import './dialog.ipc';
 import './setting.ipc';
 import './track.ipc';
+import './playlist.ipc';
 import './mainwindow.ipc';

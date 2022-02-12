@@ -20,13 +20,13 @@ export interface SettingFile {
 export interface PlayListItem {
   src: string,
   status: 'playing' | 'paused';
+  seek: number;
 }
 
 export interface PlayList {
-  createAt: string | number;
   updateAt: string | number;
-  version: string;
   title: string;
   name: string;
+  currentIndex: number;
   children: PlayListItem[];
 }

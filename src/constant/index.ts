@@ -28,6 +28,11 @@ export const IPC_CODE = {
   dialog: {
     open: 'dialog:get',
   },
+  playlist: {
+    getList: 'playlist:get-list',
+    set: 'playlist:set',
+    get: 'playlist:get',
+  },
   mainwindow: {
     close: 'mainwindow:close',
     minimize: 'manwindow:mini',

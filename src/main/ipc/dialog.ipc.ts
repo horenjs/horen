@@ -8,7 +8,7 @@
  */
 import { ipcMain, dialog } from 'electron';
 import { IPC_CODE } from 'constant';
-import debug from '../logger';
+import debug from '../utils/logger';
 import myapp from '../app';
 
 const mydebug = debug('ipc:dialog');

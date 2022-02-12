@@ -9,16 +9,16 @@
 import { ipcMain } from 'electron';
 import { IPC_CODE } from 'constant';
 import myapp from '../app';
-import logger from '../logger';
+import logger from '../utils/logger';
 
 const mylogger = logger('ipc:mainwindow');
 
-ipcMain.handle(IPC_CODE.mainwindow.close, async (evt) => {
+ipcMain.handle(IPC_CODE.mainwindow.close, async () => {
   mylogger.debug('main window close: ' + new Date());
-  myapp.mainWindow?.destroy();
+  setTimeout(() => myapp.mainWindow?.destroy(), 500);
 });
 
-ipcMain.handle(IPC_CODE.mainwindow.minimize, async (evt) => {
+ipcMain.handle(IPC_CODE.mainwindow.minimize, async () => {
   mylogger.debug('main window minimize');
   myapp.mainWindow?.minimize();
 });

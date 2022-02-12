@@ -8,7 +8,7 @@
  */
 import myapp from './app';
 import './ipc';
-import logger from './logger';
+import logger from './utils/logger';
 
 logger('start').info('start the app');
 myapp.start();

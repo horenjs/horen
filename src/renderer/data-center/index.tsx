@@ -8,7 +8,7 @@
  */
 const electron = window.require('electron');
 const { ipcRenderer } = electron;
-import { Track, SettingFile, LyricScript } from 'types';
+import {Track, SettingFile, LyricScript, PlayList} from 'types';
 import { IPC_CODE } from 'constant';
 
 export class TrackDC {
@@ -26,7 +26,7 @@ export class TrackDC {
 
   public static async getMsg(): Promise<string> {
     return new Promise((resolve, reject) => {
-      ipcRenderer.on(IPC_CODE.track.msg, (evt, msg) => {
+      ipcRenderer.on(IPC_CODE.track.msg, (evt: any, msg: string) => {
         resolve(msg);
       });
     });
@@ -44,6 +44,20 @@ export class SettingDC {
 
   public static async set(setting: SettingFile): Promise<boolean> {
     return await ipcRenderer.invoke(IPC_CODE.setting.set, setting);
+  }
+}
+
+export class PlayListDC {
+  public static async getList() {
+    return await ipcRenderer.invoke(IPC_CODE.playlist.getList);
+  }
+
+  public static async get(title: string) :Promise<PlayList> {
+    return await ipcRenderer.invoke(IPC_CODE.playlist.get, title);
+  }
+
+  public static async set(pyl: PlayList) {
+    return await ipcRenderer.invoke(IPC_CODE.playlist.set, pyl);
   }
 }
 

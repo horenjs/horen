@@ -266,7 +266,7 @@ export default class HowlPlayer {
         this.currentTrack = this.trackList[index];
         break;
       case 'shuffle': {
-        // todo: momerize the tracks passed.
+        // todo: memorize the tracks passed.
         const i = randomInt(0, length - 1);
         // 如果随机到的数与当前正在播放的相差在 1 位以内
         // 则重新进行随机以制造出伪随机的效果
@@ -297,7 +297,7 @@ export default class HowlPlayer {
   /**
    * play the audio from source given
    * @param src : src of track;
-   * @param autoplay if auto play after load the track
+   * @param autoplay if autoplay after load the track
    */
   protected _playAudioSource(src: string, autoplay = true) {
     Howler.unload();
@@ -318,6 +318,5 @@ export default class HowlPlayer {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function includesDeep(arr: any[], obj: object) {
   const filtered = arr.filter((value) => _.isEqual(value, obj));
-  if (filtered.length > 0) return true;
-  else return false;
+  return filtered.length > 0;
 }

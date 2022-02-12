@@ -9,7 +9,7 @@
 import path from 'path';
 import fs from 'fs/promises';
 import { ipcMain } from 'electron';
-import debug from '../logger';
+import debug from '../utils/logger';
 import {
   IPC_CODE,
   APP_DATA_PATH,

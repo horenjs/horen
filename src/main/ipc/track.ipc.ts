@@ -13,8 +13,8 @@ import { ipcMain } from 'electron';
 import mm from 'music-metadata';
 import { arrayBufferToBase64 } from 'mintin-util';
 import { TRACK_FORMAT, IPC_CODE, API_URL } from 'constant';
-import debug from '../logger';
-import { Track, LyricScript } from 'types';
+import debug from '../utils/logger';
+import { Track } from 'types';
 import { TrackModel } from '../db/models';
 import myapp from '../app';
 import { request } from '../utils/request';
@@ -26,7 +26,7 @@ const mydebug = debug('ipc:track');
 /**
  * 从缓存中获取音频文件列表
  */
-ipcMain.handle(IPC_CODE.track.getListCached, async (evt) => {
+ipcMain.handle(IPC_CODE.track.getListCached, async () => {
   mydebug.info('从缓存数据库中读取');
   try {
     const allTracks = (await TrackModel.findAll()).map((t) => t.get());
@@ -147,6 +147,7 @@ function getAudioFiles(files: string[]) {
 /**
  * 解析音频文件元数据
  * @param paths 音频文件地址列表
+ * @param totals
  * @returns 解析后的音频文件数据
  */
 async function getAudioFilesMeta(paths: string[], totals: number) {
@@ -253,8 +254,8 @@ async function readMusicMeta(p: string) {
 
 /**
  * 获取字符串的md5值
- * @param s 传入的字符串
  * @returns md5值
+ * @param buf
  */
 function getMd5(buf: Buffer) {
   const hash = crypto.createHash('md5');
@@ -264,8 +265,8 @@ function getMd5(buf: Buffer) {
 
 /**
  *
- * @param tracks
  * @returns
+ * @param track
  */
 async function isCached(track: Track) {
   const result = await TrackModel.findOne({
@@ -277,7 +278,7 @@ async function isCached(track: Track) {
 
 /**
  * 音频文件地址转换为歌词文件地址
- * @param src : 音频文件;
+ * @param src {string}
  * @returns
  */
 function audioExtToLrc(src: string) {

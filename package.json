@@ -1,6 +1,6 @@
 {
   "name": "horen",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "horen is a Music Player powered by Electron and React",
   "author": "Kevin Jobs",
   "license": "ISC",

@@ -1,11 +1,3 @@
-<!--
- * @Author       : Kevin Jobs
- * @Date         : 2022-01-19 23:40:05
- * @LastEditTime : 2022-02-01 17:58:15
- * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\README.md
- * @Description  : 
--->
 # Horen
 
 Horen 是一个用 React 和 electron 打造的本地音乐播放器，正在不断开发中
@@ -46,8 +38,7 @@ Horen 是一个用 React 和 electron 打造的本地音乐播放器，正在不
 
 ## 优化
 
-- [ ] 不一次性读取所有音频 避免内存占用过高
-- [ ] 播放网络歌曲
+- [x] 不一次性读取所有音频 避免内存占用过高
 
 ## 开发
 
@@ -56,14 +47,17 @@ git clone https://github.com/kevinjobs/Horen.git
 
 cd Horen
 
-# if you don't install pnpm
-npm i -g pnpm
-
 # then
-pnpm install
+npm install
 
 # start the app
-pnpm start --filter horen
+npm run start
+
+# build the app
+npm run build
+
+# package
+npm run dist
 ```
 
 ## LICENSE

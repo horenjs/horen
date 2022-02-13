@@ -28,12 +28,9 @@ export const tracksInQueueState = atom({
 /**
  * 专辑列表
  */
-export const albumListState = selector({
+export const albumListState = atom({
   key: 'albumListState',
-  get: ({ get }) => {
-    const trackList = get(trackListState);
-    return aggregateAlbum(trackList);
-  },
+  default: [] as Album[],
 });
 
 /**
@@ -43,37 +40,3 @@ export const settingState = atom({
   key: 'settingState',
   default: {} as SettingFile,
 });
-
-/**
- * 对音频列表进行重排并聚合为专辑列表
- * @param tracks 音频列表
- * @returns 重新聚合后的专辑列表
- */
-function aggregateAlbum(tracks: Track[]) {
-  const albums: Album[] = [
-    {
-      name: 'Uncategory',
-      children: [],
-    },
-  ];
-
-  for (const track of tracks) {
-    const title = track.title || track.src?.split('\\').pop();
-
-    const newTrack: Track = { ...track, title };
-
-    if (track.album) {
-      // 遍历暂时存放专辑的列表与传入的专辑进行对比
-      const hits = albums.filter((album) => album.name === track.album);
-      // 如果暂存列表中有这个专辑名 就将这个 Track push 到第一个匹配的专辑
-      if (hits.length) hits[0].children.push(newTrack);
-      // 如有没有这个专辑名 则新建一个
-      else albums.push({ name: track.album, children: [newTrack] });
-    } else {
-      // 如果专辑名为空 则传入 Uncategory 专辑
-      albums[0].children.push(newTrack);
-    }
-  }
-
-  return albums;
-}

@@ -15,7 +15,7 @@ const mydebug = debug('db');
 
 const dbConfig: Options = {
   dialect: 'sqlite',
-  storage: path.join(APP_DATA_PATH, APP_NAME, 'horen.sqlite'),
+  storage: path.join(APP_DATA_PATH, APP_NAME, 'horen.db'),
   logging: false,
 };
 
@@ -24,6 +24,7 @@ const sql = new Sequelize(dbConfig);
 (async () => {
   try {
     await sql.authenticate();
+    await sql.sync();
     mydebug.info('成功连接 sqlite 数据库');
   } catch (err) {
     mydebug.error('连接 sqlite 数据库失败');

@@ -15,10 +15,12 @@ import { Page } from '../types';
  */
 export const IPC_CODE = {
   track: {
-    getListCached: 'track:get-list-cached',
+    getTrackList: 'track:get-track-list',
+    getAlbumList: 'track:get-album-list',
+    getBySrc: 'track:get-by-uuid',
+    getAlbumByKey: 'track:get-album-by-key',
     rebuildCache: 'track:rebuild-list',
     msg: 'track:msg',
-    getBySrc: 'track:get-by-uuid',
     lyric: 'track:lyric',
   },
   setting: {

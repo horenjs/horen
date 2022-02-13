@@ -17,27 +17,17 @@ const field = {
     type: DataTypes.UUID,
     allowNull: false,
     defaultValue: DataTypes.UUIDV4,
+    primaryKey: true,
   },
-  src: { type: DataTypes.STRING, allowNull: true },
-  title: { type: DataTypes.STRING, allowNull: false, defaultValue: '' },
-  artist: { type: DataTypes.STRING, allowNull: true },
-  artists: { type: DataTypes.STRING, allowNull: true },
-  album: { type: DataTypes.STRING, allowNull: true },
-  //
-  duration: { type: DataTypes.NUMBER, allowNull: true },
-  date: { type: DataTypes.STRING, allowNull: true },
-  genre: { type: DataTypes.STRING, allowNull: true },
-  picture: { type: DataTypes.STRING, allowNull: true },
-  //
-  albumKey: { type: DataTypes.STRING, allowNull: false, defaultValue: '', }
+  key: { type: DataTypes.STRING, allowNull: false, defaultValue: '' },
 };
 
 const configs = {
   sequelize: db,
-  modelName: 'Track',
+  modelName: 'Album',
   timestamps: false,
 };
 
-const TrackModel = db.define('Track', field, configs);
+const AlbumModel = db.define('Album', field, configs);
 
-export default TrackModel;
+export default AlbumModel;

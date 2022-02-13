@@ -72,15 +72,13 @@ export default class HowlPlayer {
 
   public set trackList(list: Track[]) {
     // 歌曲不允许重复
-    const uniqueArr = list.reduce((prev, curr) => {
+    this._trackList = list.reduce((prev, curr) => {
       if (prev.length === 0) return [curr];
       // 深比较是否相等
       // 防止切换路由后 Track 对象重新生成
       // new Set() 认为对象总是不相等
       else return includesDeep(prev, curr) ? prev : [...prev, curr];
     }, [] as Track[]);
-
-    this._trackList = uniqueArr;
 
     if (this._howler) {
       // if there is a howler, do nothing

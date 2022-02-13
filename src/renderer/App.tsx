@@ -15,7 +15,7 @@ import {
   useLocation,
 } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { settingState, trackListState, tracksInQueueState } from '@/store';
+import { settingState, tracksInQueueState, albumListState } from '@/store';
 import styled from 'styled-components';
 import Library from './pages/library';
 import SettingPage from './pages/setting';
@@ -56,7 +56,7 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const setTrackList = useSetRecoilState(trackListState);
+  const setAlbumList = useSetRecoilState(albumListState);
   const [setting, setSetting] = useRecoilState(settingState);
   const [tracksInQueue, setTracksInQueue] = useRecoilState(tracksInQueueState);
 
@@ -75,7 +75,7 @@ export default function App() {
         seek = progress;
         currentIndex = i;
       }
-      children.push({src: t.src, status: t.playStatus, seek} as PlayListItem);
+      children.push({src: t.src, status: 'paused', seek} as PlayListItem);
       i += 1;
     }
 
@@ -106,41 +106,6 @@ export default function App() {
         {p.title}
       </div>
     );
-  };
-
-  /**
-   * 从设置项中获取上次的播放列表
-   * 并加载到状态库中
-   * @param pyls
-   */
-  const getAndSetSavedPlaylist = async (pyls: PlayList[]) => {
-    const defaultPlaylist = [];
-
-    for (const pyl of pyls) {
-      if (pyl.title === 'default') {
-        for (const c of pyl.children) {
-          const result = await TrackDC.getBySrc(c.src);
-          defaultPlaylist.push(result);
-        }
-      }
-    }
-
-    setTracksInQueue(defaultPlaylist);
-  };
-
-  /**
-   * 从设置项中获取曲库列表和相关信息
-   * 并加载到状态库中
-   * @param st 设置项
-   */
-  const getAndSetTrackList = async (st: SettingFile) => {
-    // 抽取设置项：组件加载时是否刷新
-    const rebuild = st['common.rebuildWhenStart'];
-    // 抽取设置项：曲库目录
-    const paths = st['common.collectionPaths'];
-
-    if (rebuild) setTrackList(await TrackDC.rebuildCache(paths));
-    else setTrackList(await TrackDC.getListCached());
   };
 
   //
@@ -199,12 +164,8 @@ export default function App() {
   React.useEffect(() => {
     (async () => {
       // 获取设置
-      const st = (await SettingDC.get()) as SettingFile;
-      const pyls = await PlayListDC.getList();
+      const st = await SettingDC.get();
       setSetting(st);
-      await getAndSetSavedPlaylist(pyls); // 获取播放列表（存储为文件的）
-      await getAndSetTrackList(st);       // 获取所有音频列表
-      //
     })();
   }, []);
 
@@ -219,7 +180,7 @@ export default function App() {
         <div className="page-header electron-drag">
           {PAGES.map(renderPageHeader)}
         </div>
-        <div className="page-container perfect-scrollbar electron-drag">
+        <div className="page-container perfect-scrollbar electron-no-drag">
           <Routes>
             <Route path="/">
               {/* 歌曲库页面 */}
@@ -254,8 +215,13 @@ export default function App() {
             if (window.confirm('确定要重建缓存数据库吗?')) {
               if (!isRebuilding) {
                 (async () => {
-                  const tracks = await TrackDC.rebuildCache(setting['common.collectionPaths']);
-                  setTrackList(tracks);
+                  const rebuilt = await TrackDC.rebuildCache(setting['common.collectionPaths']);
+                  if (rebuilt) {
+                    const res = await TrackDC.getAlbumList();
+                    setIsRebuilding(false);
+                    setAlbumList(res);
+                  }
+                  // 重建数据库后清空列表
                   setTracksInQueue([]);
                 })();
                 setIsRebuilding(true);

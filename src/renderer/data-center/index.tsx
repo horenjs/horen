@@ -8,20 +8,28 @@
  */
 const electron = window.require('electron');
 const { ipcRenderer } = electron;
-import {Track, SettingFile, LyricScript, PlayList} from 'types';
+import {Track, SettingFile, LyricScript, PlayList, Album} from 'types';
 import { IPC_CODE } from 'constant';
 
 export class TrackDC {
   public static async getListCached(): Promise<Track[]> {
-    return await ipcRenderer.invoke(IPC_CODE.track.getListCached);
+    return await ipcRenderer.invoke(IPC_CODE.track.getTrackList);
   }
 
-  public static async rebuildCache(paths: string[]): Promise<Track[]> {
-    return await ipcRenderer.invoke(IPC_CODE.track.rebuildCache, paths);
+  public static async getAlbumList(): Promise<Album[]> {
+    return await ipcRenderer.invoke(IPC_CODE.track.getAlbumList);
   }
 
   public static async getBySrc(src: string): Promise<Track> {
     return await ipcRenderer.invoke(IPC_CODE.track.getBySrc, src);
+  }
+
+  public static async getAlbumByKey(key: string): Promise<Album> {
+    return await ipcRenderer.invoke(IPC_CODE.track.getAlbumByKey, key);
+  }
+
+  public static async rebuildCache(paths: string[]): Promise<boolean> {
+    return await ipcRenderer.invoke(IPC_CODE.track.rebuildCache, paths);
   }
 
   public static async getMsg(): Promise<string> {
@@ -38,7 +46,7 @@ export class TrackDC {
 }
 
 export class SettingDC {
-  public static async get() {
+  public static async get() :Promise<SettingFile> {
     return await ipcRenderer.invoke(IPC_CODE.setting.get);
   }
 

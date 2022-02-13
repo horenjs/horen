@@ -6,7 +6,7 @@
  * @FilePath     : \horen\src\horen-plugin-lyric\lyric.ts
  * @Description  :
  */
-let EOL = '\n';
+const EOL = '\n';
 
 interface Lyric {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

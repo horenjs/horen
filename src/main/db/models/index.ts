@@ -6,4 +6,5 @@
  * @FilePath     : \Horen\src\horen\main\db\models\lyric.ts
  * @Description  : 
  */
+export { default as AlbumModel } from './album.model';
 export { default as TrackModel } from './track.model';

@@ -23,29 +23,25 @@ export interface Base {
 
 export interface Track extends Base {
   uuid?: string;
-  date?: MyDate;
-  picture?: string;
-  year?: number | string;
-  genre?: string;
-  duration?: number;
+  //
   src?: string;
   title?: string;
   artist?: string;
-  artistList?: string[];
+  artists?: string;
   album?: string;
-  common?: ICommonTagsResult;
-  format?: IFormat;
-  trackInfo?: ITrackInfo;
-  native?: INativeTags;
-  playStatus?: 'in-queue' | 'playing' | 'paused' | 'stop';
-  md5?: string;
+  //
+  duration?: number;
+  date?: MyDate;
+  genre?: string;
+  picture?: string;
+  //
+  albumKey?: string;
 }
 
-export interface Album {
-  name: string;
-  children: Track[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
+export interface Album extends Base {
+  uuid?: string;
+  key: string;
+  children?: Track[];
 }
 
 export type LyricScript = {

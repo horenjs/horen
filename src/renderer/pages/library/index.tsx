@@ -8,32 +8,36 @@
  */
 import React from 'react';
 import styled from 'styled-components';
-import { useRecoilValue, useRecoilState } from 'recoil';
-import { albumListState, tracksInQueueState } from '@/store';
+import {useRecoilValue, useRecoilState} from 'recoil';
+import { albumListState, tracksInQueueState, settingState } from '@/store';
 import { player } from '@/App';
 import { Loader } from '@/components/loader';
 import Mask from '@/components/mask';
-import { Track, Album } from 'types';
+import {Track, Album, PlayList} from 'types';
 import { AlbumModal } from './album-modal';
 import { AlbumView } from './album-viewer';
-
+import {PlayListDC, TrackDC} from "@/data-center";
 
 export function Library() {
-  const [album, setAlbum] = React.useState<Album>();
+  const [pickAlbum, setPickAlbum] = React.useState<Album>();
 
   const [tracksInQueue, setTracksInQueue] = useRecoilState(tracksInQueueState);
-  const albums = useRecoilValue(albumListState);
+  const [albumList, setAlbumList] = useRecoilState(albumListState);
+  const setting = useRecoilValue(settingState);
   
   /**
    * 点击专辑（打开专辑预览）
-   * @param a 专辑
+   * @param a
    */
-  const handleOpenAlbum = (a: Album) => setAlbum(a);
+  const handleOpenAlbum = async (a: Album) => {
+    const res = await TrackDC.getAlbumByKey(a.key);
+    setPickAlbum(res);
+  };
   
   /**
    * 关闭专辑预览
    */
-  const handleCloseAlbumModal = () => setAlbum(undefined);
+  const handleCloseAlbumModal = () => setPickAlbum(undefined);
   
   /**
    * 挑选 track
@@ -61,25 +65,66 @@ export function Library() {
     }
   };
 
+  /**
+   * 从设置项中获取上次的播放列表
+   * 并加载到状态库中
+   * @param pyls
+   */
+  const initPlaylist = async (pyls: PlayList[]) => {
+    const defaultPlaylist = [];
+
+    for (const pyl of pyls) {
+      if (pyl.title === 'default') {
+        for (const c of pyl.children) {
+          const result = await TrackDC.getBySrc(c.src);
+          if (result) defaultPlaylist.push(result);
+        }
+      }
+    }
+
+    setTracksInQueue(defaultPlaylist);
+  };
+
+  React.useEffect(() => {
+    (async () => {
+      // 抽取设置项：组件加载时是否刷新
+      const rebuild = setting['common.rebuildWhenStart'];
+      // 抽取设置项：曲库目录
+      const paths = setting['common.collectionPaths'];
+
+      if (rebuild) {
+        const rebuilt = await TrackDC.rebuildCache(paths);
+        if (rebuilt) setAlbumList(await TrackDC.getAlbumList());
+      } else {
+        setAlbumList(await TrackDC.getAlbumList());
+      }
+
+      const pyls = await PlayListDC.getList();  // 获取播放列表（存储为文件的）
+      await initPlaylist(pyls);                 // 初始化默认播放队列
+    })();
+  }, [])
+
   return (
     <MyLib className="component-library">
       <div className="albums">
-        {albums.length === 0 ? (
+        {albumList.length === 0 ? (
           <div>
             <Loader style="square" />
           </div>
         ) : (
-          albums.map((value, index) => (
-            <AlbumView
-              album={value}
-              onOpen={handleOpenAlbum}
-              key={value.title || index}
-            />
-          ))
+          albumList.map((a, index) => {
+            return (
+              <AlbumView
+                album={a}
+                onOpen={handleOpenAlbum}
+                key={a.key || index}
+              />
+            )
+          })
         )}
       </div>
 
-      {album && (
+      {pickAlbum?.children?.length && (
         <AlbumModal
           tracksInQueue={tracksInQueue.map((track) => {
             // 判断歌曲是否在播放中
@@ -88,14 +133,14 @@ export function Library() {
             else return track;
           })}
           currentTrack={player.currentTrack}
-          album={album}
+          album={pickAlbum}
           onPick={handlePickTrack}
           onClose={handleCloseAlbumModal}
         />
       )}
 
-      {album && (
-        <Mask depth={999} opacity={0.9} onClick={() => setAlbum(undefined)} />
+      {pickAlbum && (
+        <Mask depth={999} opacity={0.9} onClick={() => setPickAlbum(undefined)} />
       )}
     </MyLib>
   );
@@ -285,6 +330,16 @@ export function isInTracks(tracks: Track[], track: Track) {
   }
 
   return count > 0;
+}
+
+export function findTitleFromKey(key: string) {
+  const result = key.match(/#[\S\s]+#/gi);
+  if (result) return result[0].replace(/#/, '').replace(/#/, '');
+}
+
+export function findArtistFromKey(key: string) {
+  const result = key.match(/@[\S\s]+@/gi);
+  if (result) return result[0].replace(/@/, '').replace(/@/, '');
 }
 
 export default Library;

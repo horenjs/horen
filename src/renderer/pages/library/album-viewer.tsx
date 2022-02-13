@@ -7,38 +7,36 @@
  * @Description  :
  */
 import React from 'react';
-import { Album } from 'types';
 import defaultCover from '@/static/image/default-cover';
+import {Album} from "types";
+import { findTitleFromKey, findArtistFromKey } from "@/pages/library/index";
 
 interface Props {
   album: Album;
-  onOpen(album: Album): void;
+  onOpen(a: Album): void;
 }
 
 export function AlbumView(props: Props) {
   const { album, onOpen } = props;
 
-  const src = album.children[0]?.picture || defaultCover;
+  const src = defaultCover;
 
-  const handleOpen = (e: React.MouseEvent<HTMLDivElement>, a: Album) => {
+  const handleOpen = async (e: React.MouseEvent<HTMLDivElement>, a: Album) => {
     e.preventDefault();
     e.stopPropagation();
-    onOpen(a);
+    await onOpen(a);
   };
-
-  if (album.children.length < 1) return <></>;
 
   return (
     <div
       className="album electron-no-drag"
-      key={album.name}
-      onClick={(e) => handleOpen(e, album)}
+      data-album-key={album.key}
+      onClick={async (e) => await handleOpen(e, album)}
     >
-      <img src={`data:image/png;base64,${src}`} alt={album.name} />
+      <img src={`data:image/png;base64,${src}`} alt={album.key} />
       <div className="info">
-        <div className="name">{album.name}</div>
-        <div className="track-count">{album.children.length} 首歌曲</div>
-        <div className="artist">{album.children[0].artist}</div>
+        <div className="name">{findTitleFromKey(album.key)}</div>
+        <div className="artist">{findArtistFromKey(album.key)}</div>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import React from 'react';
 import defaultCover from '@/static/image/default-cover';
 import { Track, Album } from 'types';
 import { isInTracks } from './index';
+import { findTitleFromKey } from "./index";
 
 interface Props {
   /**
@@ -43,10 +44,10 @@ interface Props {
 export function AlbumModal(props: Props) {
   const { album, onClose, onPick, tracksInQueue, currentTrack } = props;
 
-  const publishDate = album.children[0].year || album.children[0].date;
-  const artist = album.children[0].artist;
-  const filesPath = album.children[0].src;
-  const albumPath = filesPath?.split('\\').slice(0, -1);
+  // const publishDate = album.children[0].year || album.children[0].date;
+  // const artist = album.children[0].artist;
+  // const filesPath = album.children[0].src;
+  // const albumPath = filesPath?.split('\\').slice(0, -1);
 
   const handleClose = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -54,10 +55,10 @@ export function AlbumModal(props: Props) {
     onClose();
   };
 
-  const handleAddTo = (e: React.MouseEvent<HTMLSpanElement>, ts: Track[]) => {
+  const handleAddTo = (e: React.MouseEvent<HTMLSpanElement>, ts?: Track[]) => {
     e.preventDefault();
     e.stopPropagation();
-    onPick([...ts], 'add');
+    if (ts) onPick([...ts], 'add');
   };
 
   const renderItem = (item: Track, index: number) => {
@@ -84,9 +85,9 @@ export function AlbumModal(props: Props) {
     return (
       <div
         className="album-child"
-        key={item?.uuid || item?.md5 || index}
+        key={item?.uuid || index}
         data-title={item.title}
-        data-key={item?.uuid || item?.md5 || index}
+        data-key={item?.uuid || index}
       >
         <div
           className="title"
@@ -115,7 +116,7 @@ export function AlbumModal(props: Props) {
     <div className="album-modal-view electron-no-drag">
       <div className="album-header">
         <div className="add-all">
-          {isAllTracksInQueue(album, tracksInQueue) ? (
+          {isAllTracksInQueue(album.children, tracksInQueue) ? (
             <span>✔ 已全部添加</span>
           ) : (
             <span
@@ -133,43 +134,46 @@ export function AlbumModal(props: Props) {
         </div>
       </div>
 
-      <div className="album-children">{album.children.map(renderItem)}</div>
+      <div className="album-children">{album.children?.map(renderItem)}</div>
 
       <div className="album-infos">
-        <div className="name">{album.name}</div>
+        <div className="name">{findTitleFromKey(album.key)}</div>
         <div className="cover">
           <img
             src={`data:image/png;base64,${
-              album.children[0].picture || defaultCover
+              album.children
+                ? album.children[0].picture ? album.children[0].picture : defaultCover 
+                : defaultCover
             }`}
-            alt={album.name}
+            alt={album.key}
           />
         </div>
-        <div className="count">{album.children.length} 首歌曲</div>
+        <div className="count">{album.children?.length} 首歌曲</div>
         <div className="date">
-          <span>发行时间</span> {publishDate}
+          <span>发行时间</span> {album.children ? album.children[0].date : ''}
         </div>
         <div className="artists">
-          <span>艺术家</span> {artist}
+          <span>艺术家</span> {album.children ? album.children[0].artist : ''}
         </div>
-        <div className="path" title={albumPath?.join('\\')}>
-          <span>专辑路径</span> {albumPath?.join('\\')}
+        <div className="path" title={album.children ? album.children[0].src : ''}>
+          <span>专辑路径</span> {album.children ? album.children[0].src : ''}
         </div>
       </div>
     </div>
   );
 }
 
-function isAllTracksInQueue(album: Album, tracks?: Track[]) {
+function isAllTracksInQueue(albumTracks?: Track[], tracks?: Track[]) {
   let i = 0;
-  if (tracks) {
+  if (tracks && albumTracks) {
     for (const track of tracks) {
-      for (const child of album.children) {
-        if (child.md5 === track.md5) {
+      for (const child of albumTracks) {
+        if (child.src === track.src) {
           i += 1;
         }
       }
     }
   }
-  return i === album.children.length;
+  return i === albumTracks?.length;
 }
+

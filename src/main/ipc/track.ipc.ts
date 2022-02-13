@@ -8,25 +8,26 @@
  */
 import path from 'path';
 import fs from 'fs/promises';
-import crypto from 'crypto';
 import { ipcMain } from 'electron';
 import mm from 'music-metadata';
 import { arrayBufferToBase64 } from 'mintin-util';
 import { TRACK_FORMAT, IPC_CODE, API_URL } from 'constant';
 import debug from '../utils/logger';
-import { Track } from 'types';
-import { TrackModel } from '../db/models';
+import {Album, Track} from 'types';
+import { TrackModel, AlbumModel } from '../db/models';
 import myapp from '../app';
 import { request } from '../utils/request';
 import { simplized } from '../utils/words';
 import { readDir } from '../utils/fs-extra';
 import lrcParser from '../utils/lyric';
+import {aggregateAlbum, generateAlbumKey} from '../utils/track.util';
 
 const mydebug = debug('ipc:track');
+
 /**
  * 从缓存中获取音频文件列表
  */
-ipcMain.handle(IPC_CODE.track.getListCached, async () => {
+ipcMain.handle(IPC_CODE.track.getTrackList, async () => {
   mydebug.info('从缓存数据库中读取');
   try {
     const allTracks = (await TrackModel.findAll()).map((t) => t.get());
@@ -36,6 +37,18 @@ ipcMain.handle(IPC_CODE.track.getListCached, async () => {
     mydebug.error('从数据库中读取失败');
   }
 });
+
+ipcMain.handle(IPC_CODE.track.getAlbumList, async () => {
+  mydebug.debug('从缓存数据库中读取专辑列表');
+  try {
+    const albums = (await AlbumModel.findAll()).map((a) => a.get());
+    mydebug.debug('读取专辑列表成功');
+    return albums;
+  } catch(err) {
+    console.error(err);
+    mydebug.error('读取专辑列表失败');
+  }
+})
 
 /**
  * 重建缓存并获取音频文件列表
@@ -54,11 +67,13 @@ ipcMain.handle(IPC_CODE.track.rebuildCache, async (evt, paths: string[]) => {
   mydebug.info('清空数据库并重新生成');
   try {
     await TrackModel.destroy({ truncate: true });
+    await AlbumModel.destroy({ truncate: true });
     mydebug.info('清空数据库成功');
   } catch (err) {
-    throw new Error('清空数据库失败');
+    console.error(err);
+    mydebug.error('清空数据库失败');
+    return false;
   }
-
   mydebug.info('从音频文件中解析相关信息');
   const allTracks = await getAudioFilesMeta(
     audioFilePaths,
@@ -68,9 +83,18 @@ ipcMain.handle(IPC_CODE.track.rebuildCache, async (evt, paths: string[]) => {
   mydebug.info('等待写入数据库');
   await saveToDB(allTracks);
 
-  myapp.mainWindow?.webContents.send(IPC_CODE.track.msg, 'done');
-
-  return allTracks;
+  const albums = aggregateAlbum(allTracks);
+  try {
+    await AlbumModel.bulkCreate(albums as any[]);
+    mydebug.info('保存专辑列表成功');
+    myapp.mainWindow?.webContents.send(IPC_CODE.track.msg, 'done');
+    return true;
+  } catch(err) {
+    console.error(err);
+    mydebug.error('保存专辑列表失败');
+    myapp.mainWindow?.webContents.send(IPC_CODE.track.msg, '保存专辑列表失败');
+    return false;
+  }
 });
 
 ipcMain.handle(IPC_CODE.track.getBySrc, async (evt, src: string) => {
@@ -86,6 +110,21 @@ ipcMain.handle(IPC_CODE.track.getBySrc, async (evt, src: string) => {
     mydebug.error('获取音频失败: ' + src);
   }
 });
+
+ipcMain.handle(IPC_CODE.track.getAlbumByKey, async (evt, key) => {
+  try {
+    const result = await TrackModel.findAll({where: {albumKey: key}});
+    const tracks = result.map(r => r.toJSON()) as Track[];
+    mydebug.debug(`获取专辑内的音频成功 [${key}]`);
+    return {
+      key,
+      children: tracks,
+    } as Album;
+  } catch (err) {
+    console.error(err);
+    mydebug.error(`获取专辑内的音频失败 [${key}]`);
+  }
+})
 
 /**
  * 获取歌词
@@ -223,7 +262,7 @@ async function readMusicMeta(p: string) {
   } catch (err) {
     meta = null;
     console.error(err);
-    mydebug.info('文件名: ' + p);
+    mydebug.error('无法解析该文件: ' + p);
   }
 
   const picture = meta ? meta.common?.picture : '';
@@ -235,32 +274,18 @@ async function readMusicMeta(p: string) {
     modifiedAt: stats.mtime.valueOf(),
     //uuid
     src: p,
-    title: meta?.common.title,
-    year: meta?.common.year,
-    artist: meta?.common.artist,
-    artists: String(meta?.common.artists),
-    albumartist: String(meta?.common.albumartist),
-    album: meta?.common.album,
-    duration: meta?.format.duration,
-    origindate: meta?.common.originalyear,
-    originyear: meta?.common.originalyear,
-    comment: String(meta?.common.comment),
-    genre: String(meta?.common.genre),
+    title: String(meta?.common?.title),
+    artist: String(meta?.common?.artist),
+    artists: String(meta?.common?.artists),
+    album: String(meta?.common?.album),
+    //
+    duration: meta?.format?.duration,
+    date: String(meta?.common?.date),
+    genre: String(meta?.common?.genre),
     picture: arrybuffer ? arrayBufferToBase64(arrybuffer) : '',
-    composer: meta?.common.composer,
-    md5: getMd5(buffer),
+    //
+    albumKey: generateAlbumKey(meta?.common as Track),
   } as Track;
-}
-
-/**
- * 获取字符串的md5值
- * @returns md5值
- * @param buf
- */
-function getMd5(buf: Buffer) {
-  const hash = crypto.createHash('md5');
-  hash.update(buf);
-  return hash.digest('hex');
 }
 
 /**
@@ -270,10 +295,9 @@ function getMd5(buf: Buffer) {
  */
 async function isCached(track: Track) {
   const result = await TrackModel.findOne({
-    where: { md5: track.md5 },
+    where: { src: track.src },
   });
-  if (result) return true;
-  else return false;
+  return !!result;
 }
 
 /**

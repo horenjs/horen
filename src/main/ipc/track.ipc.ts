@@ -36,13 +36,13 @@ const mydebug = debug('ipc:track');
  * 从缓存中获取音频文件列表
  */
 ipcMain.handle(IPC_CODE.track.getTrackList, async () => {
-  mydebug.info('从缓存数据库中读取');
+  mydebug.debug('从缓存数据库中读取音频列表');
   try {
     const allTracks = (await TrackModel.findAll()).map((t) => t.get());
-    mydebug.info('从缓存数据库读取成功');
+    mydebug.info('从缓存数据库读取成功音频列表');
     return allTracks;
   } catch (err) {
-    mydebug.error('从数据库中读取失败');
+    mydebug.error('从数据库中读取音频列表失败');
   }
 });
 
@@ -50,10 +50,10 @@ ipcMain.handle(IPC_CODE.track.getAlbumList, async () => {
   mydebug.debug('从缓存数据库中读取专辑列表');
   try {
     const albums = (await AlbumModel.findAll()).map((a) => a.get());
-    mydebug.debug('读取专辑列表成功');
+    mydebug.info('读取专辑列表成功');
     return albums;
   } catch(err) {
-    console.error(err);
+    // console.error(err);
     mydebug.error('读取专辑列表失败');
   }
 })
@@ -65,32 +65,33 @@ ipcMain.handle(IPC_CODE.track.rebuildCache, async (evt, paths: string[]) => {
   const rawFilePaths: string[] = [];
 
   for (const p of paths) {
-    mydebug.info('从给定的目录读取所有文件: ' + p);
+    mydebug.debug('从给定的目录读取所有文件: ' + p);
     rawFilePaths.push(...(await readDir(p)));
   }
 
-  mydebug.info('过滤出音频文件');
+  mydebug.debug('过滤出音频文件');
   const audioFilePaths = getAudioFiles(rawFilePaths);
 
-  mydebug.info('清空数据库并重新生成');
+  mydebug.warning('清空数据库并重新生成');
   try {
     await TrackModel.destroy({ truncate: true });
     await AlbumModel.destroy({ truncate: true });
     mydebug.info('清空数据库成功');
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     mydebug.error('清空数据库失败');
     return false;
   }
-  mydebug.info('从音频文件中解析相关信息');
+  mydebug.debug('从音频文件中解析相关信息');
   const allTracks = await getAudioFilesMeta(
     audioFilePaths,
     audioFilePaths.length
   );
 
-  mydebug.info('等待写入数据库');
+  mydebug.debug('等待所有音频写入数据库');
   await saveToDB(allTracks);
 
+  mydebug.debug('从音频列表中聚合专辑')
   const albums = aggregateAlbum(allTracks);
 
   for (const a of albums) {
@@ -115,7 +116,7 @@ ipcMain.handle(IPC_CODE.track.rebuildCache, async (evt, paths: string[]) => {
     myapp.mainWindow?.webContents.send(IPC_CODE.track.msg, 'done');
     return true;
   } catch(err) {
-    console.error(err);
+    // console.error(err);
     mydebug.error('保存专辑列表失败');
     myapp.mainWindow?.webContents.send(IPC_CODE.track.msg, '保存专辑列表失败');
     return false;
@@ -126,7 +127,7 @@ ipcMain.handle(IPC_CODE.track.getBySrc, async (evt, src: string) => {
   try {
     const result = await TrackModel.findOne({ where: { src } });
     if (result) {
-      mydebug.info('获取音频成功: ' + src);
+      mydebug.debug('获取音频成功: ' + src);
       return result.toJSON();
     } else {
       mydebug.error('获取音频失败: ' + src);
@@ -146,7 +147,7 @@ ipcMain.handle(IPC_CODE.track.getAlbumByKey, async (evt, key) => {
       children: tracks,
     } as Album;
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     mydebug.error(`获取专辑内的音频失败 [${key}]`);
   }
 })
@@ -157,8 +158,8 @@ ipcMain.handle(IPC_CODE.track.getAlbumCover, async (evt, key) => {
   try {
     return fsp.readFileSync(imgPath, {encoding: 'base64'});
   } catch (err) {
-    console.error(err);
-    mydebug.error(`没有本地封面: ${imgPath}`);
+    // console.error(err);
+    mydebug.warning(`没有本地封面: ${imgPath}`);
   }
 })
 
@@ -166,7 +167,7 @@ ipcMain.handle(IPC_CODE.track.getAlbumCover, async (evt, key) => {
  * 获取歌词
  */
 ipcMain.handle(IPC_CODE.track.lyric, async (evt, src: string) => {
-  mydebug.info('获取歌词: ' + src);
+  mydebug.debug('获取歌词: ' + src);
 
   try {
     const file = await fs.readFile(audioExtToLrc(src), { encoding: 'utf-8' });
@@ -297,7 +298,7 @@ async function readMusicMeta(p: string) {
     meta = await mm.parseBuffer(buffer);
   } catch (err) {
     meta = null;
-    console.error(err);
+    // console.error(err);
     mydebug.error('无法解析该文件: ' + p);
   }
 

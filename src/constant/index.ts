@@ -9,6 +9,7 @@
 export { DEFAULT_SETTING } from './setting';
 export { default as LANG } from './lang';
 import { Page } from '../types';
+import path from 'path';
 
 /**
  * ipc 通信使用的信号字符
@@ -53,6 +54,8 @@ export const APP_DATA_PATH =
  * todo: 应当从 package.json 读取
  */
 export const APP_NAME = 'horen';
+
+export const LOG_PATH = path.join(APP_DATA_PATH, APP_NAME, 'logs');
 
 /**
  * 可以解析的音频文件格式

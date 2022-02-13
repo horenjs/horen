@@ -19,6 +19,7 @@ export const IPC_CODE = {
     getAlbumList: 'track:get-album-list',
     getBySrc: 'track:get-by-uuid',
     getAlbumByKey: 'track:get-album-by-key',
+    getAlbumCover: 'track:get-album-cover',
     rebuildCache: 'track:rebuild-list',
     msg: 'track:msg',
     lyric: 'track:lyric',

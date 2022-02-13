@@ -31,3 +31,15 @@ export function generateTrackTitle(track: Track) {
 export function includesAlbum(albums: Album[], key: string) {
   return albums.filter((album) => album.key === key).length > 0;
 }
+
+export function findTitleFromKey(key: string) {
+  const result = key.match(/#[\S\s]+#/gi);
+  if (result) return result[0].replace(/#/, '').replace(/#/, '');
+  else return '';
+}
+
+export function findArtistFromKey(key: string) {
+  const result = key.match(/@[\S\s]+@/gi);
+  if (result) return result[0].replace(/@/, '').replace(/@/, '');
+  else return '';
+}

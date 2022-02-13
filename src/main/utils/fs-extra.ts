@@ -38,11 +38,15 @@ export function readdir(p: string): Promise<string[]> {
  * @param p 文件地址
  * @returns fs.Stats
  */
-export function stat(p: string): Promise<fs.Stats> {
+export async function stat(p: string): Promise<fs.Stats> {
   return new Promise((resolve, reject) => {
     fs.stat(p, (err, stats) => {
       if (err) reject(err);
       else resolve(stats);
     });
   });
+}
+
+export function ensurePath(p: string) {
+  if (fs.existsSync(p)) fs.mkdirSync(p);
 }

@@ -8,10 +8,17 @@
  */
 import path from 'path';
 import fs from 'fs/promises';
+import fsp from 'fs';
 import { ipcMain } from 'electron';
 import mm from 'music-metadata';
 import { arrayBufferToBase64 } from 'mintin-util';
-import { TRACK_FORMAT, IPC_CODE, API_URL } from 'constant';
+import {
+  TRACK_FORMAT,
+  IPC_CODE,
+  API_URL,
+  APP_DATA_PATH,
+  APP_NAME
+} from 'constant';
 import debug from '../utils/logger';
 import {Album, Track} from 'types';
 import { TrackModel, AlbumModel } from '../db/models';
@@ -20,7 +27,8 @@ import { request } from '../utils/request';
 import { simplized } from '../utils/words';
 import { readDir } from '../utils/fs-extra';
 import lrcParser from '../utils/lyric';
-import {aggregateAlbum, generateAlbumKey} from '../utils/track.util';
+import {aggregateAlbum, generateAlbumKey, findArtistFromKey, findTitleFromKey} from '../utils/track.util';
+import Request from 'request';
 
 const mydebug = debug('ipc:track');
 
@@ -84,6 +92,23 @@ ipcMain.handle(IPC_CODE.track.rebuildCache, async (evt, paths: string[]) => {
   await saveToDB(allTracks);
 
   const albums = aggregateAlbum(allTracks);
+
+  for (const a of albums) {
+    const api = new NeteaseApi(findTitleFromKey(a.key), findArtistFromKey(a.key));
+    const cover = await api.cover();
+    mydebug.debug(`获取专辑封面地址成功: ${cover}`);
+    const coverPath = path.join(APP_DATA_PATH, APP_NAME, 'Cache', 'cover');
+
+    if (!fsp.existsSync(coverPath)) fsp.mkdirSync(coverPath, {recursive: true});
+
+    const imgPath = path.join(coverPath, a.key + '.jpg');
+    if (cover) {
+      await Request(cover).pipe(fsp.createWriteStream(imgPath)).on('close', () => {
+        mydebug.debug(`保存封面图成功: ${imgPath}`);
+      })
+    }
+  }
+
   try {
     await AlbumModel.bulkCreate(albums as any[]);
     mydebug.info('保存专辑列表成功');
@@ -123,6 +148,17 @@ ipcMain.handle(IPC_CODE.track.getAlbumByKey, async (evt, key) => {
   } catch (err) {
     console.error(err);
     mydebug.error(`获取专辑内的音频失败 [${key}]`);
+  }
+})
+
+ipcMain.handle(IPC_CODE.track.getAlbumCover, async (evt, key) => {
+  const coverPath = path.join(APP_DATA_PATH, APP_NAME, 'Cache', 'cover');
+  const imgPath = path.join(coverPath, key + '.jpg');
+  try {
+    return fsp.readFileSync(imgPath, {encoding: 'base64'});
+  } catch (err) {
+    console.error(err);
+    mydebug.error(`没有本地封面: ${imgPath}`);
   }
 })
 
@@ -322,10 +358,10 @@ class NeteaseApi {
     this.kw = title + artist;
   }
 
-  async search() {
+  async search(type = 1) {
     const payload = {
       s: this.kw,
-      type: 1,
+      type,
       offset: 0,
       total: true,
       limit: 10,
@@ -363,5 +399,26 @@ class NeteaseApi {
       // mydebug.debug(res.lrc.lyric);
       return res.lrc.lyric;
     } else return '';
+  }
+
+  async cover() {
+    const jsonStr = JSON.parse(await this.search(10));
+    // console.log(jsonStr);
+    if (jsonStr.result) {
+      if (jsonStr.result.albumCount > 0) {
+        const albumList = jsonStr.result.albums;
+        for (const album of albumList) {
+          if (album.name === this.title) {
+            const artists = album.artists;
+            for (const artist of artists) {
+              if (artist.name === this.artist) {
+                mydebug.info('搜索的专辑名称: ' + album.name);
+                return album.picUrl;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

@@ -10,6 +10,7 @@ import React from 'react';
 import defaultCover from '@/static/image/default-cover';
 import {Album} from "types";
 import { findTitleFromKey, findArtistFromKey } from "@/pages/library/index";
+import { TrackDC} from "@/data-center";
 
 interface Props {
   album: Album;
@@ -19,13 +20,20 @@ interface Props {
 export function AlbumView(props: Props) {
   const { album, onOpen } = props;
 
-  const src = defaultCover;
+  const [src, setSrc] = React.useState(defaultCover);
 
   const handleOpen = async (e: React.MouseEvent<HTMLDivElement>, a: Album) => {
     e.preventDefault();
     e.stopPropagation();
     await onOpen(a);
   };
+
+  React.useEffect(() => {
+    (async () => {
+      const res = await TrackDC.getAlbumCover(album.key);
+      if (typeof res !== "undefined") setSrc(res);
+    })();
+  }, []);
 
   return (
     <div

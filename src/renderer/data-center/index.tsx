@@ -28,6 +28,10 @@ export class TrackDC {
     return await ipcRenderer.invoke(IPC_CODE.track.getAlbumByKey, key);
   }
 
+  public static async getAlbumCover(key: string): Promise<string> {
+    return await ipcRenderer.invoke(IPC_CODE.track.getAlbumCover, key);
+  }
+
   public static async rebuildCache(paths: string[]): Promise<boolean> {
     return await ipcRenderer.invoke(IPC_CODE.track.rebuildCache, paths);
   }

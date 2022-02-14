@@ -26,6 +26,7 @@ import {
   extractAudioFilesMeta,
   NeteaseApi,
   getTracksNotCached,
+  arrayBufferToBuffer,
 } from '../utils/track.util';
 import Request from 'request';
 import debug from "../utils/logger.util";
@@ -100,12 +101,16 @@ ipcMain.handle(IPC_CODE.track.rebuildCache, async (evt, paths: string[]) => {
     mydebug.debug(`[重建缓存]获取专辑封面地址成功: ${cover}`);
 
     ensurePath(COVER_PATH)
-
     const imgPath = path.join(COVER_PATH, a.key + '.jpg');
-    if (cover) {
-      await Request(cover).pipe(fsp.createWriteStream(imgPath)).on('close', () => {
-        mydebug.debug(`[重建缓存]保存封面图成功: ${imgPath}`);
-      })
+
+    if (a.pb) {
+      await fs.writeFile(imgPath, arrayBufferToBuffer(a.pb));
+    } else {
+      if (cover) {
+        await Request(cover).pipe(fsp.createWriteStream(imgPath)).on('close', () => {
+          mydebug.debug(`[重建缓存]保存封面图成功: ${imgPath}`);
+        })
+      }
     }
   }
 

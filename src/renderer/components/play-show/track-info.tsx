@@ -9,25 +9,25 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Track } from 'types';
-import defaultCover from '@/static/image/default-cover';
 import { formatSecond } from 'mintin-util';
 
 interface Props {
   track?: Track;
+  cover?: string;
 }
 
 export default function TrackInfo(props: Props) {
-  const { track } = props;
+  const { track, cover } = props;
 
   const genre =
     !!track?.genre && track?.genre !== 'undefined' ? track.genre : '未知流派';
 
-  const year = track?.year ? `${track?.year}年` : '未知年份';
+  const year = track?.date ? `${track?.date}年` : '未知年份';
 
   return (
     <MyTrackInfo className="play-show__track-info">
       <div className="cover">
-        <img src={`data:image/png;base64,${track?.picture || defaultCover}`} />
+        <img src={`data:image/png;base64,${cover}`} alt={track?.title} />
       </div>
       <div className="track-info">
         <div className="title-duration">

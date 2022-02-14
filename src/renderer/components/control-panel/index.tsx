@@ -13,6 +13,7 @@ import { Track } from 'types';
 import { Loader } from '../loader';
 import { player } from '@/App';
 import Slider from '../slider';
+import { TrackDC } from "@/data-center";
 
 export interface ControlPanelProps {
   track?: Track;
@@ -48,6 +49,8 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
     onVolume,
     onMute,
   } = props;
+
+  const [cover, setCover] = React.useState<string>();
 
   const trackTitle =
     track?.title || track?.src?.split('.').slice(-2, -1)[0] || 'Unkown track';
@@ -92,7 +95,7 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
     if (onRebuildCache) onRebuildCache(e);
   };
 
-  const handleVolmue = (vol: number) => {
+  const handleVolume = (vol: number) => {
     console.log(vol);
     if (onVolume) onVolume(vol);
   };
@@ -103,6 +106,16 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
     if (onMute) onMute();
   }
 
+  React.useEffect(() => {
+    (async () => {
+      if (track.albumKey) {
+        const co = await TrackDC.getAlbumCover(track.albumKey);
+        const c = co || track?.picture || defaultCover;
+        setCover(c);
+      }
+    })();
+  }, [track]);
+
   return (
     <My className="control-panel electron-drag">
       <div className="progress">
@@ -111,7 +124,7 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
       <div className="panel">
         <div className="track-cover electron-no-drag">
           <img
-            src={`data:image/png;base64,${track?.picture || defaultCover}`}
+            src={`data:image/png;base64,${cover}`}
             alt={track?.title || 'unkown-track'}
           />
           <div className="up-arrow" onClick={handlePlayShow} role="button">
@@ -161,7 +174,7 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
               {muted ? '🕨' : volume > 0.5 ? '🕪' : '🕩'}
             </div>
             <div className="adjust-volume">
-              <Slider progress={volume * 100} onChange={handleVolmue} />
+              <Slider progress={volume * 100} onChange={handleVolume} />
             </div>
           </div>
         </div>

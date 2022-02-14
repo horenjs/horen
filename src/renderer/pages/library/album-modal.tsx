@@ -7,7 +7,6 @@
  * @Description  :
  */
 import React from 'react';
-import defaultCover from '@/static/image/default-cover';
 import { Track, Album } from 'types';
 import { isInTracks } from './index';
 import { findTitleFromKey } from "./index";
@@ -17,7 +16,7 @@ interface Props {
    * 专辑
    */
   album: Album;
-  
+  cover?: string;
   /**
    * 点击关闭专辑预览
    */
@@ -42,12 +41,7 @@ interface Props {
 }
 
 export function AlbumModal(props: Props) {
-  const { album, onClose, onPick, tracksInQueue, currentTrack } = props;
-
-  // const publishDate = album.children[0].year || album.children[0].date;
-  // const artist = album.children[0].artist;
-  // const filesPath = album.children[0].src;
-  // const albumPath = filesPath?.split('\\').slice(0, -1);
+  const { album, cover, onClose, onPick, tracksInQueue, currentTrack } = props;
 
   const handleClose = (e: React.MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -140,11 +134,7 @@ export function AlbumModal(props: Props) {
         <div className="name">{findTitleFromKey(album.key)}</div>
         <div className="cover">
           <img
-            src={`data:image/png;base64,${
-              album.children
-                ? album.children[0].picture ? album.children[0].picture : defaultCover 
-                : defaultCover
-            }`}
+            src={`data:image/png;base64,${cover}`}
             alt={album.key}
           />
         </div>

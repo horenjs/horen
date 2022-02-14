@@ -10,7 +10,7 @@ import React from 'react';
 import defaultCover from '@/static/image/default-cover';
 import {Album} from "types";
 import { findTitleFromKey, findArtistFromKey } from "@/pages/library/index";
-import { TrackDC} from "@/data-center";
+import { TrackDC } from "@/data-center";
 
 interface Props {
   album: Album;

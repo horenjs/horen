@@ -6,13 +6,6 @@
  * @FilePath     : \horen\src\horen\types\track.ts
  * @Description  :
  */
-import {
-  ITrackInfo,
-  ICommonTagsResult,
-  INativeTags,
-  IFormat,
-} from 'music-metadata/lib/type';
-
 export type MyDate = string | number | Date;
 
 export interface Base {
@@ -34,6 +27,7 @@ export interface Track extends Base {
   date?: MyDate;
   genre?: string;
   picture?: string;
+  pictureBuffer?: ArrayBuffer;
   //
   albumKey?: string;
 }
@@ -41,6 +35,7 @@ export interface Track extends Base {
 export interface Album extends Base {
   uuid?: string;
   key: string;
+  pb?: ArrayBuffer;
   children?: Track[];
 }
 

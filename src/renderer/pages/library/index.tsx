@@ -8,7 +8,7 @@
  */
 import React from 'react';
 import styled from 'styled-components';
-import {useRecoilValue, useRecoilState} from 'recoil';
+import {useRecoilState, useRecoilValue} from 'recoil';
 import { albumListState, tracksInQueueState } from '@/store';
 import { player } from '@/App';
 import { Loader } from '@/components/loader';
@@ -17,9 +17,12 @@ import {Track, Album} from 'types';
 import { AlbumModal } from './album-modal';
 import { AlbumView } from './album-viewer';
 import {TrackDC} from "@/data-center";
+import defaultCover from "@/static/image/default-cover";
 
 export function Library() {
+  const [current, setCurrent] = React.useState(0);
   const [pickAlbum, setPickAlbum] = React.useState<Album>();
+  const [coverList, setCoverList] = React.useState<string[]>([]);
 
   const [tracksInQueue, setTracksInQueue] = useRecoilState(tracksInQueueState);
   const albumList = useRecoilValue(albumListState);
@@ -30,6 +33,9 @@ export function Library() {
    */
   const handleOpenAlbum = async (a: Album) => {
     const res = await TrackDC.getAlbumByKey(a.key);
+    albumList.map((album, index) => {
+      if (album.key === a.key) setCurrent(index);
+    })
     setPickAlbum(res);
   };
   
@@ -64,6 +70,20 @@ export function Library() {
     }
   };
 
+  React.useEffect(() => {
+    (async () => {
+      const covers = [];
+      for (const a of albumList) {
+        const res = await TrackDC.getAlbumCover(a.key);
+        const c = a.children
+          ? a.children[0].picture ? a.children[0].picture : defaultCover
+          : res ? res : defaultCover
+        covers.push(c);
+      }
+      setCoverList(covers);
+    })();
+  }, [albumList])
+
   return (
     <MyLib className="component-library">
       <div className="albums">
@@ -94,6 +114,7 @@ export function Library() {
           })}
           currentTrack={player.currentTrack}
           album={pickAlbum}
+          cover={coverList[current]}
           onPick={handlePickTrack}
           onClose={handleCloseAlbumModal}
         />

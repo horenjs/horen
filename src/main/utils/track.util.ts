@@ -19,8 +19,9 @@ export function aggregateAlbum(tracks: Track[]) {
 
   for (const track of tracks) {
     const key = generateAlbumKey(track);
+    const pb = track.pictureBuffer;
     // 如有没有这个专辑名 则新建一个
-    if (!includesAlbum(albums, key)) albums.push({ key });
+    if (!includesAlbum(albums, key)) albums.push({ key, pb });
   }
 
   return albums;
@@ -131,7 +132,7 @@ async function readMusicMeta(p: string) {
   }
 
   const picture = meta ? meta.common?.picture : '';
-  const arrybuffer = picture ? picture[0].data : null;
+  const pictureBuffer = picture ? picture[0].data : null;
 
   return {
     createAt: stats.birthtime.valueOf(),
@@ -147,7 +148,8 @@ async function readMusicMeta(p: string) {
     duration: meta?.format?.duration,
     date: String(meta?.common?.date),
     genre: String(meta?.common?.genre),
-    picture: arrybuffer ? arrayBufferToBase64(arrybuffer) : '',
+    picture: pictureBuffer ? arrayBufferToBase64(pictureBuffer) : '',
+    pictureBuffer: pictureBuffer,
     //
     albumKey: generateAlbumKey(meta?.common as Track),
   } as Track;
@@ -172,9 +174,9 @@ async function isCached(track: Track) {
  */
 export function audioExtToLrc(src: string) {
   const parts = src.split('.');
-  const newparts = parts.slice(0, -1);
-  newparts.push('lrc');
-  return newparts.join('.');
+  const newParts = parts.slice(0, -1);
+  newParts.push('lrc');
+  return newParts.join('.');
 }
 
 /**
@@ -250,4 +252,11 @@ export class NeteaseApi {
       }
     }
   }
+}
+
+export function arrayBufferToBuffer(ab: ArrayBuffer) {
+  const buf = new Buffer(ab.byteLength);
+  const view = new Uint8Array(ab);
+  for (let i = 0; i < buf.length; ++i) buf[i] = view[i];
+  return buf;
 }

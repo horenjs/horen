@@ -13,6 +13,8 @@ import { LyricScript, Track } from 'types';
 import TrackInfo from './track-info';
 import { ANIMATION_DELAY } from 'constant';
 import { LyricPanel } from '@/components/lyric-panel';
+import { TrackDC } from "@/data-center";
+import defaultCover from "@/static/image/default-cover";
 
 interface Props {
   playingTrack?: Track;
@@ -25,6 +27,7 @@ interface Props {
 export default function PlayShow(props: Props) {
   const { playingTrack, lyric, visible, seek, onClose } = props;
 
+  const [cover, setCover] = React.useState<string>();
   const [isMounting, setIsMounting] = React.useState(true);
   const [ani, setAni] = React.useState('hidden');
 
@@ -54,6 +57,16 @@ export default function PlayShow(props: Props) {
     return () => clearTimeout(timer);
   }, []);
 
+  React.useEffect(() => {
+    (async () => {
+      if (playingTrack?.albumKey) {
+        const co = await TrackDC.getAlbumCover(playingTrack.albumKey);
+        const c = co || playingTrack?.picture || defaultCover;
+        setCover(c);
+      }
+    })();
+  }, [playingTrack]);
+
   return ReactDOM.createPortal(
     <MyPlayShow className={cls.join(' ')}>
       <div className="header electron-no-drag">
@@ -66,7 +79,7 @@ export default function PlayShow(props: Props) {
         </div>
       </div>
       <div className="left electron-no-drag">
-        <TrackInfo track={playingTrack} />
+        <TrackInfo track={playingTrack} cover={cover} />
       </div>
       <div className="right">
         <div className="lyric">

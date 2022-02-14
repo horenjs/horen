@@ -28,7 +28,6 @@ import { notice } from './components/notification';
 import { SettingDC, TrackDC, PlayListDC } from './data-center';
 import {
   Page,
-  SettingFile,
   LyricScript,
   Track,
   PlayListItem,
@@ -108,6 +107,26 @@ export default function App() {
     );
   };
 
+  /**
+   * 从设置项中获取上次的播放列表
+   * 并加载到状态库中
+   * @param pyls
+   */
+  const initPlaylist = async (pyls: PlayList[]) => {
+    const defaultPlaylist = [];
+
+    for (const pyl of pyls) {
+      if (pyl.title === 'default') {
+        for (const c of pyl.children) {
+          const result = await TrackDC.getBySrc(c.src);
+          if (result) defaultPlaylist.push(result);
+        }
+      }
+    }
+
+    setTracksInQueue(defaultPlaylist);
+  };
+
   //
   //
   // 以下在特定状态变更时触发
@@ -168,6 +187,25 @@ export default function App() {
       setSetting(st);
     })();
   }, []);
+
+  React.useEffect(() => {
+    (async () => {
+      // 抽取设置项：组件加载时是否刷新
+      const rebuild = setting['common.rebuildWhenStart'];
+      // 抽取设置项：曲库目录
+      const paths = setting['common.collectionPaths'];
+
+      if (rebuild) {
+        const rebuilt = await TrackDC.rebuildCache(paths);
+        if (rebuilt) setAlbumList(await TrackDC.getAlbumList());
+      } else {
+        setAlbumList(await TrackDC.getAlbumList());
+      }
+
+      const pyls = await PlayListDC.getList();  // 获取播放列表（存储为文件的）
+      await initPlaylist(pyls);                 // 初始化默认播放队列
+    })();
+  }, [])
 
   return (
     <MyApp className="app">

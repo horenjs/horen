@@ -9,21 +9,20 @@
 import React from 'react';
 import styled from 'styled-components';
 import {useRecoilValue, useRecoilState} from 'recoil';
-import { albumListState, tracksInQueueState, settingState } from '@/store';
+import { albumListState, tracksInQueueState } from '@/store';
 import { player } from '@/App';
 import { Loader } from '@/components/loader';
 import Mask from '@/components/mask';
-import {Track, Album, PlayList} from 'types';
+import {Track, Album} from 'types';
 import { AlbumModal } from './album-modal';
 import { AlbumView } from './album-viewer';
-import {PlayListDC, TrackDC} from "@/data-center";
+import {TrackDC} from "@/data-center";
 
 export function Library() {
   const [pickAlbum, setPickAlbum] = React.useState<Album>();
 
   const [tracksInQueue, setTracksInQueue] = useRecoilState(tracksInQueueState);
-  const [albumList, setAlbumList] = useRecoilState(albumListState);
-  const setting = useRecoilValue(settingState);
+  const albumList = useRecoilValue(albumListState);
   
   /**
    * 点击专辑（打开专辑预览）
@@ -64,45 +63,6 @@ export function Library() {
         setTracksInQueue([...tracksInQueue, ...filtered]);
     }
   };
-
-  /**
-   * 从设置项中获取上次的播放列表
-   * 并加载到状态库中
-   * @param pyls
-   */
-  const initPlaylist = async (pyls: PlayList[]) => {
-    const defaultPlaylist = [];
-
-    for (const pyl of pyls) {
-      if (pyl.title === 'default') {
-        for (const c of pyl.children) {
-          const result = await TrackDC.getBySrc(c.src);
-          if (result) defaultPlaylist.push(result);
-        }
-      }
-    }
-
-    setTracksInQueue(defaultPlaylist);
-  };
-
-  React.useEffect(() => {
-    (async () => {
-      // 抽取设置项：组件加载时是否刷新
-      const rebuild = setting['common.rebuildWhenStart'];
-      // 抽取设置项：曲库目录
-      const paths = setting['common.collectionPaths'];
-
-      if (rebuild) {
-        const rebuilt = await TrackDC.rebuildCache(paths);
-        if (rebuilt) setAlbumList(await TrackDC.getAlbumList());
-      } else {
-        setAlbumList(await TrackDC.getAlbumList());
-      }
-
-      const pyls = await PlayListDC.getList();  // 获取播放列表（存储为文件的）
-      await initPlaylist(pyls);                 // 初始化默认播放队列
-    })();
-  }, [])
 
   return (
     <MyLib className="component-library">

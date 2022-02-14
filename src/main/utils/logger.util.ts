@@ -3,38 +3,25 @@
  * @Date         : 2022-01-30 01:28:14
  * @LastEditTime : 2022-01-30 17:32:04
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\src\horen\main\logger.ts
+ * @FilePath     : \Horen\src\horen\main\logger.util.ts
  * @Description  :
  */
 import chalk from 'chalk';
 import ddebug from 'debug';
 import util from "util";
-import { LOG_PATH } from 'constant';
+import {LOG_PATH} from 'constant';
 import fs from 'fs';
 import path from 'path';
 
-function logger(extend = '') {
+function loggerUtil(extend = '') {
   const dbrDebug = ddebug('horen');
 
   let myDebug: ddebug.Debugger;
 
   chalk.level = 3;
 
-  if (extend !== '') {
-    /*
-    const maxExtendSize = 10;
-    // 最大字符不得超过 maxExtendSize
-    // 超过的用 ... 代替
-    // 不足的用 ' ' 补足
-    if (extend.length <= maxExtendSize) {
-      extend = extend + repeatStr(maxExtendSize - extend.length + 3);
-    } else {
-      extend = extend.substring(0, maxExtendSize) + repeatStr(3, '.');
-    } */
-    myDebug = dbrDebug.extend(extend);
-  } else {
-    myDebug = dbrDebug;
-  }
+  if (extend !== '') myDebug = dbrDebug.extend(extend);
+  else myDebug = dbrDebug;
 
   myDebug.log = function (...args) {
     writeToFile(LOG_PATH, util.format(...args) + '\n');
@@ -75,23 +62,12 @@ function logger(extend = '') {
     })
   }
 
-  const createLogger = {
+  return {
     debug,
     info,
     warning,
     error,
     critic,
   };
-
-  return createLogger;
 }
-
-function repeatStr(times: number, symbol = ' ') {
-  let str = '';
-  for (let i = 0; i < times; i++) {
-    str += symbol;
-  }
-  return str;
-}
-
-export default logger;
+export default loggerUtil;

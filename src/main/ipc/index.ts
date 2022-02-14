@@ -3,7 +3,7 @@
  * @Date         : 2022-01-21 10:40:55
  * @LastEditTime : 2022-01-29 00:42:54
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\src\horen\main\ipc\lyric.ts
+ * @FilePath     : \horen\src\horen\main\ipc\lyric.util.ts
  * @Description  :
  */
 import './dialog.ipc';

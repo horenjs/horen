@@ -3,7 +3,7 @@
  * @Date         : 2022-01-30 16:37:21
  * @LastEditTime : 2022-02-01 16:43:35
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\src\horen-plugin-lyric\lyric.ts
+ * @FilePath     : \horen\src\horen-plugin-lyric\lyric.util.ts
  * @Description  :
  */
 const EOL = '\n';
@@ -40,7 +40,7 @@ function lrcParser(data: string) {
   };
 
   // test the info line and push it;
-  for (let i = 0; startAndText.test(lines[i]) === false; i++) {
+  for (let i = 0; !startAndText.test(lines[i]); i++) {
     infos.push(lines[i]);
   }
 
@@ -87,7 +87,7 @@ function extractInfo(s: string): string[] {
 }
 
 /**
- * cover time string to seconds
+ * cover time string to second
  * i.g: [01:09.10] -> 69.10
  * @param s time string like [01:09.10]
  * @returns seconds (to fixed(2))

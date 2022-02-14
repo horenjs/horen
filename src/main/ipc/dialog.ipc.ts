@@ -8,14 +8,14 @@
  */
 import { ipcMain, dialog } from 'electron';
 import { IPC_CODE } from 'constant';
-import debug from '../utils/logger';
+import debug from '../utils/logger.util';
 import myapp from '../app';
 
 const mydebug = debug('ipc:dialog');
 /**
  * 监听对话框打开
  */
-ipcMain.handle(IPC_CODE.dialog.open, async (evt, flag = 'dir') => {
+ipcMain.handle(IPC_CODE.dialog.open, async () => {
   if (myapp.mainWindow) {
     return await dialog.showOpenDialog(myapp.mainWindow, {
       properties: ['openDirectory', 'multiSelections'],

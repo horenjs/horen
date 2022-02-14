@@ -7,7 +7,7 @@
  * @Description  : 
  */
 import { Sequelize, Options } from 'sequelize';
-import debug from '../utils/logger';
+import debug from '../utils/logger.util';
 import path from 'path';
 import { APP_DATA_PATH, APP_NAME } from 'constant';
 

@@ -14,9 +14,9 @@ import {APP_DATA_PATH, APP_NAME, IPC_CODE, COVER_PATH} from 'constant';
 import {Album, Track} from 'types';
 import {AlbumModel, TrackModel} from '../db/models';
 import myapp from '../app';
-import {simplized} from '../utils/words';
-import {readDir, ensurePath} from '../utils/fs-extra';
-import lrcParser from '../utils/lyric';
+import {simplized} from '../utils/char.util';
+import {readDir, ensurePath} from '../utils/fs-extra.util';
+import lrcParser from '../utils/lyric.util';
 import {
   aggregateAlbum,
   audioExtToLrc,
@@ -28,7 +28,7 @@ import {
   getTracksNotCached,
 } from '../utils/track.util';
 import Request from 'request';
-import debug from "../utils/logger";
+import debug from "../utils/logger.util";
 
 export const mydebug = debug('ipc:track');
 

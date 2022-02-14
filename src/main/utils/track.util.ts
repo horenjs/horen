@@ -1,7 +1,7 @@
 import {Album, Track} from "types";
 import myapp from "../app";
 import {API_URL, IPC_CODE, AUDIO_EXTS} from "constant";
-import {request} from "./request";
+import {post} from "./request.util";
 import fs from "fs/promises";
 import path from "path";
 import mm from "music-metadata";
@@ -195,7 +195,7 @@ export class NeteaseApi {
       total: true,
       limit: 10,
     };
-    const res = await request(API_URL.search, payload);
+    const res = await post(API_URL.search, payload);
     return res as string;
   }
 
@@ -223,7 +223,7 @@ export class NeteaseApi {
       id: uid,
       lv: -1,
     };
-    const res = JSON.parse((await request(API_URL.lrc, payload)) as string);
+    const res = JSON.parse((await post(API_URL.lrc, payload)) as string);
     if (res.code === 200) {
       // mydebug.debug(res.lrc.lyric);
       return res.lrc.lyric;

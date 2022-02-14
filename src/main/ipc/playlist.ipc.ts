@@ -3,11 +3,11 @@ import fsp from 'fs/promises';
 import { ipcMain } from 'electron';
 import { PlayList } from 'types';
 import myapp from "../app";
-import { readDir } from "../utils/fs-extra";
-import logger from '../utils/logger';
+import { readDir } from "../utils/fs-extra.util";
+import loggerUtil from '../utils/logger.util';
 import { IPC_CODE, APP_NAME } from "constant";
 
-const mylogger = logger('ipc:playlist');
+const mylogger = loggerUtil('ipc:playlist');
 const APP_DATA_PATH = myapp.app.getPath('appData');
 
 ipcMain.handle(IPC_CODE.playlist.getList, async () => {

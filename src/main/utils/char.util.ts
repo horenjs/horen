@@ -3,7 +3,7 @@
  * @Date         : 2022-02-01 17:26:42
  * @LastEditTime : 2022-02-01 17:26:42
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\src\horen\main\utils\words.ts
+ * @FilePath     : \horen\src\horen\main\utils\char.util.ts
  * @Description  :
  */
 function charPYStr() {
@@ -15,8 +15,8 @@ function ftPYStr() {
 }
 
 export function traditionalized(cc: string) {
-  var str = '';
-  for (var i = 0; i < cc.length; i++) {
+  let str = '';
+  for (let i = 0; i < cc.length; i++) {
     if (charPYStr().indexOf(cc.charAt(i)) != -1)
       str += ftPYStr().charAt(charPYStr().indexOf(cc.charAt(i)));
     else str += cc.charAt(i);
@@ -25,8 +25,8 @@ export function traditionalized(cc: string) {
 }
 
 export function simplized(cc: string) {
-  var str = '';
-  for (var i = 0; i < cc.length; i++) {
+  let str = '';
+  for (let i = 0; i < cc.length; i++) {
     if (ftPYStr().indexOf(cc.charAt(i)) != -1)
       str += charPYStr().charAt(ftPYStr().indexOf(cc.charAt(i)));
     else str += cc.charAt(i);

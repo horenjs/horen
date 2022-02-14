@@ -9,9 +9,9 @@
 import { ipcMain } from 'electron';
 import { IPC_CODE } from 'constant';
 import myapp from '../app';
-import logger from '../utils/logger';
+import loggerUtil from '../utils/logger.util';
 
-const mylogger = logger('ipc:mainwindow');
+const mylogger = loggerUtil('ipc:mainwindow');
 
 ipcMain.handle(IPC_CODE.mainwindow.close, async () => {
   mylogger.debug('main window close: ' + new Date());

@@ -9,7 +9,7 @@
 import path from 'path';
 import fs from 'fs/promises';
 import { ipcMain } from 'electron';
-import debug from '../utils/logger';
+import debug from '../utils/logger.util';
 import {
   IPC_CODE,
   APP_DATA_PATH,
@@ -39,7 +39,7 @@ ipcMain.handle(IPC_CODE.setting.set, async (evt, setting) => {
 /**
  * 获取设置选项
  */
-ipcMain.handle(IPC_CODE.setting.get, async (evt) => {
+ipcMain.handle(IPC_CODE.setting.get, async () => {
   const p = path.join(APP_DATA_PATH, APP_NAME, 'setting.user.json');
 
   try {

@@ -3,7 +3,7 @@
  * @Date         : 2022-01-20 23:05:39
  * @LastEditTime : 2022-02-01 16:22:15
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\src\horen-plugin-player\lyric.ts
+ * @FilePath     : \horen\src\horen-plugin-player\lyric.util.ts
  * @Description  : a player for AlO
  */
 import { Howl, Howler } from 'howler';

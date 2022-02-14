@@ -3,7 +3,7 @@
  * @Date         : 2022-01-22 01:51:07
  * @LastEditTime : 2022-02-01 15:53:16
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\src\horen\constant\lyric.ts
+ * @FilePath     : \horen\src\horen\constant\lyric.util.ts
  * @Description  :
  */
 export { DEFAULT_SETTING } from './setting';

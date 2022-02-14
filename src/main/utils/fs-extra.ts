@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import fsp from "fs";
 /**
  * 获取给定文件夹下的所有文件
  * @param p 文件夹地址
@@ -48,5 +49,5 @@ export async function stat(p: string): Promise<fs.Stats> {
 }
 
 export function ensurePath(p: string) {
-  if (fs.existsSync(p)) fs.mkdirSync(p);
+  if (!fsp.existsSync(p)) fsp.mkdirSync(p, {recursive: true});
 }

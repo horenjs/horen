@@ -56,11 +56,12 @@ export const APP_DATA_PATH =
 export const APP_NAME = 'horen';
 
 export const LOG_PATH = path.join(APP_DATA_PATH, APP_NAME, 'logs');
+export const COVER_PATH = path.join(APP_DATA_PATH, APP_NAME, 'Cache', 'cover');
 
 /**
  * 可以解析的音频文件格式
  */
-export const TRACK_FORMAT = [
+export const AUDIO_EXTS = [
   'aiff',
   'aac',
   'ape',

@@ -81,21 +81,12 @@ ipcMain.handle(IPC_CODE.track.rebuildCache, async (evt, paths: string[]) => {
 
   sendMsgToRenderer(`共有 ${audioFilePaths.length} 个文件`)
 
-  const filesToExtract = [];
-
-  for (const f of audioFilePaths) {
-    if (!await isCached(f)) filesToExtract.push(f);
-  }
-
-  sendMsgToRenderer(`未缓存的有 ${filesToExtract.length} 个`);
-
   mydebug.debug('[重建缓存]抽取所有音频元数据');
   const allTracks = await extractAudioFilesMeta(
-    filesToExtract,
-    filesToExtract.length
+    audioFilePaths,
+    audioFilePaths.length
   );
 
-  /*
   mydebug.warning('[重建缓存]清空缓存数据库');
   try {
     await TrackModel.destroy({ truncate: true });
@@ -105,7 +96,7 @@ ipcMain.handle(IPC_CODE.track.rebuildCache, async (evt, paths: string[]) => {
     // console.error(err);
     mydebug.error('[重建缓存]清空数据库失败');
     return resp(0, '清空数据库失败');
-  } */
+  }
 
   mydebug.debug('[重建缓存]从音频列表中聚合专辑')
   const albums = aggregateAlbum(allTracks);

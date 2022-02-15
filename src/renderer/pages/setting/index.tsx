@@ -100,7 +100,7 @@ export default function SettingPage() {
             }}/>;
           }
           
-          return <SettingItem group={item.group} label={item.label} element={el} />
+          return <SettingItem group={item.group} label={item.label} element={el} key={item.group+item.label} />
         })}
       </div>
     )

@@ -14,3 +14,13 @@ export interface Page {
   path: string,
   title: string,
 }
+
+export type Code =
+  | 1
+  | 0
+
+export interface Resp {
+  code: Code;
+  msg: string;
+  data?: object | object[] | string | number | string[] | number[];
+}

@@ -26,7 +26,7 @@ export function Library() {
 
   const [tracksInQueue, setTracksInQueue] = useRecoilState(tracksInQueueState);
   const albumList = useRecoilValue(albumListState);
-  
+
   /**
    * 点击专辑（打开专辑预览）
    * @param a

@@ -16,8 +16,8 @@ export class TrackDC {
     return await ipcRenderer.invoke(IPC_CODE.track.getTrackList);
   }
 
-  public static async getAlbumList(): Promise<Album[]> {
-    return await ipcRenderer.invoke(IPC_CODE.track.getAlbumList);
+  public static async getAlbumList(limit = 20, offset = 0): Promise<Album[]> {
+    return await ipcRenderer.invoke(IPC_CODE.track.getAlbumList, limit, offset);
   }
 
   public static async getBySrc(src: string): Promise<Track> {

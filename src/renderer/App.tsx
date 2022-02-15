@@ -41,11 +41,16 @@ import Player from '@/utils/player';
 export const player = new Player();
 
 export default function App() {
+  const albumListLimit = 20;
+
+  const pageContainerRef: any = React.useRef<HTMLDivElement>();
+
   const [isMuted, setIsMuted] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
   const [isQueueVisible, setIsQueueVisible] = React.useState(false);
   const [isPlayShowVisible, setIsPlayShowVisible] = React.useState(false);
   const [isRebuilding, setIsRebuilding] = React.useState(false);
+  const [albumListOffest, setAlbumListOffset] = React.useState(0);
   /**
    * 音频加载进度
    */
@@ -55,7 +60,7 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const setAlbumList = useSetRecoilState(albumListState);
+  const [albumList, setAlbumList] = useRecoilState(albumListState);
   const [setting, setSetting] = useRecoilState(settingState);
   const [tracksInQueue, setTracksInQueue] = useRecoilState(tracksInQueueState);
 
@@ -127,6 +132,17 @@ export default function App() {
     setTracksInQueue(defaultPlaylist);
   };
 
+  const handleScroll = (e: any) => {
+    const toTop = pageContainerRef.current.scrollTop;
+    const clientHeight = pageContainerRef.current.clientHeight;
+    const scrollHeight = pageContainerRef.current.scrollHeight;
+    const delta = toTop + clientHeight - scrollHeight;
+    // console.log(delta);
+    if (delta > -50) {
+      setAlbumListOffset(albumListOffest + 20);
+    }
+  }
+
   //
   //
   // 以下在特定状态变更时触发
@@ -197,7 +213,7 @@ export default function App() {
 
       if (rebuild) {
         const rebuilt = await TrackDC.rebuildCache(paths);
-        if (rebuilt) setAlbumList(await TrackDC.getAlbumList());
+        if (rebuilt) setAlbumList(await TrackDC.getAlbumList(albumListLimit, albumListOffest));
       } else {
         setAlbumList(await TrackDC.getAlbumList());
       }
@@ -206,6 +222,20 @@ export default function App() {
       await initPlaylist(pyls);                 // 初始化默认播放队列
     })();
   }, [])
+
+  // offset 改变时获取更多专辑列表
+  React.useEffect(() => {
+    (async () => {
+      const more = await TrackDC.getAlbumList(albumListLimit, albumListOffest);
+      setAlbumList(albumList.concat(more));
+    })();
+  }, [albumListOffest]);
+
+  // 监听 page-container 滚动事件
+  React.useEffect(() => {
+    pageContainerRef.current?.addEventListener('scroll', handleScroll);
+    return () => pageContainerRef.current?.removeEventListener('scroll', handleScroll);
+  }, [albumListOffest]);
 
   return (
     <MyApp className="app">
@@ -218,7 +248,7 @@ export default function App() {
         <div className="page-header electron-drag">
           {PAGES.map(renderPageHeader)}
         </div>
-        <div className="page-container perfect-scrollbar electron-no-drag">
+        <div className="page-container perfect-scrollbar electron-no-drag" ref={pageContainerRef}>
           <Routes>
             <Route path="/">
               {/* 歌曲库页面 */}

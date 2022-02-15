@@ -26,7 +26,7 @@ import {
   filterAudioFiles,
   extractAudioFilesMeta,
   NeteaseApi,
-  getTracksNotCached,
+  isCached,
   arrayBufferToBuffer,
 } from '../utils/track.util';
 import Request from 'request';
@@ -79,12 +79,23 @@ ipcMain.handle(IPC_CODE.track.rebuildCache, async (evt, paths: string[]) => {
   mydebug.debug('[重建缓存]过滤所有音频文件');
   const audioFilePaths = filterAudioFiles(rawFilePaths);
 
+  sendMsgToRenderer(`共有 ${audioFilePaths.length} 个文件`)
+
+  const filesToExtract = [];
+
+  for (const f of audioFilePaths) {
+    if (!await isCached(f)) filesToExtract.push(f);
+  }
+
+  sendMsgToRenderer(`未缓存的有 ${filesToExtract.length} 个`);
+
   mydebug.debug('[重建缓存]抽取所有音频元数据');
   const allTracks = await extractAudioFilesMeta(
-    audioFilePaths,
-    audioFilePaths.length
+    filesToExtract,
+    filesToExtract.length
   );
 
+  /*
   mydebug.warning('[重建缓存]清空缓存数据库');
   try {
     await TrackModel.destroy({ truncate: true });
@@ -94,7 +105,7 @@ ipcMain.handle(IPC_CODE.track.rebuildCache, async (evt, paths: string[]) => {
     // console.error(err);
     mydebug.error('[重建缓存]清空数据库失败');
     return resp(0, '清空数据库失败');
-  }
+  } */
 
   mydebug.debug('[重建缓存]从音频列表中聚合专辑')
   const albums = aggregateAlbum(allTracks);
@@ -104,12 +115,14 @@ ipcMain.handle(IPC_CODE.track.rebuildCache, async (evt, paths: string[]) => {
     mydebug.debug(`[重建缓存]获取专辑封面地址成功: ${cover}`);
 
     ensurePath(COVER_PATH)
-    const imgPath = path.join(COVER_PATH, a.key + '.jpg');
+
+    const imgPath = path.join(COVER_PATH, a.key.replace(/\//, ' ') + '.jpg');
+    mydebug.debug(`保存专辑封面: ${imgPath}`);
 
     if (a.pb) {
       await fs.writeFile(imgPath, arrayBufferToBuffer(a.pb));
     } else {
-      if (cover) {
+      if (typeof cover !== 'undefined') {
         await Request(cover).pipe(fsp.createWriteStream(imgPath)).on('close', () => {
           mydebug.debug(`[重建缓存]保存封面图成功: ${imgPath}`);
         })
@@ -119,14 +132,13 @@ ipcMain.handle(IPC_CODE.track.rebuildCache, async (evt, paths: string[]) => {
 
   mydebug.debug('[重建缓存]将所有音频写入数据库');
   const saveSize = 200;
-  const tracksToSave = await getTracksNotCached(allTracks);
   for (let i = 0; i < allTracks.length; i += saveSize) {
     try {
-      await TrackModel.bulkCreate(tracksToSave.slice(i, i + saveSize) as any[]);
-      mydebug.info('[重建缓存]写入数据库成功' + i + '-' + i + saveSize);
+      await TrackModel.bulkCreate(allTracks.slice(i, i + saveSize) as any[]);
+      mydebug.info('[重建缓存]写入数据库成功' + i + '-' + (i + saveSize));
     } catch (err) {
       console.error(err);
-      mydebug.info('[重建缓存]写入数据库失败' + i + '-' + i + saveSize);
+      mydebug.info('[重建缓存]写入数据库失败' + i + '-' + (i + saveSize));
       return resp(0, '写入数据库失败')
     }
   }
@@ -232,3 +244,7 @@ ipcMain.handle(IPC_CODE.track.lyric, async (evt, src: string) => {
     return resp(0, '获取歌词失败');
   }
 });
+
+const sendMsgToRenderer = (msg: string) => {
+  myapp.mainWindow?.webContents.send(IPC_CODE.track.msg, msg);
+}

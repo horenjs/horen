@@ -158,11 +158,11 @@ async function readMusicMeta(p: string) {
 /**
  *
  * @returns
- * @param track
+ * @param trackOrSrc
  */
-async function isCached(track: Track) {
+export async function isCached(trackOrSrc: Track | string) {
   const result = await TrackModel.findOne({
-    where: {src: track.src},
+    where: {src: typeof trackOrSrc === 'string' ? trackOrSrc : trackOrSrc.src},
   });
   return !!result;
 }

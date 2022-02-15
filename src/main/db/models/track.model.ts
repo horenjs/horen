@@ -18,7 +18,7 @@ const field = {
     allowNull: false,
     defaultValue: DataTypes.UUIDV4,
   },
-  src: { type: DataTypes.STRING, allowNull: true },
+  src: { type: DataTypes.STRING, allowNull: true, primaryKey: true, },
   title: { type: DataTypes.STRING, allowNull: false, defaultValue: '' },
   artist: { type: DataTypes.STRING, allowNull: true },
   artists: { type: DataTypes.STRING, allowNull: true },

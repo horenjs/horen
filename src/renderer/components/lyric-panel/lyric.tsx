@@ -48,7 +48,7 @@ export function LyricPanel(props: LyricPanelProps) {
             return (
               <div
                 className="lyric-item"
-                key={lyric.start}
+                key={lyric.start+new Date().valueOf()}
                 data-time={lyric.start}
                 data-index={index}
                 style={{ height, margin }}

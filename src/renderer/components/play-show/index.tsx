@@ -61,7 +61,7 @@ export default function PlayShow(props: Props) {
     (async () => {
       if (playingTrack?.albumKey) {
         const co = await TrackDC.getAlbumCover(playingTrack.albumKey);
-        const c = co || playingTrack?.picture || defaultCover;
+        const c = co.code === 1? co.data : playingTrack?.picture || defaultCover;
         setCover(c);
       }
     })();

@@ -14,7 +14,7 @@ import {
   Navigate,
   useLocation,
 } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { settingState, tracksInQueueState, albumListState } from '@/store';
 import styled from 'styled-components';
 import Library from './pages/library';
@@ -124,7 +124,7 @@ export default function App() {
       if (pyl.title === 'default') {
         for (const c of pyl.children) {
           const result = await TrackDC.getBySrc(c.src);
-          if (result) defaultPlaylist.push(result);
+          if (result.code === 1) defaultPlaylist.push(result.data);
         }
       }
     }
@@ -186,7 +186,7 @@ export default function App() {
       if (player.currentTrack) {
         const { src = '' } = player.currentTrack;
         const lrcs = await TrackDC.lyric(src);
-        setLyrics(lrcs);
+        if (lrcs.code === 1) setLyrics(lrcs.data);
       }
     })();
   }, [player.currentTrack]);
@@ -213,9 +213,11 @@ export default function App() {
 
       if (rebuild) {
         const rebuilt = await TrackDC.rebuildCache(paths);
-        if (rebuilt) setAlbumList(await TrackDC.getAlbumList(albumListLimit, albumListOffest));
+        const al = await TrackDC.getAlbumList(albumListLimit, albumListOffest);
+        if (rebuilt && al.code === 1) setAlbumList(al.data);
       } else {
-        setAlbumList(await TrackDC.getAlbumList());
+        const al = await TrackDC.getAlbumList(albumListLimit, albumListOffest);
+        if (al.code === 1) setAlbumList(al.data);
       }
 
       const pyls = await PlayListDC.getList();  // 获取播放列表（存储为文件的）
@@ -227,7 +229,7 @@ export default function App() {
   React.useEffect(() => {
     (async () => {
       const more = await TrackDC.getAlbumList(albumListLimit, albumListOffest);
-      setAlbumList(albumList.concat(more));
+      if (more.code === 1) setAlbumList(albumList.concat(more.data));
     })();
   }, [albumListOffest]);
 
@@ -287,7 +289,7 @@ export default function App() {
                   if (rebuilt) {
                     const res = await TrackDC.getAlbumList();
                     setIsRebuilding(false);
-                    setAlbumList(res);
+                    if (res.code === 1) setAlbumList(res.data);
                   }
                   // 重建数据库后清空列表
                   setTracksInQueue([]);

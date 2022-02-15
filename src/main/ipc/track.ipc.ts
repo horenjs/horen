@@ -11,7 +11,7 @@ import fs from 'fs/promises';
 import fsp from 'fs';
 import {ipcMain} from 'electron';
 import {APP_DATA_PATH, APP_NAME, IPC_CODE, COVER_PATH} from 'constant';
-import {Album, Track} from 'types';
+import {Album, LyricScript, Track} from 'types';
 import {AlbumModel, TrackModel} from '../db/models';
 import myapp from '../app';
 import {simplized} from '../utils/char.util';
@@ -42,7 +42,7 @@ ipcMain.handle(IPC_CODE.track.getTrackList, async () => {
   try {
     const allTracks = (await TrackModel.findAll()).map((t) => t.get());
     mydebug.info('从缓存数据库读取成功音频列表');
-    return resp(1, '从缓存数据库读取成功音频列表', allTracks);
+    return resp<Track[]>(1, '从缓存数据库读取成功音频列表', allTracks);
   } catch (err) {
     mydebug.error('从数据库中读取音频列表失败');
     return resp(1, '从数据库中读取音频列表失败');
@@ -57,7 +57,7 @@ ipcMain.handle(IPC_CODE.track.getAlbumList, async (evt, limit = 20, offset = 0) 
   try {
     const albums = (await AlbumModel.findAll({limit, offset})).map((a) => a.get());
     mydebug.info('读取专辑列表成功');
-    return resp(1, '读取专辑列表成功', albums);
+    return resp<Album[]>(1, '读取专辑列表成功', albums);
   } catch(err) {
     // console.error(err);
     mydebug.error('读取专辑列表失败');
@@ -153,7 +153,7 @@ ipcMain.handle(IPC_CODE.track.getBySrc, async (evt, src: string) => {
     const result = await TrackModel.findOne({ where: { src } });
     if (result) {
       mydebug.debug('获取音频成功: ' + src);
-      return resp(1, '获取音频成功', result.toJSON());
+      return resp<Track>(1, '获取音频成功', result.toJSON());
     } else {
       mydebug.error('获取音频失败: ' + src);
       return resp(0, '获取音频失败')
@@ -172,7 +172,7 @@ ipcMain.handle(IPC_CODE.track.getAlbumByKey, async (evt, key) => {
     const result = await TrackModel.findAll({where: {albumKey: key}});
     const tracks = result.map(r => r.toJSON()) as Track[];
     mydebug.debug(`获取专辑内的音频成功 [${key}]`);
-    return resp(1, '获取专辑内的音频成功', {
+    return resp<Album>(1, '获取专辑内的音频成功', {
       key,
       children: tracks,
     } as Album);
@@ -190,7 +190,7 @@ ipcMain.handle(IPC_CODE.track.getAlbumCover, async (evt, key) => {
   const coverPath = path.join(APP_DATA_PATH, APP_NAME, 'Cache', 'cover');
   const imgPath = path.join(coverPath, key + '.jpg');
   try {
-    return resp(1, '获取封面成功', fsp.readFileSync(imgPath, {encoding: 'base64'}));
+    return resp<string>(1, '获取封面成功', fsp.readFileSync(imgPath, {encoding: 'base64'}));
   } catch (err) {
     // console.error(err);
     mydebug.warning(`没有本地封面: ${imgPath}`);
@@ -207,7 +207,7 @@ ipcMain.handle(IPC_CODE.track.lyric, async (evt, src: string) => {
   try {
     const file = await fs.readFile(audioExtToLrc(src), { encoding: 'utf-8' });
     mydebug.info('找到本地歌词文件');
-    return lrcParser(file).scripts;
+    return resp<LyricScript[]>(1, `找到本地歌词文件`, lrcParser(file).scripts);
   } catch (err) {
     mydebug.warning('无法找到本地歌词文件');
   }
@@ -225,9 +225,10 @@ ipcMain.handle(IPC_CODE.track.lyric, async (evt, src: string) => {
       mydebug.debug('保存歌词到文件: ' + audioExtToLrc(src));
       await fs.writeFile(audioExtToLrc(src), lrc, { encoding: 'utf-8' });
 
-      return lrcParser(lrc).scripts;
+      return resp<LyricScript[]>(1, `从互联网找到歌词`, lrcParser(lrc).scripts);
     }
   } catch (err) {
     mydebug.error('获取歌词失败: ' + src);
+    return resp(0, '获取歌词失败');
   }
 });

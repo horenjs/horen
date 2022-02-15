@@ -8,31 +8,31 @@
  */
 const electron = window.require('electron');
 const { ipcRenderer } = electron;
-import {Track, SettingFile, LyricScript, PlayList, Album} from 'types';
+import {Track, SettingFile, LyricScript, PlayList, Album, Resp} from 'types';
 import { IPC_CODE } from 'constant';
 
 export class TrackDC {
-  public static async getListCached(): Promise<Track[]> {
+  public static async getListCached(): Promise<Resp<Track[]>> {
     return await ipcRenderer.invoke(IPC_CODE.track.getTrackList);
   }
 
-  public static async getAlbumList(limit = 20, offset = 0): Promise<Album[]> {
+  public static async getAlbumList(limit = 20, offset = 0): Promise<Resp<Album[]>> {
     return await ipcRenderer.invoke(IPC_CODE.track.getAlbumList, limit, offset);
   }
 
-  public static async getBySrc(src: string): Promise<Track> {
+  public static async getBySrc(src: string): Promise<Resp<Track>> {
     return await ipcRenderer.invoke(IPC_CODE.track.getBySrc, src);
   }
 
-  public static async getAlbumByKey(key: string): Promise<Album> {
+  public static async getAlbumByKey(key: string): Promise<Resp<Album>> {
     return await ipcRenderer.invoke(IPC_CODE.track.getAlbumByKey, key);
   }
 
-  public static async getAlbumCover(key: string): Promise<string> {
+  public static async getAlbumCover(key: string): Promise<Resp<string>> {
     return await ipcRenderer.invoke(IPC_CODE.track.getAlbumCover, key);
   }
 
-  public static async rebuildCache(paths: string[]): Promise<boolean> {
+  public static async rebuildCache(paths: string[]): Promise<Resp<undefined>> {
     return await ipcRenderer.invoke(IPC_CODE.track.rebuildCache, paths);
   }
 
@@ -44,7 +44,7 @@ export class TrackDC {
     });
   }
 
-  public static async lyric(src: string): Promise<LyricScript[]> {
+  public static async lyric(src: string): Promise<Resp<LyricScript[]>> {
     return await ipcRenderer.invoke(IPC_CODE.track.lyric, src);
   }
 }

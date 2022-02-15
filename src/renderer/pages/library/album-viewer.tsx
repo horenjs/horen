@@ -31,7 +31,7 @@ export function AlbumView(props: Props) {
   React.useEffect(() => {
     (async () => {
       const res = await TrackDC.getAlbumCover(album.key);
-      if (typeof res !== "undefined") setSrc(res);
+      if (res.code === 1) setSrc(res.data);
     })();
   }, []);
 

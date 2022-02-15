@@ -19,8 +19,8 @@ export type Code =
   | 1
   | 0
 
-export interface Resp {
+export interface Resp<T = object | object[] | string | number | string[] | number[]> {
   code: Code;
   msg: string;
-  data?: object | object[] | string | number | string[] | number[];
+  data: T;
 }

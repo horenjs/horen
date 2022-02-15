@@ -36,7 +36,7 @@ export function Library() {
     albumList.map((album, index) => {
       if (album.key === a.key) setCurrent(index);
     })
-    setPickAlbum(res);
+    if (res.code === 1) setPickAlbum(res.data);
   };
   
   /**
@@ -77,7 +77,7 @@ export function Library() {
         const res = await TrackDC.getAlbumCover(a.key);
         const c = a.children
           ? a.children[0].picture ? a.children[0].picture : defaultCover
-          : res ? res : defaultCover
+          : res.code === 1 ? res.data : defaultCover
         covers.push(c);
       }
       setCoverList(covers);

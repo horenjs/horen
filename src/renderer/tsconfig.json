@@ -13,7 +13,7 @@
   },
   "include": [
     "./**/*",
-    "../types/**/*",
-    "../constant/**/*"
+    "../types/**/*.ts",
+    "../constant/**/*.ts"
   ]
 }

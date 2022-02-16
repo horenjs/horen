@@ -12,6 +12,7 @@ export interface SettingFile {
   version: string;
   "common.collectionPaths": string[];
   "common.rebuildWhenStart": boolean;
+  "common.autoplayWhenStart": boolean;
   "appearance.theme": string;
   "appearance.lang": string;
   [key: string]: string | string[] | number | number[] | boolean;

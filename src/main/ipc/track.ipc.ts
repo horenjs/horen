@@ -110,13 +110,18 @@ ipcMain.handle(IPC_CODE.track.rebuildCache, async (evt, paths: string[]) => {
     const imgPath = path.join(COVER_PATH, a.key.replace(/\//, ' ') + '.jpg');
     mydebug.debug(`保存专辑封面: ${imgPath}`);
 
-    if (a.pb) {
-      await fs.writeFile(imgPath, arrayBufferToBuffer(a.pb));
-    } else {
-      if (typeof cover !== 'undefined') {
-        await Request(cover).pipe(fsp.createWriteStream(imgPath)).on('close', () => {
-          mydebug.debug(`[重建缓存]保存封面图成功: ${imgPath}`);
-        })
+    try {
+      await fs.access(imgPath);
+      mydebug.warning(`album cover exists: ${imgPath}`);
+    } catch (err) {
+      if (a.pb) {
+        await fs.writeFile(imgPath, arrayBufferToBuffer(a.pb));
+      } else {
+        if (typeof cover !== 'undefined') {
+          await Request(cover).pipe(fsp.createWriteStream(imgPath)).on('close', () => {
+            mydebug.debug(`[重建缓存]保存封面图成功: ${imgPath}`);
+          })
+        }
       }
     }
   }

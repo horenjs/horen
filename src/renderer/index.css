@@ -26,6 +26,10 @@ body {
   border-radius: 8px;
 }
 
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 .perfect-scrollbar::-webkit-scrollbar {
   width: 4px;
 }

@@ -103,7 +103,7 @@
   },
   "build": {
     "appId": "com.kevinjobs.horen",
-    "asar": false,
+    "asar": true,
     "directories": {
       "output": "build"
     },

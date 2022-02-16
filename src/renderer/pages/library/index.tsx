@@ -18,6 +18,7 @@ import { AlbumModal } from './album-modal';
 import { AlbumView } from './album-viewer';
 import {TrackDC} from "@/data-center";
 import defaultCover from "@/static/image/default-cover";
+import VirtualList from "@/components/virtual-list";
 
 export function Library() {
   const [current, setCurrent] = React.useState(0);
@@ -69,6 +70,16 @@ export function Library() {
         setTracksInQueue([...tracksInQueue, ...filtered]);
     }
   };
+  
+  const renderAlbumView = (item: Album, index: number) => {
+    return (
+      <AlbumView
+        album={item}
+        onOpen={handleOpenAlbum}
+        key={item.key || index}
+      />
+    )
+  }
 
   React.useEffect(() => {
     (async () => {
@@ -92,15 +103,7 @@ export function Library() {
             <Loader style="square" />
           </div>
         ) : (
-          albumList.map((a, index) => {
-            return (
-              <AlbumView
-                album={a}
-                onOpen={handleOpenAlbum}
-                key={a.key || index}
-              />
-            )
-          })
+          <VirtualList itemWidth={224} itemHeight={296} width={1128} height={576} data={albumList} render={renderAlbumView} />
         )}
       </div>
 
@@ -132,17 +135,20 @@ const MyLib = styled.div`
   background-color: #313233;
   color: #f1f1f1;
   .albums {
+    width: 100%;
     display: flex;
-    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
     .album {
       display: inline-block;
       height: 280px;
       width: 192px;
       margin: 8px 16px;
       cursor: pointer;
+      vertical-align: top;
       img {
-        width: 100%;
-        height: calc(100% - 88px);
+        width: 192px;
+        height: 192px;
         object-fit: cover;
         border-radius: 4px;
       }

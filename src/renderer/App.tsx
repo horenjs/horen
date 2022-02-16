@@ -316,7 +316,7 @@ const MyApp = styled.div`
     background-color: #313233;
     user-select: none;
     .page-header {
-      margin: 0 64px 0 32px;
+      margin: 0 96px 0 32px;
       padding: 40px 0 0 0;
       display: flex;
       align-items: flex-end;

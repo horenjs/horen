@@ -36,24 +36,24 @@ const MyTitlePanel = styled.div`
     width: calc(100% - 44px);
     height: 40px;
     z-index: 999;
+    user-select: none;
     .title {
       position: absolute;
       left: 0;
       top: 0;
-      width: calc(100% - 64px);
+      width: calc(100% - 96px);
       height: 100%;
       text-align: center;
       color: #c1c2c3;
     }
     .operate {
-      width: 64px;
+      width: 96px;
       height: 100%;
       display: inline-block;
       position: absolute;
       right: 0;
       top: 0;
-      .minimize,
-      .close {
+      .operate-item {
         position: absolute;
         width: 32px;
         height: 32px;
@@ -62,6 +62,13 @@ const MyTitlePanel = styled.div`
         font-size: 1rem;
         cursor: pointer;
         text-align: center;
+      }
+      .simplized {
+        right: 64px;
+        &:hover {
+          background-color: #212223;
+          color: #ffffff;
+        }
       }
       .minimize {
         right: 32px;

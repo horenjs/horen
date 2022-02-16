@@ -8,7 +8,7 @@
  */
 const electron = window.require('electron');
 const { ipcRenderer } = electron;
-import {Track, SettingFile, LyricScript, PlayList, Album, Resp} from 'types';
+import {Track, SettingFile, LyricScript, PlayList, Album, Resp, Rectangle} from 'types';
 import { IPC_CODE } from 'constant';
 
 export class TrackDC {
@@ -86,5 +86,13 @@ export class MainwindowDC {
 
   public static async minimize() {
     return await ipcRenderer.invoke(IPC_CODE.mainwindow.minimize);
+  }
+
+  public static async setBounds(bounds: Rectangle) {
+    return await ipcRenderer.invoke(IPC_CODE.mainwindow.setBounds, bounds);
+  }
+
+  public static async getBounds() :Promise<Resp<Rectangle>> {
+    return await ipcRenderer.invoke(IPC_CODE.mainwindow.getBounds);
   }
 }

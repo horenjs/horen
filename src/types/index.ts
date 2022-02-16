@@ -24,3 +24,10 @@ export interface Resp<T = object | object[] | string | number | string[] | numbe
   msg: string;
   data: T;
 }
+
+export interface Rectangle {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}

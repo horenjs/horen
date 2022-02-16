@@ -1,6 +1,6 @@
 {
   "name": "horen",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "horen is a Music Player powered by Electron and React",
   "author": "Kevin Jobs",
   "license": "ISC",
@@ -26,7 +26,7 @@
     "start": "cross-env NODE_ENV=development DEBUG='horen:*' concurrently \"pnpm start:renderer\" \"pnpm start:main\"",
     "build": "cross-env NODE_ENV=production DEBUG='horen:*' rimraf ./dist && concurrently \"pnpm build:renderer\" \"pnpm build:main\"",
     "run:test": ".\\node_modules\\electron\\dist\\electron.exe .\\dist\\main.js",
-    "dist": "electron-builder --win --x64"
+    "dist": "rimraf ./build && electron-builder --win --x64"
   },
   "dependencies": {
     "chalk": "^4.0.0",
@@ -74,6 +74,7 @@
     "eslint": "^8.9.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
+    "path-browserify": "^1.0.1",
     "react-fresh": "^0.1.4",
     "react-is": "^17.0.2",
     "react-refresh": "^0.10.0",

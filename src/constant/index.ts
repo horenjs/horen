@@ -9,7 +9,7 @@
 export { DEFAULT_SETTING } from './setting';
 export { default as LANG } from './lang';
 import { Page } from '../types';
-import path = require('path');
+import * as path from 'path';
 
 /**
  * ipc 通信使用的信号字符

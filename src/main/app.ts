@@ -69,6 +69,10 @@ export class App {
         app.quit();
       }
     });
+
+    this._mainWindow?.once('ready-to-show', () => {
+      this._mainWindow?.show();
+    })
   }
 
   protected get nodeEnv() {
@@ -91,6 +95,7 @@ export function createWindow(opts?: BrowserWindowConstructorOptions) {
       contextIsolation: false,
       webSecurity: false,
     },
+    backgroundColor: '#313233',
   });
 }
 

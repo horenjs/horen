@@ -107,13 +107,21 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
   }
 
   React.useEffect(() => {
-    (async () => {
-      if (track?.albumKey) {
-        const co = await TrackDC.getAlbumCover(track.albumKey);
-        const c = co.code === 1 ? co.data : track?.picture || defaultCover;
-        setCover(c);
+    if (track) {
+      const key = track.albumKey;
+      if (key) {
+        (async () => {
+          const co = await TrackDC.getAlbumCover(key);
+          console.log(co);
+          const c = co.code === 1 ? co.data : track?.picture || defaultCover;
+          setCover(c);
+        })()
+      } else {
+        setCover(defaultCover);
       }
-    })();
+    } else {
+      setCover(defaultCover);
+    }
   }, [track]);
 
   return (

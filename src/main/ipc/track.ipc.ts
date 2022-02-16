@@ -193,7 +193,9 @@ ipcMain.handle(IPC_CODE.track.getAlbumCover, async (evt, key) => {
   const coverPath = path.join(APP_DATA_PATH, APP_NAME, 'Cache', 'cover');
   const imgPath = path.join(coverPath, key + '.jpg');
   try {
-    return resp<string>(1, '获取封面成功', fsp.readFileSync(imgPath, {encoding: 'base64'}));
+    const result = fsp.readFileSync(imgPath, {encoding: 'base64'});
+    if (result) return resp<string>(1, '获取封面成功', result);
+    else return resp(0, `没有本地封面: ${imgPath}`);
   } catch (err) {
     // console.error(err);
     mydebug.warning(`没有本地封面: ${imgPath}`);

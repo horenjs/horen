@@ -58,13 +58,21 @@ export default function PlayShow(props: Props) {
   }, []);
 
   React.useEffect(() => {
-    (async () => {
-      if (playingTrack?.albumKey) {
-        const co = await TrackDC.getAlbumCover(playingTrack.albumKey);
-        const c = co.code === 1? co.data : playingTrack?.picture || defaultCover;
-        setCover(c);
+    if (playingTrack) {
+      const key = playingTrack.albumKey;
+      if (key) {
+        (async () => {
+          const co = await TrackDC.getAlbumCover(key);
+          console.log(co);
+          const c = co.code === 1 ? co.data : playingTrack?.picture || defaultCover;
+          setCover(c);
+        })()
+      } else {
+        setCover(defaultCover);
       }
-    })();
+    } else {
+      setCover(defaultCover);
+    }
   }, [playingTrack]);
 
   return ReactDOM.createPortal(

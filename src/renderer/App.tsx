@@ -26,6 +26,7 @@ import { PlayQueue } from './components/play-queue';
 import PlayShow from './components/play-show';
 import TitlePanel from './components/title-panel';
 import { notice } from './components/notification';
+import { DisplayCate} from "@/components/display-cate";
 import {SettingDC, TrackDC, PlayListDC, MainwindowDC} from './data-center';
 import {
   Page,
@@ -34,6 +35,7 @@ import {
 } from 'types';
 import { PAGES, MINI_PLAYER_BOUNDS } from 'constant';
 import Player from '@/utils/player';
+import {Cate} from "@/components/display-cate/cate";
 
 // 初始化一个播放器
 // 这个播放器是全局唯一的播放器
@@ -44,6 +46,10 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  /**
+   * list display category
+   */
+  const [displayCate, setDisplayCate] = React.useState<Cate>('track');
   /**
    * main window: is in mini player
    */
@@ -169,7 +175,7 @@ export default function App() {
       <Route path="/">
         {/* 歌曲库页面 */}
         <Route index element={<Navigate to="library" />} />
-        <Route path="library" element={<Library />} />
+        <Route path="library" element={<Library cate={displayCate} />} />
         {/* 设置页面 */}
         <Route path="setting" element={<SettingPage />} />
         <Route path="home" element={<HomePage />} />
@@ -296,7 +302,12 @@ export default function App() {
             </div>
             <div className="pages">
               <div className="page-header electron-drag">
-                { PAGES.map(renderPageHeader) }
+                <div className={'page-title'}>
+                  { PAGES.map(renderPageHeader) }
+                </div>
+                <div className={'page-cate'}>
+                  <DisplayCate cate={displayCate} onPick={(cate) => setDisplayCate(cate)}/>
+                </div>
               </div>
               <div className="page-container perfect-scrollbar electron-no-drag">
                 { renderPageRoutes() }
@@ -332,20 +343,28 @@ const MyApp = styled.div`
       margin: 0 96px 0 32px;
       padding: 40px 0 0 0;
       display: flex;
-      align-items: flex-end;
-      .title {
-        font-size: 1.8rem;
-        font-weight: 600;
-        color: #717273;
-        margin: 0 16px;
-        text-transform: capitalize;
-        line-height: 40px;
-        cursor: pointer;
-        transition: all 0.15s ease-in-out;
-        &.actived {
-          color: #f1f1f1;
-          font-size: 2rem;
+      align-items: center;
+      .page-title {
+        display: flex;
+        flex-grow: 1;
+        .title {
+          font-size: 1.8rem;
+          font-weight: 600;
+          color: #717273;
+          margin: 0 16px;
+          text-transform: capitalize;
+          line-height: 40px;
+          cursor: pointer;
+          transition: all 0.15s ease-in-out;
+          &.actived {
+            color: #f1f1f1;
+            font-size: 2rem;
+          }
         }
+      }
+      .page-cate {
+        position: relative;
+        top: 8px;
       }
     }
     .page-container {

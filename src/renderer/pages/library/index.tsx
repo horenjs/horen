@@ -19,13 +19,23 @@ import { AlbumView } from './album-viewer';
 import {TrackDC} from "@/data-center";
 import defaultCover from "@/static/image/default-cover";
 import VirtualList from "@/components/virtual-list";
+import {Cate} from "@/components/display-cate/cate";
+import {formatSecond} from "mintin-util";
+import { THEME } from "constant";
 
-export function Library() {
+export interface LibraryProps {
+  cate?: Cate;
+}
+
+export function Library(props: LibraryProps) {
+  const { cate } = props;
+
   const [current, setCurrent] = React.useState(0);
   const [pickAlbum, setPickAlbum] = React.useState<Album>();
   const [coverList, setCoverList] = React.useState<string[]>([]);
 
   const [tracksInQueue, setTracksInQueue] = useRecoilState(tracksInQueueState);
+  const [trackList, setTrackList] = React.useState<Track[]>();
   const albumList = useRecoilValue(albumListState);
 
   /**
@@ -81,6 +91,60 @@ export function Library() {
     )
   }
 
+  const renderTrackList = (ts: Track[]) => {
+    return (
+      <div className={'track-list'}>
+        <VirtualList
+          itemWidth={1060}
+          itemHeight={40}
+          width={1060}
+          height={592}
+          data={ts}
+          render={(t, i) => {
+            return (
+              <li key={t.src || i} className={'track-list-item'} onDoubleClick={e => {
+                e.preventDefault();
+                e.stopPropagation();
+                player.currentTrack = t;
+                player.trackList = [t, ...player.trackList];
+              }}>
+                <span className={'info'}>
+                  <span className={'title'}>{ t.title }</span>
+                  <span className={'artist'}>{ t.artist }</span>
+                  <span className={'album'}>《{ t.album }》</span>
+                </span>
+                <span className={'duration'}>{ formatSecond(t.duration) }</span>
+              </li>
+            )
+        }} />
+      </div>
+    )
+  }
+
+  const renderAlbumList = (al: Album[]) => {
+    return (
+      <div className="albums">
+        <VirtualList
+          itemWidth={224}
+          itemHeight={296}
+          width={1128}
+          height={600}
+          data={al}
+          render={renderAlbumView}
+        />
+      </div>
+    )
+  }
+
+  React.useEffect(() => {
+    if (cate === 'track') {
+      (async () => {
+        const res = await TrackDC.getTrackList();
+        if (res.code === 1) setTrackList(res.data);
+      })();
+    }
+  }, [cate])
+
   React.useEffect(() => {
     (async () => {
       const covers = [];
@@ -93,36 +157,29 @@ export function Library() {
       }
       setCoverList(covers);
     })();
-  }, [albumList])
+  }, [albumList.length])
 
   return (
     <MyLib className="component-library">
-      <div className="albums">
-        {albumList.length === 0 ? (
-          <div>
-            <Loader style="square" />
-          </div>
-        ) : (
-          <VirtualList itemWidth={224} itemHeight={296} width={1128} height={600} data={albumList} render={renderAlbumView} />
+      {cate === 'track' && trackList && renderTrackList(trackList)}
+      {cate === 'album' && albumList && renderAlbumList(albumList)}
+      <div>
+        {pickAlbum?.children?.length && (
+          <AlbumModal
+            tracksInQueue={tracksInQueue.map((track) => {
+              // 判断歌曲是否在播放中
+              if (track?.title === player.currentTrack?.title)
+                return { ...track, playStatus: 'playing' };
+              else return track;
+            })}
+            currentTrack={player.currentTrack}
+            album={pickAlbum}
+            cover={coverList[current]}
+            onPick={handlePickTrack}
+            onClose={handleCloseAlbumModal}
+          />
         )}
       </div>
-
-      {pickAlbum?.children?.length && (
-        <AlbumModal
-          tracksInQueue={tracksInQueue.map((track) => {
-            // 判断歌曲是否在播放中
-            if (track?.title === player.currentTrack?.title)
-              return { ...track, playStatus: 'playing' };
-            else return track;
-          })}
-          currentTrack={player.currentTrack}
-          album={pickAlbum}
-          cover={coverList[current]}
-          onPick={handlePickTrack}
-          onClose={handleCloseAlbumModal}
-        />
-      )}
-
       {pickAlbum && (
         <Mask depth={999} opacity={0.9} onClick={() => setPickAlbum(undefined)} />
       )}
@@ -134,6 +191,38 @@ const MyLib = styled.div`
   height: 100%;
   background-color: #313233;
   color: #f1f1f1;
+  .track-list {
+    padding: 0 16px;
+    .track-list-item {
+      margin: 4px 0;
+      padding: 0 16px;
+      list-style: none;
+      line-height: 40px;
+      border-radius: 4px;
+      display: flex;
+      &.actived {
+        .info {
+          color: ${THEME.color.success};
+        }
+      }
+      &:hover {
+        background-color: #515253;
+      }
+      .info {
+        display: inline-block;
+        flex-grow: 1;
+        .artist,.album {
+          font-size: 0.8rem;
+          display: inline-block;
+          margin: 0 8px;
+          color: #717273;
+        }
+      }
+      .duration {
+        
+      }
+    }
+  }
   .albums {
     width: 100%;
     display: flex;

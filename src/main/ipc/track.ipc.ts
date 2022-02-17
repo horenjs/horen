@@ -26,7 +26,6 @@ import {
   filterAudioFiles,
   extractAudioFilesMeta,
   NeteaseApi,
-  isCached,
   arrayBufferToBuffer,
 } from '../utils/track.util';
 import Request from 'request';

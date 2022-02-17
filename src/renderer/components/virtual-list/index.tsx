@@ -7,7 +7,7 @@ export interface VirtualListProps {
   width: number;
   height: number;
   data: any[];
-  render(item: any, index?: number): React.ReactNode;
+  render(item: any, index: number): React.ReactNode;
 }
 
 export default VirtualList;

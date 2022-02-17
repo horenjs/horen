@@ -43,8 +43,8 @@ export function AlbumView(props: Props) {
     >
       <img src={`data:image/png;base64,${src}`} alt={album.key} />
       <div className="info">
-        <div className="name">{findTitleFromKey(album.key)}</div>
-        <div className="artist">{findArtistFromKey(album.key)}</div>
+        <div className="name">{album.key && findTitleFromKey(album.key)}</div>
+        <div className="artist">{album.key && findArtistFromKey(album.key)}</div>
       </div>
     </div>
   );

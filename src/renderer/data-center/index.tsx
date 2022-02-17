@@ -12,7 +12,7 @@ import {Track, SettingFile, LyricScript, PlayList, Album, Resp, Rectangle} from 
 import { IPC_CODE } from 'constant';
 
 export class TrackDC {
-  public static async getListCached(): Promise<Resp<Track[]>> {
+  public static async getTrackList(): Promise<Resp<Track[]>> {
     return await ipcRenderer.invoke(IPC_CODE.track.getTrackList);
   }
 

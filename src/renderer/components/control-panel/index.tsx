@@ -98,7 +98,6 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
       if (key) {
         (async () => {
           const co = await TrackDC.getAlbumCover(key);
-          console.log(co);
           const c = co.code === 1 ? co.data : player.currentTrack?.picture || defaultCover;
           setCover(c);
         })()

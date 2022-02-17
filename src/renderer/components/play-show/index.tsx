@@ -9,24 +9,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
-import { LyricScript, Track } from 'types';
+import { LyricScript } from 'types';
 import TrackInfo from './track-info';
 import { ANIMATION_DELAY } from 'constant';
 import { LyricPanel } from '@/components/lyric-panel';
 import { TrackDC } from "@/data-center";
 import defaultCover from "@/static/image/default-cover";
+import { player } from "@/App";
 
 interface Props {
-  playingTrack?: Track;
-  lyric: LyricScript[];
-  seek: number;
   visible: boolean;
   onClose(): void;
 }
 
 export default function PlayShow(props: Props) {
-  const { playingTrack, lyric, visible, seek, onClose } = props;
+  const { visible, onClose } = props;
 
+  /**
+   * current track lyric
+   */
+  const [lyrics, setLyrics] = React.useState<LyricScript[]>([]);
   const [cover, setCover] = React.useState<string>();
   const [isMounting, setIsMounting] = React.useState(true);
   const [ani, setAni] = React.useState('hidden');
@@ -58,13 +60,13 @@ export default function PlayShow(props: Props) {
   }, []);
 
   React.useEffect(() => {
-    if (playingTrack) {
-      const key = playingTrack.albumKey;
+    if (player?.currentTrack) {
+      const key = player?.currentTrack.albumKey;
       if (key) {
         (async () => {
           const co = await TrackDC.getAlbumCover(key);
           console.log(co);
-          const c = co.code === 1 ? co.data : playingTrack?.picture || defaultCover;
+          const c = co.code === 1 ? co.data : player?.currentTrack?.picture || defaultCover;
           setCover(c);
         })()
       } else {
@@ -73,7 +75,18 @@ export default function PlayShow(props: Props) {
     } else {
       setCover(defaultCover);
     }
-  }, [playingTrack]);
+  }, [player.currentTrack]);
+
+  // 在当前播放音频变化时触发
+  React.useEffect(() => {
+    (async () => {
+      if (player.currentTrack) {
+        const { src = '' } = player.currentTrack;
+        const lrcs = await TrackDC.lyric(src);
+        if (lrcs.code === 1) setLyrics(lrcs.data);
+      }
+    })();
+  }, [player.currentTrack]);
 
   return ReactDOM.createPortal(
     <MyPlayShow className={cls.join(' ')}>
@@ -87,11 +100,11 @@ export default function PlayShow(props: Props) {
         </div>
       </div>
       <div className="left electron-no-drag">
-        <TrackInfo track={playingTrack} cover={cover} />
+        <TrackInfo track={player?.currentTrack} cover={cover} />
       </div>
       <div className="right">
         <div className="lyric">
-          <LyricPanel lyrics={lyric} seek={seek} />
+          <LyricPanel lyrics={lyrics} seek={player.seek} />
         </div>
       </div>
     </MyPlayShow>,

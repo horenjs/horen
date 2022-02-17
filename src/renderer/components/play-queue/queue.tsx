@@ -12,7 +12,12 @@ import { PlayQueueProps } from './index';
 import { Loader } from '../loader';
 import { formatSecond } from 'mintin-util';
 
-type QueueProps = Omit<PlayQueueProps, 'onClose' | 'visible'>;
+type QueueProps = Omit<PlayQueueProps, 'onClose' | 'visible'> & {
+  tracks: Track[];
+  track: Track;
+  onPlay(track: Track): void;
+  onDelete(track: Track): void;
+};
 
 const Queue: React.FC<QueueProps> = (props) => {
   const { tracks, track, onPlay, onDelete } = props;

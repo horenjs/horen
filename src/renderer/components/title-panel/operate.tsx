@@ -8,7 +8,6 @@
  */
 import React from 'react';
 import { MainwindowDC } from '@/data-center';
-import { Rectangle } from 'types';
 import { ImShrink2 } from 'react-icons/im';
 
 export interface OperateProps {
@@ -18,15 +17,12 @@ export interface OperateProps {
 }
 
 export default function Operate(props: OperateProps) {
-  const { onClose, onMinimize, onSimp } = props;
+  const { onMinimize, onSimp } = props;
 
   const handleClose = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    if (onClose) {
-      await onClose();
-      await MainwindowDC.close();
-    }
+    await MainwindowDC.close();
   };
 
   const handleMinimize = (e: React.MouseEvent<HTMLElement>) => {

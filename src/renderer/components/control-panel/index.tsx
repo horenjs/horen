@@ -16,71 +16,56 @@ import Slider from '../slider';
 import { TrackDC } from "@/data-center";
 
 export interface ControlPanelProps {
-  track?: Track;
-  playing?: boolean;
-  progress?: number | string;
-  volume?: number;
-  muted?: boolean,
-  onPrev?(e?: React.MouseEvent<HTMLElement>): void;
-  onNext?(e?: React.MouseEvent<HTMLElement>): void;
-  onPlayOrPause?(e?: React.MouseEvent<HTMLElement>): void;
-  onSeek?(per: number): void;
-  onShow?(e?: React.MouseEvent<HTMLElement>): void;
+  onOpenShow?(e?: React.MouseEvent<HTMLElement>): void;
   onOpenQueue?(e?: React.MouseEvent<HTMLElement>): void;
   onRebuildCache?(e?: React.MouseEvent<HTMLElement>): void;
-  onVolume?(vol: number): void;
-  onMute?(): void;
 }
 
 const ControlPanel: React.FC<ControlPanelProps> = (props) => {
   const {
-    track = player.currentTrack as Track,
-    playing = player.playing,
-    progress = 0,
-    volume = 1,
-    muted = false,
-    onPrev,
-    onPlayOrPause,
-    onNext,
-    onSeek,
-    onShow,
+    onOpenShow,
     onOpenQueue,
     onRebuildCache,
-    onVolume,
-    onMute,
   } = props;
 
   const [cover, setCover] = React.useState<string>();
+  /**
+   * curren track seek?
+   */
+  const [progress, setProgress] = React.useState(0);
+  /**
+   * is player muted?
+   */
+  const [isMuted, setIsMuted] = React.useState(false);
 
   const trackTitle =
-    track?.title || track?.src?.split('.').slice(-2, -1)[0] || 'Unkown track';
+    player.currentTrack?.title
+    || player.currentTrack?.src?.split('.').slice(-2, -1)[0]
+    || 'Unknown track';
 
   const handlePrev = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     player.skip('prev');
-    if (onPrev) onPrev(e);
   };
 
   const handlePlayOrPause = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     player.playOrPause();
-    if (onPlayOrPause) onPlayOrPause(e);
   };
 
   const handleNext = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     player.skip('next');
-    if (onNext) onNext(e);
   };
 
   const handleSeek = (per: number) => {
-    if (onSeek) onSeek(per);
+    player.seek = per * player.duration;
   };
 
   const handlePlayShow = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    if (onShow) onShow(e);
+    if (onOpenShow) onOpenShow(e);
   };
 
   const handleOpenQueue = (e: React.MouseEvent<HTMLElement>) => {
@@ -96,24 +81,25 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
   };
 
   const handleVolume = (vol: number) => {
-    console.log(vol);
-    if (onVolume) onVolume(vol);
+    player.volume = vol
   };
 
   const handleMute = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    if (onMute) onMute();
+    if (!isMuted) player.mute();
+    else player.unmute();
+    setIsMuted(!isMuted);
   }
 
   React.useEffect(() => {
-    if (track) {
-      const key = track.albumKey;
+    if (player.currentTrack) {
+      const key = player.currentTrack.albumKey;
       if (key) {
         (async () => {
           const co = await TrackDC.getAlbumCover(key);
           console.log(co);
-          const c = co.code === 1 ? co.data : track?.picture || defaultCover;
+          const c = co.code === 1 ? co.data : player.currentTrack?.picture || defaultCover;
           setCover(c);
         })()
       } else {
@@ -122,7 +108,16 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
     } else {
       setCover(defaultCover);
     }
-  }, [track]);
+  }, [player.currentTrack]);
+
+  // 每隔一秒刷新播放进度
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((player.seek / player.duration) * 100);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [progress]);
 
   return (
     <My className="control-panel electron-drag">
@@ -133,12 +128,12 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
         <div className="track-cover electron-no-drag">
           <img
             src={`data:image/png;base64,${cover}`}
-            alt={track?.title || 'unkown-track'}
+            alt={player.currentTrack?.title || 'unkown-track'}
           />
           <div className="up-arrow" onClick={handlePlayShow} role="button">
             ︿
           </div>
-          {playing && (
+          {player.playing && (
             <div className="loader">
               <Loader style="pulse" />
             </div>
@@ -149,7 +144,7 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
             {trackTitle}
           </div>
           <div className="artist electron-no-drag">
-            {track?.artist || 'Unkown Artist'}
+            {player.currentTrack?.artist || 'Unkown Artist'}
           </div>
         </div>
         <div className="track-operate electron-no-drag">
@@ -160,7 +155,7 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
             className="play-or-pause electron-no-drag"
             onClick={handlePlayOrPause}
           >
-            {playing ? (
+            {player.playing ? (
               <span className="to-pause" title="暂停">
                 =
               </span>
@@ -179,10 +174,10 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
           </div>
           <div className="volume electron-no-drag">
             <div className="volume-icon" onClick={handleMute}>
-              {muted ? '🕨' : volume > 0.5 ? '🕪' : '🕩'}
+              {isMuted ? '🕨' : player.volume > 0.5 ? '🕪' : '🕩'}
             </div>
             <div className="adjust-volume">
-              <Slider progress={volume * 100} onChange={handleVolume} />
+              <Slider progress={player.volume * 100} onChange={handleVolume} />
             </div>
           </div>
         </div>

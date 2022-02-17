@@ -8,6 +8,7 @@
  */
 export { DEFAULT_SETTING } from './setting';
 export { default as LANG } from './lang';
+export { MINI_PLAYER_BOUNDS } from './window';
 import { Page } from '../types';
 import * as path from 'path';
 

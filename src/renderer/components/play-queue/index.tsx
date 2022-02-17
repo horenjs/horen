@@ -13,28 +13,22 @@ import { Track } from 'types';
 import Queue from './queue';
 import Mask from '../mask';
 import { ANIMATION_DELAY, THEME } from 'constant';
+import { player } from "@/App";
+import {useSetRecoilState} from "recoil";
+import {tracksInQueueState} from "@/store";
 
 export interface PlayQueueProps {
-  /**
-   * track list
-   */
-  tracks: Track[];
-  /**
-   * selected track
-   */
-  track: Track;
   visible: boolean;
-  onPlay(track: Track): void;
-  onDelete(track: Track): void;
-  onEmpty?(): void;
   onClose(): void;
 }
 
 export function PlayQueue(props: PlayQueueProps) {
-  const { tracks, track, visible, onPlay, onDelete, onEmpty, onClose } = props;
+  const { visible, onClose } = props;
 
   const [isMounting, setIsMounting] = React.useState(true);
   const [animation, setAnimation] = React.useState('');
+
+  const setTracksInQueue = useSetRecoilState(tracksInQueueState);
 
   const classnames = [
     'electron-no-drag',
@@ -47,6 +41,16 @@ export function PlayQueue(props: PlayQueueProps) {
     setAnimation('slideOutRight');
     onClose();
   };
+
+  /**
+   * empty the track list, both player's trackList and track in queue
+   */
+  const handleEmptyTrackList = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    player.trackList = [];
+    setTracksInQueue([]);
+  }
 
   React.useEffect(() => {
     if (visible) {
@@ -71,15 +75,16 @@ export function PlayQueue(props: PlayQueueProps) {
       <div className="header">
         <div className="title">
           <span>播放队列</span>
-          <span role="button" className="empty" onClick={e => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (onEmpty) onEmpty();
-          }}>清空列表</span>
+          <span role="button" className="empty" onClick={handleEmptyTrackList}>清空列表</span>
         </div>
-        <div className="count">{tracks.length} 首歌曲</div>
+        <div className="count">{player.trackList?.length} 首歌曲</div>
       </div>
-      <Queue track={track} tracks={tracks} onPlay={onPlay} onDelete={onDelete} />
+      <Queue
+        track={player.currentTrack}
+        tracks={player.trackList}
+        onPlay={(track) => player.currentTrack = track}
+        onDelete={(track) => player.trackList = delTrack(player.trackList, track)}
+      />
       <div className="bottom">
         <div className="close" role="button" onClick={handleClose}>
           <span>收起队列</span>
@@ -89,6 +94,14 @@ export function PlayQueue(props: PlayQueueProps) {
     </MyPlayQueue>,
     document.getElementById('root') || document.body
   );
+}
+
+function delTrack(ts: Track[], track: Track) {
+  const tracks = [];
+  for (let i = 0; i < ts.length; i++) {
+    if (ts[i].src !== track.src) tracks.push(ts[i]);
+  }
+  return tracks;
 }
 
 const MyPlayQueue = styled.div`

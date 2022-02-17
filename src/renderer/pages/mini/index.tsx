@@ -96,7 +96,7 @@ const MyMini = styled.div`
       }
     }
     img {
-      height: 100%;
+      height: 128px;
       width: 128px;
       object-fit: cover;
     }

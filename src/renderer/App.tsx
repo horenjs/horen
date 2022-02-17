@@ -20,18 +20,19 @@ import styled from 'styled-components';
 import Library from './pages/library';
 import SettingPage from './pages/setting';
 import HomePage from './pages/home';
+import MiniPlayer from "@/pages/mini";
 import ControlPanel from './components/control-panel';
 import { PlayQueue } from './components/play-queue';
 import PlayShow from './components/play-show';
 import TitlePanel from './components/title-panel';
 import { notice } from './components/notification';
-import { SettingDC, TrackDC, PlayListDC } from './data-center';
+import {SettingDC, TrackDC, PlayListDC, MainwindowDC} from './data-center';
 import {
   Page,
   LyricScript,
   Track,
   PlayListItem,
-  PlayList
+  PlayList, Rectangle
 } from 'types';
 import { PAGES } from 'constant';
 import Player from '@/utils/player';
@@ -42,12 +43,20 @@ export const player = new Player();
 
 export default function App() {
   const albumListLimit = 500;
+  const simpBounds: Rectangle = {
+    x: 100,
+    y: 100,
+    width: 360,
+    height: 128,
+  }
 
+  const [isMiniPlayer, setIsMiniPlayer] = React.useState(false);
   const [isMuted, setIsMuted] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
   const [isQueueVisible, setIsQueueVisible] = React.useState(false);
   const [isPlayShowVisible, setIsPlayShowVisible] = React.useState(false);
   const [isRebuilding, setIsRebuilding] = React.useState(false);
+  const [bounds, setBounds] = React.useState<Rectangle>();
   /**
    * 音频加载进度
    */
@@ -213,50 +222,86 @@ export default function App() {
 
   return (
     <MyApp className="app">
-      <TitlePanel
-        onClose={async () => {
-          return await savePlaylist();
-        }}
-      />
-      <div className="pages">
-        <div className="page-header electron-drag">
-          {PAGES.map(renderPageHeader)}
-        </div>
-        <div className="page-container perfect-scrollbar electron-no-drag">
+      {
+        isMiniPlayer ?
           <Routes>
-            <Route path="/">
-              {/* 歌曲库页面 */}
-              <Route index element={<Navigate to="library" />} />
-              <Route path="library" element={<Library />} />
-              {/* 设置页面 */}
-              <Route path="setting" element={<SettingPage />} />
-              <Route path="home" element={<HomePage />} />
-              {/* 未匹配到路由时自动跳转到曲库页面 */}
-              <Route path="*" element={<Navigate to="library" />} />
+            <Route path={"/mini-player"}>
+              <Route
+                index
+                element={
+                  <MiniPlayer
+                    currentTrack={player.currentTrack}
+                    onExpand={() => {
+                      setIsMiniPlayer(false);
+                      navigate('/');
+                      if (bounds) {
+                        (async () => {
+                          await MainwindowDC.setBounds(bounds);
+                          setBounds(undefined);
+                        })();
+                      }
+                    }
+                  }/>}
+              />
             </Route>
           </Routes>
-        </div>
-      </div>
+          :
+          <>
+          <TitlePanel
+            onClose={async () => {
+              return await savePlaylist();
+            }}
+            onSimp={() => {
+              setIsMiniPlayer(!isMiniPlayer);
+              navigate('/mini-player');
+              (async () => {
+                const res = await MainwindowDC.getBounds();
+                if (res.code === 1) {
+                  await MainwindowDC.setBounds(simpBounds);
+                  setBounds(res.data);
+                }
+              })();
+            }}
+          />
+          <div className="pages">
+            <div className="page-header electron-drag">
+              {PAGES.map(renderPageHeader)}
+            </div>
+            <div className="page-container perfect-scrollbar electron-no-drag">
+              <Routes>
+                <Route path="/">
+                  {/* 歌曲库页面 */}
+                  <Route index element={<Navigate to="library" />} />
+                  <Route path="library" element={<Library />} />
+                  {/* 设置页面 */}
+                  <Route path="setting" element={<SettingPage />} />
+                  <Route path="home" element={<HomePage />} />
+                  {/* 未匹配到路由时自动跳转到曲库页面 */}
+                  <Route path="*" element={<Navigate to="library" />} />
+                </Route>
 
-      {/* 歌曲控制中心 */}
-      <div className="page-bottom">
-        <ControlPanel
-          onSeek={(per) => (player.seek = per * player.duration)}
-          onVolume={(vol) => (player.volume = vol)}
-          onShow={() => setIsPlayShowVisible(!isPlayShowVisible)}
-          progress={progress}
-          volume={player.volume}
-          muted={isMuted}
-          onMute={() => {
-            if (!isMuted) player.mute();
-            else player.unmute();
-            setIsMuted(!isMuted);
-          }}
-          onOpenQueue={() => setIsQueueVisible(true)}
-          onRebuildCache={() => {
-            if (window.confirm('确定要重建缓存数据库吗?')) {
-              if (!isRebuilding) {
-                (async () => {
+              </Routes>
+            </div>
+          </div>
+          {/* 歌曲控制中心 */}
+            <div className="page-bottom">
+            <ControlPanel
+              onSeek={(per) => (player.seek = per * player.duration)}
+              onVolume={(vol) => (player.volume = vol)}
+              onShow={() => setIsPlayShowVisible(!isPlayShowVisible)}
+              progress={progress}
+              volume={player.volume}
+              muted={isMuted}
+              onMute={() => {
+                if (!isMuted) player.mute();
+                else player.unmute();
+                setIsMuted(!isMuted);
+              }}
+              onOpenQueue={() => setIsQueueVisible(true)}
+              onRebuildCache={() => {
+                if (window.confirm('确定要重建缓存数据库吗?')) {
+                if (!isRebuilding) {
+                  (async () => {
                   const rebuilt = await TrackDC.rebuildCache(setting['common.collectionPaths']);
                   if (rebuilt) {
                     const res = await TrackDC.getAlbumList();
@@ -265,15 +310,16 @@ export default function App() {
                   }
                   // 重建数据库后清空列表
                   setTracksInQueue([]);
-                })();
-                setIsRebuilding(true);
-              } else {
-                window.alert('正在重建缓存数据库请勿重复点击');
+                  })();
+                    setIsRebuilding(true);
+                  } else {
+                    window.alert('正在重建缓存数据库请勿重复点击');
+                  }
               }
-            }
-          }}
-        />
-      </div>
+              }}
+            /></div>
+          </>
+      }
       {/* 当前播放队列 */}
       <PlayQueue
         tracks={player.trackList}
@@ -312,6 +358,7 @@ function delTrack(ts: Track[], track: Track) {
 const MyApp = styled.div`
   margin: 0;
   padding: 0;
+  border-radius: 4px;
   .pages {
     background-color: #313233;
     user-select: none;

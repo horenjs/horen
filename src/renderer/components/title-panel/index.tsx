@@ -54,6 +54,8 @@ const MyTitlePanel = styled.div`
       right: 0;
       top: 0;
       .operate-item {
+        margin: 0;
+        padding: 0;
         position: absolute;
         width: 32px;
         height: 32px;

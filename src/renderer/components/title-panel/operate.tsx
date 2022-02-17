@@ -9,6 +9,7 @@
 import React from 'react';
 import { MainwindowDC } from '@/data-center';
 import { Rectangle } from 'types';
+import { ImShrink2 } from 'react-icons/im';
 
 export interface OperateProps {
   onMinimize?(e?: React.MouseEvent<HTMLElement>): void;
@@ -18,15 +19,6 @@ export interface OperateProps {
 
 export default function Operate(props: OperateProps) {
   const { onClose, onMinimize, onSimp } = props;
-
-  const simpBounds: Rectangle = {
-    x: 100,
-    y: 100,
-    width: 400,
-    height: 200,
-  }
-
-  const [bounds, setBounds] = React.useState<Rectangle>();
 
   const handleClose = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -46,23 +38,7 @@ export default function Operate(props: OperateProps) {
 
   const handleSimplized = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    console.log(bounds);
-    if (onSimp) onSimp(e);
-
-    if (!bounds) {
-      (async () => {
-        const res = await MainwindowDC.getBounds();
-        if (res.code === 1) {
-          await MainwindowDC.setBounds(simpBounds);
-          setBounds(res.data);
-        }
-      })();
-    } else {
-      (async () => {
-        await MainwindowDC.setBounds(bounds);
-        setBounds(undefined);
-      })();
-    }
+    if (onSimp) onSimp();
   }
 
   return (
@@ -71,10 +47,9 @@ export default function Operate(props: OperateProps) {
         className={"operate-item simplized electron-no-drag"}
         role={'button'}
         onClick={handleSimplized}
-        style={{transform: `rotate(${bounds ? -90 : 90}deg)`}}
         title={'切换迷你播放器'}
       >
-        ➘
+        <ImShrink2 />
       </div>
       <div
         className="operate-item minimize electron-no-drag"

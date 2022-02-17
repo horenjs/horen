@@ -72,6 +72,7 @@ export class App {
 
     this._mainWindow?.once('ready-to-show', () => {
       this._mainWindow?.show();
+      this._mainWindow?.setBackgroundColor('transparent');
     })
   }
 

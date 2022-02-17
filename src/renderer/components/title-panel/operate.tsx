@@ -8,7 +8,7 @@
  */
 import React from 'react';
 import { MainwindowDC } from '@/data-center';
-import { ImShrink2 } from 'react-icons/im';
+import { RiPictureInPicture2Line } from 'react-icons/ri';
 
 export interface OperateProps {
   onMinimize?(e?: React.MouseEvent<HTMLElement>): void;
@@ -45,7 +45,7 @@ export default function Operate(props: OperateProps) {
         onClick={handleSimplized}
         title={'切换迷你播放器'}
       >
-        <ImShrink2 />
+        <RiPictureInPicture2Line />
       </div>
       <div
         className="operate-item minimize electron-no-drag"

@@ -64,6 +64,9 @@ const MyTitlePanel = styled.div`
         font-size: 1rem;
         cursor: pointer;
         text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       .simplized {
         right: 64px;

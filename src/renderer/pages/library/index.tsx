@@ -103,7 +103,7 @@ export function Library() {
             <Loader style="square" />
           </div>
         ) : (
-          <VirtualList itemWidth={224} itemHeight={296} width={1128} height={576} data={albumList} render={renderAlbumView} />
+          <VirtualList itemWidth={224} itemHeight={296} width={1128} height={600} data={albumList} render={renderAlbumView} />
         )}
       </div>
 

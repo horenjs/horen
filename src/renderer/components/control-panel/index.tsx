@@ -204,7 +204,7 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
 
 const My = styled.div`
   height: 80px;
-  background-color: #2d2e2f;
+  background-color: #252627;
   display: flex;
   position: relative;
   align-items: center;
@@ -214,7 +214,7 @@ const My = styled.div`
   .progress {
     width: 100%;
     position: absolute;
-    top: -4px;
+    top: -8px;
     left: 0;
   }
   .panel {

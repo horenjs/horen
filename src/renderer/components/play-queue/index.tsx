@@ -114,8 +114,6 @@ const MyPlayQueue = styled.div`
   z-index: 9999999;
   background-color: #414243;
   color: #f1f1f1;
-  border-radius: 0 8px 8px 0;
-  
   &.animation-slideOutRight {
     animation: slideOutRight ${ANIMATION_DELAY.normal / 1000}s;
     animation-fill-mode: forwards;
@@ -209,7 +207,6 @@ const MyPlayQueue = styled.div`
     height: 76px;
     padding: 0;
     background-color: #414243;
-    border-radius: 0 0 8px 0;
     .close {
       height: 100%;
       text-align: center;
@@ -218,7 +215,6 @@ const MyPlayQueue = styled.div`
       align-items: center;
       justify-content: center;
       font-weight: 500;
-      border-radius: 0 0 8px 0;
       &:hover {
         background-color: #515253;
       }

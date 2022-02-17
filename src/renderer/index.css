@@ -12,7 +12,6 @@ body {
   padding: 0;
   height: 100vh;
   overflow: hidden;
-  border-radius: 8px;
 }
 
 .pages {
@@ -44,4 +43,10 @@ body {
 
 .electron-no-drag {
   -webkit-app-region: no-drag;
+}
+
+.text-overflow {
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
 }

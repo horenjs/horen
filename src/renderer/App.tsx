@@ -325,7 +325,6 @@ export default function App() {
 const MyApp = styled.div`
   margin: 0;
   padding: 0;
-  border-radius: 4px;
   .pages {
     background-color: #313233;
     user-select: none;
@@ -362,6 +361,5 @@ const MyApp = styled.div`
     bottom: 0;
     width: 100%;
     z-index: 999;
-    border-radius: 0 0 8px 8px;
   }
 `;

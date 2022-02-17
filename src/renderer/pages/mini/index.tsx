@@ -3,8 +3,8 @@ import styled from "styled-components";
 import {Track} from "types";
 import {TrackDC} from "@/data-center";
 import defaultCover from "@/static/image/default-cover";
-import { BsArrowsAngleExpand } from 'react-icons/bs';
 import { BiSkipPrevious, BiSkipNext, BiPause, BiPlay } from 'react-icons/bi';
+import { RiPictureInPictureExitLine } from 'react-icons/ri';
 import {player} from "@/App";
 import { Loader } from "@/components/loader";
 
@@ -47,31 +47,31 @@ export default function MiniPlayer(props: MiniPlayerProps) {
         {
           player.playing && <div className={'loading'}><Loader style={'pulse'} /></div>
         }
-        <div className={'icon-expand'} onClick={handleExpand}>
-          <BsArrowsAngleExpand size={32} color={'#d1d2d3'} />
-        </div>
       </div>
       <div className={'operate'}>
-        <div className={'title'}>
+        <div className={'op-item title text-overflow'} title={currentTrack?.title}>
           <span>{ currentTrack?.title }</span>
         </div>
-        <div className={'artist'}>
+        <div className={'op-item artist'}>
           <span>{ currentTrack?.artist }</span>
         </div>
-        <div className={'prev-next electron-no-drag'}>
-          <div className={'op-item prev'} onClick={e => player.skip('prev')}>
+        <div className={'op-item prev-next electron-no-drag'}>
+          <div className={'pn-item prev'} onClick={e => player.skip('prev')}>
             <BiSkipPrevious size={32} />
           </div>
-          <div className={'op-item play-or-pause'}>
+          <div className={'pn-item play-or-pause'}>
             {
               player.playing
                 ? <span onClick={handlePlayOrPause}><BiPause size={36} /></span>
                 : <span onClick={handlePlayOrPause}><BiPlay size={36} /></span>
             }
           </div>
-          <div className={'op-item next'} onClick={e => player.skip('next')}>
+          <div className={'pn-item next'} onClick={e => player.skip('next')}>
             <BiSkipNext size={32} />
           </div>
+        </div>
+        <div className={'op-item expand electron-no-drag'} onClick={handleExpand}>
+          <RiPictureInPictureExitLine size={20} />
         </div>
       </div>
     </MyMini>
@@ -87,14 +87,6 @@ const MyMini = styled.div`
     height: 128px;
     position: relative;
     cursor: pointer;
-    &:hover {
-      .icon-expand {
-        visibility: visible;
-      }
-      .loading {
-        visibility: hidden;
-      }
-    }
     img {
       height: 128px;
       width: 128px;
@@ -116,30 +108,46 @@ const MyMini = styled.div`
   }
   .operate {
     height: 128px;
-    width: calc(100% - 128px);
-    padding: 16px 24px;
+    width: calc(100% - 32px);
+    padding: 16px;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    .op-item {
+      color: #d1d2d3;
+      margin: 0;
+      padding: 0;
+      cursor: pointer;
+    }
     .title {
       color: #f1f1f1;
-      width: 100%;
+      width: calc(100% - 48px);
       padding-left: 8px;
     }
     .artist {
       font-size: 0.8rem;
       color: #d1d1d1;
       margin: 4px 0;
-      width: 100%;
+      width: calc(100% - 48px);
       padding-left: 8px;
+    }
+    .expand {
+      margin: -3px 0 0 8px;
+      padding: 0;
+      height: 20px;
+      &:hover {
+        color: #fff;
+      }
     }
     .prev-next {
       display: flex;
       align-items: center;
-      width: 100%;
-      .op-item {
-       color: #d1d2d3;
+      .pn-item {
+        color: #d1d2d3;
         cursor: pointer;
+        &:hover {
+          color: #fff;
+        }
       }
     }
   }

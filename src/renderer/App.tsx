@@ -284,6 +284,10 @@ export default function App() {
       const rebuild = st['common.rebuildWhenStart'];
       // 抽取设置项：曲库目录
       const paths = st['common.collectionPaths'];
+      //
+      const autoplay = st['common.autoplayWhenStart'];
+
+      setIsCurrentTrackPlaying(autoplay);
 
       if (rebuild) {
         const rebuilt = await TrackDC.rebuildCache(paths);

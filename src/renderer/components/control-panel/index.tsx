@@ -35,7 +35,7 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
   /**
    * curren track seek?
    */
-  const [progress, setProgress] = useRecoilState(currentTrackSeekState);
+  const [seek, setSeek] = useRecoilState(currentTrackSeekState);
   /**
    * is player muted?
    */
@@ -118,16 +118,16 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
   // 每隔一秒刷新播放进度
   React.useEffect(() => {
     const timer = setInterval(() => {
-      setProgress((player.seek / player.duration) * 100);
+      setSeek(player.seek);
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [progress]);
+  }, [seek]);
 
   return (
     <My className="control-panel electron-drag">
       <div className="progress">
-        <Slider progress={progress} onChange={handleSeek} />
+        <Slider progress={(player.seek / player.duration) * 100} onChange={handleSeek} />
       </div>
       <div className="panel">
         <div className="track-cover electron-no-drag">

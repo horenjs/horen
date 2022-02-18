@@ -15,7 +15,7 @@ interface TitleProps {
 export default function (props: TitleProps) {
   const { title } = props;
   return (
-    <div className="title electron-no-drag">
+    <div className="title electron-drag">
       <div className="text">{title}</div>
     </div>
   );

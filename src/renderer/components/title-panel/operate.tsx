@@ -9,6 +9,8 @@
 import React from 'react';
 import { MainwindowDC } from '@/data-center';
 import { RiPictureInPicture2Line } from 'react-icons/ri';
+import { AiOutlineMinus } from 'react-icons/ai';
+import { CgClose } from 'react-icons/cg';
 
 export interface OperateProps {
   onMinimize?(e?: React.MouseEvent<HTMLElement>): void;
@@ -52,14 +54,14 @@ export default function Operate(props: OperateProps) {
         role={'button'}
         onClick={handleMinimize}
       >
-        ―
+        <AiOutlineMinus size={20} />
       </div>
       <div
         className="operate-item close electron-no-drag"
         role="button"
         onClick={handleClose}
       >
-        ✕
+        <CgClose size={20}/>
       </div>
     </div>
   );

@@ -9,11 +9,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import defaultCover from '../../static/image/default-cover';
-import { Track } from 'types';
 import { Loader } from '../loader';
 import { player } from '@/App';
 import Slider from '../slider';
 import { TrackDC } from "@/data-center";
+import { MdOutlineSkipNext, MdOutlineSkipPrevious, MdPause, MdOutlinePlayArrow } from 'react-icons/md';
+import { ImVolumeHigh, ImVolumeMedium, ImVolumeLow, ImVolumeMute2 } from 'react-icons/im';
 
 export interface ControlPanelProps {
   onOpenShow?(e?: React.MouseEvent<HTMLElement>): void;
@@ -148,7 +149,7 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
         </div>
         <div className="track-operate electron-no-drag">
           <div className="prev" onClick={handlePrev} title="上一首">
-            ⊻
+            <MdOutlineSkipPrevious />
           </div>
           <div
             className="play-or-pause electron-no-drag"
@@ -156,11 +157,11 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
           >
             {player.playing ? (
               <span className="to-pause" title="暂停">
-                =
+                <MdPause />
               </span>
             ) : (
               <span className="to-play" title="播放">
-                ⊳
+                <MdOutlinePlayArrow />
               </span>
             )}
           </div>
@@ -169,11 +170,19 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
             onClick={handleNext}
             title="下一首"
           >
-            ⊻
+            <MdOutlineSkipNext />
           </div>
           <div className="volume electron-no-drag">
             <div className="volume-icon" onClick={handleMute}>
-              {isMuted ? '🕨' : player.volume > 0.5 ? '🕪' : '🕩'}
+              {
+                isMuted || player.volume === 0
+                  ? <ImVolumeMute2 />
+                  : player.volume > 0.7
+                    ? <ImVolumeHigh />
+                    : player.volume > 0.4
+                      ? <ImVolumeMedium />
+                      : <ImVolumeLow />
+              }
             </div>
             <div className="adjust-volume">
               <Slider progress={player.volume * 100} onChange={handleVolume} />
@@ -294,13 +303,9 @@ const My = styled.div`
       }
       .prev {
         font-size: 1.8rem;
-        transform: rotate(90deg);
-        font-weight: 500;
       }
       .next {
         font-size: 1.8rem;
-        transform: rotate(-90deg);
-        font-weight: 500;
       }
       .play-or-pause {
         width: 2rem;
@@ -308,31 +313,17 @@ const My = styled.div`
         justify-content: center;
         align-items: center;
         margin: 0 24px;
-        position: relative;
-        left: 1px;
-        top: 0px;
+        font-size: 1.8rem;
         .to-pause {
-          position: relative;
-          left: 4px;
-          display: inline-block;
-          transform: rotate(90deg);
-          font-size: 2.3rem;
+          
         }
         .to-play {
-          position: relative;
-          top: -3px;
-          left: 2px;
-          display: inline-block;
-          font-size: 2.5rem;
-          font-weight: 200;
-          transform: scaleX(72%);
+          
         }
       }
       .volume {
         font-size: 1.6rem;
         margin: 0 8px 0 32px;
-        top: 2px;
-        position: relative;
         height: 80px;
         cursor: pointer;
         display: flex;
@@ -342,18 +333,14 @@ const My = styled.div`
           color: #f1f1f1;
         }
         .volume-icon {
-          width: 32px;
-          display: block;
-          transform: rotate(180deg);
-          line-height: 24px;
-          text-align: center;
+          font-size: 1.3rem;
         }
         .adjust-volume {
           display: block;
           width: 50px;
-          margin: 0 0 0 8px;
+          padding: 0 0 0 8px;
           position: relative;
-          top: -1px;
+          top: -2px;
         }
       }
     }

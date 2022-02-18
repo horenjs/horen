@@ -20,7 +20,7 @@ export default function (props: Props) {
   const { title, ...restProps } = props;
 
   return ReactDOM.createPortal(
-    <MyTitlePanel className="title-panel electron-no-drag">
+    <MyTitlePanel className="title-panel electron-drag">
       <Title title={title} />
       <Operate {...restProps} />
     </MyTitlePanel>,

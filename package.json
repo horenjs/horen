@@ -19,12 +19,12 @@
   "main": "./dist/main.js",
   "scripts": {
     "lint": "eslint -c .eslintrc.js --ext .ts",
-    "start:main": "wait-on tcp:8080 && pnpm build:main && electron ./dist/main.js",
+    "start:main": "wait-on tcp:8080 && npm run build:main && electron ./dist/main.js",
     "start:renderer": "webpack serve --config ./src/renderer/webpack/config.dev.js",
     "build:main": "webpack --config ./src/main/webpack.config.js --stats-error-details",
     "build:renderer": "webpack --config ./src/renderer/webpack/config.js --stats-error-details",
-    "start": "cross-env NODE_ENV=development DEBUG='horen:*' concurrently \"pnpm start:renderer\" \"pnpm start:main\"",
-    "build": "cross-env NODE_ENV=production DEBUG='horen:*' rimraf ./dist && concurrently \"pnpm build:renderer\" \"pnpm build:main\"",
+    "start": "cross-env NODE_ENV=development DEBUG='horen:*' concurrently \"npm run start:renderer\" \"npm run start:main\"",
+    "build": "cross-env NODE_ENV=production DEBUG='horen:*' rimraf ./dist && concurrently \"npm run build:renderer\" \"npm run build:main\"",
     "run:test": ".\\node_modules\\electron\\dist\\electron.exe .\\dist\\main.js",
     "dist": "rimraf ./build && electron-builder --win --x64"
   },

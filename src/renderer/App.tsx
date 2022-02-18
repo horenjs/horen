@@ -305,9 +305,12 @@ export default function App() {
                 <div className={'page-title'}>
                   { PAGES.map(renderPageHeader) }
                 </div>
-                <div className={'page-cate'}>
-                  <DisplayCate cate={displayCate} onPick={(cate) => setDisplayCate(cate)}/>
-                </div>
+                {
+                  location.pathname === '/library' &&
+                  <div className={'page-cate'}>
+                    <DisplayCate cate={displayCate} onPick={(cate) => setDisplayCate(cate)}/>
+                  </div>
+                }
               </div>
               <div className="page-container perfect-scrollbar electron-no-drag">
                 { renderPageRoutes() }
@@ -339,9 +342,10 @@ const MyApp = styled.div`
   .pages {
     background-color: #313233;
     user-select: none;
+    padding-top: 40px;
     .page-header {
-      margin: 0 96px 0 32px;
-      padding: 40px 0 0 0;
+      margin: 0 32px;
+      padding: 0 28px 0 0;
       display: flex;
       align-items: center;
       .page-title {

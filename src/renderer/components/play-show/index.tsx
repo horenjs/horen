@@ -9,21 +9,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
-import { LyricScript } from 'types';
+import { LyricScript, Track } from 'types';
 import TrackInfo from './track-info';
 import { ANIMATION_DELAY } from 'constant';
 import { LyricPanel } from '@/components/lyric-panel';
 import { TrackDC } from "@/data-center";
 import defaultCover from "@/static/image/default-cover";
-import { player } from "@/App";
 
 interface Props {
   visible: boolean;
   onClose(): void;
+  currentTrack: Track;
+  seek: number;
 }
 
 export default function PlayShow(props: Props) {
-  const { visible, onClose } = props;
+  const { visible, onClose, currentTrack, seek } = props;
 
   /**
    * current track lyric
@@ -60,13 +61,19 @@ export default function PlayShow(props: Props) {
   }, []);
 
   React.useEffect(() => {
-    if (player?.currentTrack) {
-      const key = player?.currentTrack.albumKey;
+    if (currentTrack) {
+      (async () => {
+        const { src = '' } = currentTrack;
+        const lrcs = await TrackDC.lyric(src);
+        if (lrcs.code === 1) setLyrics(lrcs.data);
+        else setLyrics([]);
+      })();
+
+      const key = currentTrack.albumKey;
       if (key) {
         (async () => {
           const co = await TrackDC.getAlbumCover(key);
-          console.log(co);
-          const c = co.code === 1 ? co.data : player?.currentTrack?.picture || defaultCover;
+          const c = co.code === 1 ? co.data : currentTrack.picture || defaultCover;
           setCover(c);
         })()
       } else {
@@ -75,18 +82,7 @@ export default function PlayShow(props: Props) {
     } else {
       setCover(defaultCover);
     }
-  }, [player.currentTrack]);
-
-  // 在当前播放音频变化时触发
-  React.useEffect(() => {
-    (async () => {
-      if (player.currentTrack) {
-        const { src = '' } = player.currentTrack;
-        const lrcs = await TrackDC.lyric(src);
-        if (lrcs.code === 1) setLyrics(lrcs.data);
-      }
-    })();
-  }, [player.currentTrack]);
+  }, [currentTrack]);
 
   return ReactDOM.createPortal(
     <MyPlayShow className={cls.join(' ')}>
@@ -100,11 +96,11 @@ export default function PlayShow(props: Props) {
         </div>
       </div>
       <div className="left electron-no-drag">
-        <TrackInfo track={player?.currentTrack} cover={cover} />
+        <TrackInfo track={currentTrack} cover={cover} />
       </div>
       <div className="right">
         <div className="lyric">
-          <LyricPanel lyrics={lyrics} seek={player.seek} />
+          <LyricPanel lyrics={lyrics} seek={seek || 0} />
         </div>
       </div>
     </MyPlayShow>,

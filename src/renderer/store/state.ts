@@ -34,6 +34,24 @@ export const albumListState = atom({
 });
 
 /**
+ * progress
+ */
+export const currentTrackSeekState = atom({
+  key: 'current-track-seek-state',
+  default: 0,
+})
+
+export const currentTrackState = atom({
+  key: 'current-track',
+  default: {} as Track,
+})
+
+export const currentTrackIsPlayingState = atom({
+  key: 'current-track-is-playing',
+  default: false,
+})
+
+/**
  * 存储在 json 文件中的设置项
  */
 export const settingState = atom({

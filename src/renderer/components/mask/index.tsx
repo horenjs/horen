@@ -38,5 +38,4 @@ export default function Mask(props: Props) {
 const MyMask = styled.div`
   position: fixed;
   inset: 0;
-  border-radius: 8px;
 `;

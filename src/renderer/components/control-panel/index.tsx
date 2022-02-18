@@ -8,6 +8,8 @@
  */
 import React from 'react';
 import styled from 'styled-components';
+import {useRecoilState} from "recoil";
+import { currentTrackSeekState, currentTrackIsPlayingState } from '@/store'
 import defaultCover from '../../static/image/default-cover';
 import { Loader } from '../loader';
 import { player } from '@/App';
@@ -33,11 +35,13 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
   /**
    * curren track seek?
    */
-  const [progress, setProgress] = React.useState(0);
+  const [progress, setProgress] = useRecoilState(currentTrackSeekState);
   /**
    * is player muted?
    */
   const [isMuted, setIsMuted] = React.useState(false);
+
+  const [isPlaying, setIsPlaying] = useRecoilState(currentTrackIsPlayingState);
 
   const trackTitle =
     player.currentTrack?.title
@@ -51,6 +55,7 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
 
   const handlePlayOrPause = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
+    setIsPlaying(!isPlaying);
     player.playOrPause();
   };
 
@@ -155,15 +160,17 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
             className="play-or-pause electron-no-drag"
             onClick={handlePlayOrPause}
           >
-            {player.playing ? (
-              <span className="to-pause" title="暂停">
-                <MdPause />
-              </span>
-            ) : (
-              <span className="to-play" title="播放">
-                <MdOutlinePlayArrow />
-              </span>
-            )}
+            {
+              isPlaying ? (
+                <span className="to-pause" title="暂停">
+                  <MdPause />
+                </span>
+              ) : (
+                <span className="to-play" title="播放">
+                  <MdOutlinePlayArrow />
+                </span>
+              )
+            }
           </div>
           <div
             className="next electron-no-drag"

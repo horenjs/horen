@@ -11,4 +11,7 @@ export {
   settingState,
   trackListState,
   tracksInQueueState,
+  currentTrackSeekState,
+  currentTrackState,
+  currentTrackIsPlayingState,
 } from './state';

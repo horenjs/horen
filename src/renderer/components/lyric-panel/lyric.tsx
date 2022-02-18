@@ -37,7 +37,7 @@ export function LyricPanel(props: LyricPanelProps) {
 
   return (
     <MyLyric className="component-lyric-panel">
-      {lyrics ? (
+      {lyrics.length ? (
         <div className="container" style={{ top: 200 - top }}>
           {lyrics.map((lyric, index) => {
             const color = index === current ? THEME.color.primary : '#f1f1f1';

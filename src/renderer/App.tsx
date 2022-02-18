@@ -14,8 +14,15 @@ import {
   Navigate,
   useLocation,
 } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
-import { settingState, tracksInQueueState, albumListState } from '@/store';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import {
+  settingState,
+  tracksInQueueState,
+  albumListState,
+  currentTrackSeekState,
+  currentTrackState,
+  currentTrackIsPlayingState,
+} from '@/store';
 import styled from 'styled-components';
 import Library from './pages/library';
 import SettingPage from './pages/setting';
@@ -31,7 +38,8 @@ import {SettingDC, TrackDC, PlayListDC, MainwindowDC} from './data-center';
 import {
   Page,
   PlayListItem,
-  PlayList, Rectangle
+  PlayList,
+  Rectangle,
 } from 'types';
 import { PAGES, MINI_PLAYER_BOUNDS } from 'constant';
 import Player from '@/utils/player';
@@ -42,14 +50,14 @@ import {Cate} from "@/components/display-cate/cate";
 export const player = new Player();
 
 export default function App() {
-  const albumListLimit = 500;
+  const albumListLimit = 9999;
   const navigate = useNavigate();
   const location = useLocation();
 
   /**
    * list display category
    */
-  const [displayCate, setDisplayCate] = React.useState<Cate>('track');
+  const [displayCate, setDisplayCate] = React.useState<Cate>('album');
   /**
    * main window: is in mini player
    */
@@ -75,6 +83,9 @@ export default function App() {
    */
   const [trackLoadProgress, setTrackLoadProgress] = React.useState<string>('');
 
+  const currentTrackSeek = useRecoilValue(currentTrackSeekState);
+  const [isCurrentTrackPlaying, setIsCurrentTrackPlaying] = useRecoilState(currentTrackIsPlayingState);
+  const [, setCurrentTrack] = useRecoilState(currentTrackState);
   const [, setAlbumList] = useRecoilState(albumListState);
   const [setting, setSetting] = useRecoilState(settingState);
   const [tracksInQueue, setTracksInQueue] = useRecoilState(tracksInQueueState);
@@ -109,8 +120,6 @@ export default function App() {
     await PlayListDC.set(pyl);
   };
 
-
-
   /**
    * rebuild cache
    */
@@ -133,12 +142,13 @@ export default function App() {
       }
     }
   }
-
   /**
    * minimize the player
    */
   const handleSimpPlayer = () => {
     setIsMiniPlayer(!isMiniPlayer);
+    setCurrentTrack(player.currentTrack);
+    setIsCurrentTrackPlaying(player.playing);
     navigate('/mini-player');
     (async () => {
       const res = await MainwindowDC.getBounds();
@@ -148,7 +158,6 @@ export default function App() {
       }
     })();
   }
-
   /**
    * 渲染页面的标题
    * @param p 页面
@@ -166,7 +175,6 @@ export default function App() {
       </div>
     );
   };
-
   /**
    * render the page routes
    */
@@ -184,13 +192,23 @@ export default function App() {
       </Route>
     </Routes>
   )
-
   /**
    * render the mini player
    */
   const renderMiniPlayer = () => (
     <MiniPlayer
-      currentTrack={player.currentTrack}
+      onPrev={() => {
+        player.skip('prev');
+        setCurrentTrack(player.currentTrack);
+      }}
+      onPlayOrPause={() => {
+        player.playOrPause();
+        setIsCurrentTrackPlaying(!isCurrentTrackPlaying);
+      }}
+      onNext={() => {
+        player.skip('next');
+        setCurrentTrack(player.currentTrack);
+      }}
       onExpand={() => {
         setIsMiniPlayer(false);
         navigate('/');
@@ -203,7 +221,6 @@ export default function App() {
       }
       }/>
   )
-
   /**
    * 从设置项中获取上次的播放列表
    * 并加载到状态库中
@@ -327,14 +344,17 @@ export default function App() {
             {/* 当前播放队列 */}
             <PlayQueue visible={isQueueVisible} onClose={() => setIsQueueVisible(false)}/>
             {/* 正在播放展示页面 */}
-            <PlayShow visible={isPlayShowVisible} onClose={() => setIsPlayShowVisible(false)}/>
+            <PlayShow
+              currentTrack={player.currentTrack}
+              seek={currentTrackSeek}
+              visible={isPlayShowVisible}
+              onClose={() => setIsPlayShowVisible(false)}
+            />
           </>
       }
     </MyApp>
   );
 }
-
-
 
 const MyApp = styled.div`
   margin: 0;

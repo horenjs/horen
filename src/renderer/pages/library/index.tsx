@@ -161,8 +161,14 @@ export function Library(props: LibraryProps) {
 
   return (
     <MyLib className="component-library">
-      {cate === 'track' && trackList && renderTrackList(trackList)}
-      {cate === 'album' && albumList && renderAlbumList(albumList)}
+      {
+        cate === 'track'
+        ? trackList?.length ? renderTrackList(trackList) : <Loader style={'square'}/> : ''
+      }
+      {
+        cate === 'album'
+        ? albumList.length ? renderAlbumList(albumList) : <Loader style={'square'} /> : ''
+      }
       <div>
         {pickAlbum?.children?.length && (
           <AlbumModal

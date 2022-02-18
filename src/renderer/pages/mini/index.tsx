@@ -1,22 +1,32 @@
 import React from 'react';
 import styled from "styled-components";
-import {Track} from "types";
+import { useRecoilValue } from "recoil";
+import { currentTrackState, currentTrackIsPlayingState } from "@/store";
 import {TrackDC} from "@/data-center";
 import defaultCover from "@/static/image/default-cover";
 import { BiSkipPrevious, BiSkipNext, BiPause, BiPlay } from 'react-icons/bi';
 import { RiPictureInPictureExitLine } from 'react-icons/ri';
-import {player} from "@/App";
 import { Loader } from "@/components/loader";
 
 interface MiniPlayerProps {
-  currentTrack: Track,
   onExpand?(): void;
+  onPrev?(): void;
+  onNext?(): void;
+  onPlayOrPause?(): void;
 }
 
 export default function MiniPlayer(props: MiniPlayerProps) {
-  const { currentTrack, onExpand } = props;
+  const {
+    onExpand,
+    onPrev,
+    onNext,
+    onPlayOrPause,
+  } = props;
 
   const [cover, setCover] = React.useState<string>(defaultCover);
+
+  const currentTrack = useRecoilValue(currentTrackState);
+  const isPlaying = useRecoilValue(currentTrackIsPlayingState);
 
   const handleExpand = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -27,7 +37,18 @@ export default function MiniPlayer(props: MiniPlayerProps) {
   const handlePlayOrPause = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    player.playOrPause();
+    if (onPlayOrPause) onPlayOrPause();
+  }
+  const handlePrev = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onPrev) onPrev();
+  }
+
+  const handleNext = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onNext) onNext();
   }
 
   React.useEffect(() => {
@@ -38,6 +59,7 @@ export default function MiniPlayer(props: MiniPlayerProps) {
         if (res.code === 1) setCover(res.data);
       }
     })();
+    console.log(currentTrack);
   }, [currentTrack])
 
   return (
@@ -45,7 +67,9 @@ export default function MiniPlayer(props: MiniPlayerProps) {
       <div className={'cover electron-no-drag'}>
         <img src={`data:image/png;base64,${cover}`} alt={currentTrack?.albumKey} />
         {
-          player.playing && <div className={'loading'}><Loader style={'pulse'} /></div>
+          isPlaying
+          &&
+          <div className={'loading'}><Loader style={'pulse'} /></div>
         }
       </div>
       <div className={'operate'}>
@@ -56,17 +80,17 @@ export default function MiniPlayer(props: MiniPlayerProps) {
           <span>{ currentTrack?.artist }</span>
         </div>
         <div className={'op-item prev-next electron-no-drag'}>
-          <div className={'pn-item prev'} onClick={e => player.skip('prev')}>
+          <div className={'pn-item prev'} onClick={handlePrev}>
             <BiSkipPrevious size={32} />
           </div>
           <div className={'pn-item play-or-pause'}>
             {
-              player.playing
+              isPlaying
                 ? <span onClick={handlePlayOrPause}><BiPause size={36} /></span>
                 : <span onClick={handlePlayOrPause}><BiPlay size={36} /></span>
             }
           </div>
-          <div className={'pn-item next'} onClick={e => player.skip('next')}>
+          <div className={'pn-item next'} onClick={handleNext}>
             <BiSkipNext size={32} />
           </div>
         </div>

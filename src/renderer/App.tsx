@@ -279,15 +279,11 @@ export default function App() {
       // 获取设置
       const st = await SettingDC.get();
       setSetting(st);
-    })();
-  }, []);
 
-  React.useEffect(() => {
-    (async () => {
       // 抽取设置项：组件加载时是否刷新
-      const rebuild = setting['common.rebuildWhenStart'];
+      const rebuild = st['common.rebuildWhenStart'];
       // 抽取设置项：曲库目录
-      const paths = setting['common.collectionPaths'];
+      const paths = st['common.collectionPaths'];
 
       if (rebuild) {
         const rebuilt = await TrackDC.rebuildCache(paths);

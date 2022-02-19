@@ -9,15 +9,13 @@
 import { Howl, Howler } from 'howler';
 import { randomInt, shift } from 'mintin-util';
 import _ from 'underscore';
-import { Track } from 'types';
+import { Track, PlayOrder } from 'types';
 
 // 判断是否为浏览器环境
 if (typeof window === 'undefined')
   throw new Error(
     `Howl Player can only run on the browser, not NodeJs Runtime.`
   );
-
-export type PlayMode = 'repeat' | 'single' | 'shuffle';
 
 /**
  * A Player powered by Howl
@@ -75,7 +73,7 @@ export default class HowlPlayer {
   /**
    * play mode
    */
-  protected _mode: PlayMode = 'repeat';
+  protected _mode: PlayOrder = 'repeat';
   /**
    * auto play
    */
@@ -187,7 +185,7 @@ export default class HowlPlayer {
   /**
    * set the play mode of the track list
    */
-  public set mode(m: PlayMode) {
+  public set mode(m: PlayOrder) {
     this._mode = m;
   }
 
@@ -262,7 +260,7 @@ export default class HowlPlayer {
 
   protected _skipTo(order: 'prev' | 'next', index: number, length: number) {
     switch (this.mode) {
-      case 'repeat':
+      case 'loop':
         if (order === 'next') {
           if (index >= length - 1) this.currentTrack = this.trackList[0];
           else this.currentTrack = this.trackList[index + 1];
@@ -271,8 +269,21 @@ export default class HowlPlayer {
           else this.currentTrack = this.trackList[index - 1];
         }
         break;
-      case 'single':
+      case 'repeat':
         this.currentTrack = this.trackList[index];
+        break;
+      case 'in-order':
+        if (order === 'next') {
+          if (index >= length - 1) {
+            this.stop();
+            this._currentTrack = undefined;
+          } else this.currentTrack = this.trackList[index + 1];
+        } else {
+          if (index < 1) {
+            this.stop();
+            this._currentTrack = undefined;
+          } else this.currentTrack = this.trackList[index - 1];
+        }
         break;
       case 'shuffle': {
         // todo: memorize the tracks passed.

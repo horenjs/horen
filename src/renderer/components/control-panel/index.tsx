@@ -9,12 +9,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import {useRecoilState} from "recoil";
-import { currentTrackSeekState, currentTrackIsPlayingState } from '@/store'
+import { currentTrackSeekState, currentTrackIsPlayingState, settingState } from '@/store'
 import defaultCover from '../../static/image/default-cover';
 import { Loader } from '../loader';
 import { player } from '@/App';
 import Slider from '../slider';
-import { TrackDC, MainwindowDC } from "@/data-center";
+import {TrackDC, MainwindowDC, SettingDC} from "@/data-center";
 import { MdOutlineSkipNext, MdOutlineSkipPrevious, MdPause, MdOutlinePlayArrow } from 'react-icons/md';
 import { ImVolumeHigh, ImVolumeMedium, ImVolumeLow, ImVolumeMute2, ImLoop2 } from 'react-icons/im';
 import { RiRepeatOneLine, RiOrderPlayLine, RiShuffleFill } from 'react-icons/ri';
@@ -47,8 +47,10 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
    */
   const [isPlaying, setIsPlaying] = useRecoilState(currentTrackIsPlayingState);
 
+  const [setting, ] = useRecoilState(settingState);
+
   const [playOrder, setPlayOrder] = React.useState<PlayOrder>('in-order');
-  
+
   const trackTitle =
     player.currentTrack?.title
     || player.currentTrack?.src?.split('.').slice(-2, -1)[0]
@@ -109,8 +111,17 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
     e.stopPropagation();
     const orders: [PlayOrder, PlayOrder, PlayOrder, PlayOrder] = ['in-order', 'shuffle', 'repeat', 'loop'];
     const i = orders.indexOf(playOrder);
-    if (i >= 0 && i < orders.length - 1) setPlayOrder(orders[i + 1]);
-    else setPlayOrder(orders[0]);
+    if (i >= 0 && i < orders.length - 1) {
+      setPlayOrder(orders[i + 1]);
+      player.mode = orders[i + 1];
+    } else {
+      setPlayOrder(orders[0]);
+      player.mode = orders[0];
+    }
+
+    (async () => {
+      await SettingDC.set({...setting, "track.status.playMode": player.mode});
+    })();
   }
   
   const renderPlayOrder = (o: PlayOrder) => {
@@ -169,6 +180,10 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
 
     return () => clearInterval(timer);
   }, [seek]);
+
+  React.useEffect(() => {
+    setPlayOrder(setting["track.status.playMode"]);
+  }, [setting]);
 
   return (
     <My className="control-panel electron-drag">

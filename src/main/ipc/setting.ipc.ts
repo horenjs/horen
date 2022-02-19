@@ -26,7 +26,7 @@ ipcMain.handle(IPC_CODE.setting.set, async (evt, setting) => {
   try {
     await fs.writeFile(
       path.join(APP_DATA_PATH, APP_NAME, 'setting.user.json'),
-      JSON.stringify(setting, null, 2)
+      JSON.stringify({...setting, updateAt: new Date().valueOf()}, null, 2)
     );
     mydebug.info('设置更新成功' + new Date());
     return true;

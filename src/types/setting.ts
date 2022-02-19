@@ -6,6 +6,8 @@
  * @FilePath     : \horen\src\horen\types\setting.ts
  * @Description  :
  */
+import {PlayOrder} from "./track";
+
 export interface SettingFile {
   createAt: string | number;
   updateAt: string | number;
@@ -15,6 +17,9 @@ export interface SettingFile {
   "common.autoplayWhenStart": boolean;
   "appearance.theme": string;
   "appearance.lang": string;
+  "track.status.playMode": PlayOrder;
+  "track.status.seek": number;
+  "track.status.currentIndex": number;
   [key: string]: string | string[] | number | number[] | boolean;
 }
 

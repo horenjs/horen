@@ -286,8 +286,11 @@ export default function App() {
       const paths = st['common.collectionPaths'];
       //
       const autoplay = st['common.autoplayWhenStart'];
+      //
+      const playerMode = st['track.status.playMode'];
 
       setIsCurrentTrackPlaying(autoplay);
+      player.mode = playerMode;
 
       if (rebuild) {
         const rebuilt = await TrackDC.rebuildCache(paths);

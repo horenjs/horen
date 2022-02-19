@@ -404,5 +404,6 @@ const MyApp = styled.div`
     bottom: 0;
     width: 100%;
     z-index: 999;
+    user-select: none;
   }
 `;

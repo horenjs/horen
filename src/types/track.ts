@@ -44,3 +44,9 @@ export type LyricScript = {
   text: string;
   end: number;
 };
+
+export type PlayOrder =
+  | 'in-order'
+  | 'shuffle'
+  | 'repeat'
+  | 'loop'

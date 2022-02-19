@@ -116,19 +116,6 @@ const MySlider = styled.div`
   background-color: ${THEME.color.backgroundColorTint};
   cursor: pointer;
   transition: all 0.1s ease-in-out;
-  &:hover {
-    height: ${height * 2}px;
-    .back {
-      height: ${height * 2}px;
-    }
-    .front {
-      height: ${height * 2}px;
-      .slide-handle {
-        width: ${height * 3}px;
-        height: ${height * 3}px;
-      }
-    }
-  }
   .back {
     position: absolute;
     height: ${height}px;

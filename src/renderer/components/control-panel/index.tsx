@@ -16,7 +16,9 @@ import { player } from '@/App';
 import Slider from '../slider';
 import { TrackDC } from "@/data-center";
 import { MdOutlineSkipNext, MdOutlineSkipPrevious, MdPause, MdOutlinePlayArrow } from 'react-icons/md';
-import { ImVolumeHigh, ImVolumeMedium, ImVolumeLow, ImVolumeMute2 } from 'react-icons/im';
+import { ImVolumeHigh, ImVolumeMedium, ImVolumeLow, ImVolumeMute2, ImLoop2 } from 'react-icons/im';
+import { RiRepeatOneLine, RiOrderPlayLine, RiShuffleFill } from 'react-icons/ri';
+import {PlayOrder} from "types";
 
 export interface ControlPanelProps {
   onOpenShow?(e?: React.MouseEvent<HTMLElement>): void;
@@ -40,9 +42,13 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
    * is player muted?
    */
   const [isMuted, setIsMuted] = React.useState(false);
-
+  /**
+   * is current track playing?
+   */
   const [isPlaying, setIsPlaying] = useRecoilState(currentTrackIsPlayingState);
 
+  const [playOrder, setPlayOrder] = React.useState<PlayOrder>('in-order');
+  
   const trackTitle =
     player.currentTrack?.title
     || player.currentTrack?.src?.split('.').slice(-2, -1)[0]
@@ -97,7 +103,37 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
     else player.unmute();
     setIsMuted(!isMuted);
   }
-
+  
+  const handleClickPlayOrder = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const orders: [PlayOrder, PlayOrder, PlayOrder, PlayOrder] = ['in-order', 'shuffle', 'repeat', 'loop'];
+    const i = orders.indexOf(playOrder);
+    if (i >= 0 && i < orders.length - 1) setPlayOrder(orders[i + 1]);
+    else setPlayOrder(orders[0]);
+  }
+  
+  const renderPlayOrder = (o: PlayOrder) => {
+    let el: React.ReactNode;
+    
+    switch (o) {
+      case 'in-order':
+        el = <RiOrderPlayLine size={18} />;
+        break;
+      case 'loop':
+        el = <ImLoop2 size={16} />;
+        break;
+      case 'repeat':
+        el = <RiRepeatOneLine size={19} />;
+        break;
+      case 'shuffle':
+        el = <RiShuffleFill size={19} />;
+        break;
+    }
+    
+    return el;
+  }
+ 
   React.useEffect(() => {
     if (player.currentTrack) {
       const key = player.currentTrack.albumKey;
@@ -153,11 +189,11 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
           </div>
         </div>
         <div className="track-operate electron-no-drag">
-          <div className="prev" onClick={handlePrev} title="上一首">
+          <div className="op-item prev" onClick={handlePrev} title="上一首">
             <MdOutlineSkipPrevious />
           </div>
           <div
-            className="play-or-pause electron-no-drag"
+            className="op-item play-or-pause electron-no-drag"
             onClick={handlePlayOrPause}
           >
             {
@@ -173,13 +209,13 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
             }
           </div>
           <div
-            className="next electron-no-drag"
+            className="op-item next electron-no-drag"
             onClick={handleNext}
             title="下一首"
           >
             <MdOutlineSkipNext />
           </div>
-          <div className="volume electron-no-drag">
+          <div className="op-item volume electron-no-drag">
             <div className="volume-icon" onClick={handleMute}>
               {
                 isMuted || player.volume === 0
@@ -195,6 +231,10 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
               <Slider progress={player.volume * 100} onChange={handleVolume} />
             </div>
           </div>
+          <div
+            className={'op-item play-order'}
+            onClick={handleClickPlayOrder}
+          >{ renderPlayOrder(playOrder) }</div>
         </div>
 
         <div className="track-plugin electron-no-drag">
@@ -299,38 +339,39 @@ const My = styled.div`
       align-items: center;
       justify-content: center;
       margin-left: -64px;
-      .prev,
-      .play-or-pause,
-      .next {
+      .op-item {
         cursor: pointer;
-        user-select: none;
+        display: flex;
+        align-items: center;
+        height: 80px;
         &:hover {
           color: #f1f1f1;
         }
       }
       .prev {
-        font-size: 1.8rem;
+        font-size: 1.9rem;
       }
       .next {
-        font-size: 1.8rem;
+        font-size: 1.9rem;
       }
       .play-or-pause {
-        width: 2rem;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 0 24px;
         font-size: 1.8rem;
+        margin: 0 8px;
         .to-pause {
-          
+          height: 80px;
+          display: flex;
+          align-items: center;
         }
         .to-play {
-          
+          height: 80px;
+          display: flex;
+          align-items: center;
         }
       }
       .volume {
         font-size: 1.6rem;
-        margin: 0 8px 0 32px;
+        margin: 0 16px;
+        padding: 0 0 3px 0;
         height: 80px;
         cursor: pointer;
         display: flex;
@@ -341,14 +382,21 @@ const My = styled.div`
         }
         .volume-icon {
           font-size: 1.3rem;
+          height: 19px;
         }
         .adjust-volume {
+          height: 4px;
           display: block;
           width: 50px;
           padding: 0 0 0 8px;
           position: relative;
           top: -2px;
         }
+      }
+      .play-order {
+        width: 32px;
+        justify-content: center;
+        padding: 1px 0 0 0;
       }
     }
     .track-plugin {

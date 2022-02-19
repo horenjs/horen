@@ -25,6 +25,13 @@ export type PlayMode = 'repeat' | 'single' | 'shuffle';
  * You can only call it on the Browser Environment.
  */
 export default class HowlPlayer {
+  get autoplay(): boolean {
+    return this._autoplay;
+  }
+
+  set autoplay(value: boolean) {
+    this._autoplay = value;
+  }
   /**
    * track list
    */
@@ -69,6 +76,10 @@ export default class HowlPlayer {
    * play mode
    */
   protected _mode: PlayMode = 'repeat';
+  /**
+   * auto play
+   */
+  private _autoplay = true;
 
   public set trackList(list: Track[]) {
     // 歌曲不允许重复
@@ -295,9 +306,8 @@ export default class HowlPlayer {
   /**
    * play the audio from source given
    * @param src : src of track;
-   * @param autoplay if autoplay after load the track
    */
-  protected _playAudioSource(src: string, autoplay = true) {
+  protected _playAudioSource(src: string) {
     Howler.unload();
 
     this._howler = new Howl({
@@ -307,7 +317,7 @@ export default class HowlPlayer {
       volume: this.volume,
     });
 
-    if (autoplay) {
+    if (this._autoplay) {
       this._play();
     }
   }

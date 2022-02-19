@@ -88,6 +88,14 @@ export class MainwindowDC {
     return await ipcRenderer.invoke(IPC_CODE.mainwindow.minimize);
   }
 
+  public static async setTitle(title: string) {
+    return await ipcRenderer.invoke(IPC_CODE.mainwindow.setTitle, title);
+  }
+
+  public static async setProgress(progress: number) {
+    return await ipcRenderer.invoke(IPC_CODE.mainwindow.setProgress, progress);
+  }
+
   public static async setBounds(bounds: Rectangle) {
     return await ipcRenderer.invoke(IPC_CODE.mainwindow.setBounds, bounds);
   }

@@ -14,7 +14,7 @@ import defaultCover from '../../static/image/default-cover';
 import { Loader } from '../loader';
 import { player } from '@/App';
 import Slider from '../slider';
-import { TrackDC } from "@/data-center";
+import { TrackDC, MainwindowDC } from "@/data-center";
 import { MdOutlineSkipNext, MdOutlineSkipPrevious, MdPause, MdOutlinePlayArrow } from 'react-icons/md';
 import { ImVolumeHigh, ImVolumeMedium, ImVolumeLow, ImVolumeMute2, ImLoop2 } from 'react-icons/im';
 import { RiRepeatOneLine, RiOrderPlayLine, RiShuffleFill } from 'react-icons/ri';
@@ -137,6 +137,9 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
   React.useEffect(() => {
     if (player.currentTrack) {
       const key = player.currentTrack.albumKey;
+      const title = player.currentTrack?.title;
+      const artist = player.currentTrack?.artist;
+
       if (key) {
         (async () => {
           const co = await TrackDC.getAlbumCover(key);
@@ -145,6 +148,12 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
         })()
       } else {
         setCover(defaultCover);
+      }
+
+      if (title) {
+        (async () => {
+          await MainwindowDC.setTitle(title + ' - ' + artist);
+        })();
       }
     } else {
       setCover(defaultCover);
@@ -155,6 +164,7 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
   React.useEffect(() => {
     const timer = setInterval(() => {
       setSeek(player.seek);
+      (async () => await MainwindowDC.setProgress(player.seek / player.duration))();
     }, 1000);
 
     return () => clearInterval(timer);
@@ -249,7 +259,7 @@ const ControlPanel: React.FC<ControlPanelProps> = (props) => {
           </div>
           <div className="open-queue" role="button" onClick={handleOpenQueue}>
             <div>打开队列</div>
-            <span>{player.trackList.length} 首歌曲</span>
+            <span>{player.trackList?.length} 首歌曲</span>
           </div>
         </div>
       </div>

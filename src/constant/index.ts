@@ -40,7 +40,9 @@ export const IPC_CODE = {
   },
   mainwindow: {
     close: 'mainwindow:close',
-    minimize: 'manwindow:mini',
+    minimize: 'mainwindow:mini',
+    setTitle: 'mainwindow:set-title',
+    setProgress: 'mainwindow:set-progress',
     setBounds: 'mainwindow:set-bounds',
     getBounds: 'mainwindow:get-bounds',
   },

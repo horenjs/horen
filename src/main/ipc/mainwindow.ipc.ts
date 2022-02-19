@@ -25,6 +25,28 @@ ipcMain.handle(IPC_CODE.mainwindow.minimize, async () => {
   myapp.mainWindow?.minimize();
 });
 
+ipcMain.handle(IPC_CODE.mainwindow.setTitle, async (evt, title: string) => {
+  mylogger.debug(`set the main window title: ${title}`);
+  try {
+    myapp.mainWindow?.setTitle(title);
+    return resp(1, 'set title success');
+  } catch (err) {
+    mydebug.error('set title failed');
+    return resp(0, 'set title failed');
+  }
+})
+
+ipcMain.handle(IPC_CODE.mainwindow.setProgress, async (evt, progress: number) => {
+  // mylogger.debug(`set the main window progress: ${progress}`);
+  try {
+    myapp.mainWindow?.setProgressBar(progress);
+    return resp(1, 'set progress success');
+  } catch (err) {
+    mydebug.error('set progress failed');
+    return resp(0, 'set progress failed');
+  }
+})
+
 ipcMain.handle(IPC_CODE.mainwindow.setBounds, async (evt, bounds: Rectangle) => {
   mylogger.debug(`set the main window size: x: ${bounds.x}, y: ${bounds.y}, width: ${bounds.width}, height: ${bounds.height}`);
   try {

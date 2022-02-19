@@ -129,7 +129,7 @@ export default function App() {
         (async () => {
           const rebuilt = await TrackDC.rebuildCache(setting['common.collectionPaths']);
           if (rebuilt) {
-            const res = await TrackDC.getAlbumList();
+            const res = await TrackDC.getAlbumList(albumListLimit);
             setIsRebuilding(false);
             if (res.code === 1) setAlbumList(res.data);
           }

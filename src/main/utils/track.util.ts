@@ -86,6 +86,9 @@ export async function extractAudioFilesMeta(paths: string[], totals: number) {
     myapp.mainWindow?.webContents.send(IPC_CODE.track.msg, msg);
 
     const meta = await readMusicMeta(p);
+
+    if (meta.duration === Infinity) meta.duration = 9999;
+
     tracks.push(meta);
 
     index += 1;

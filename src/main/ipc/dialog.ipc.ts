@@ -1,21 +1,22 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-28 15:01:30
- * @LastEditTime : 2022-01-30 01:31:28
+ * @LastEditTime : 2022-05-07 20:31:33
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\src\horen\main\ipc\dialog.ipc.ts
+ * @FilePath     : \Horen\src\main\ipc\dialog.ipc.ts
  * @Description  :
  */
-import { ipcMain, dialog } from 'electron';
-import { IPC_CODE } from 'constant';
+import { dialog } from 'electron';
 import debug from '../utils/logger.util';
 import myapp from '../app';
 
 const mydebug = debug('ipc:dialog');
+
 /**
- * 监听对话框打开
+ * 处理窗口打开
+ * @returns Promise<Electron.OpenDialogReturnValue>
  */
-ipcMain.handle(IPC_CODE.dialog.open, async () => {
+export async function handleDialogOpen() {
   if (myapp.mainWindow) {
     return await dialog.showOpenDialog(myapp.mainWindow, {
       properties: ['openDirectory', 'multiSelections'],
@@ -23,4 +24,4 @@ ipcMain.handle(IPC_CODE.dialog.open, async () => {
   } else {
     mydebug.warning('主窗口不存在 无法打开对话框');
   }
-});
+}

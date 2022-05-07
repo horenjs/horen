@@ -1,7 +1,7 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-28 14:55:06
- * @LastEditTime : 2022-05-06 22:19:04
+ * @LastEditTime : 2022-05-07 23:23:43
  * @lastEditors  : Kevin Jobs
  * @FilePath     : \Horen\src\main\ipc\track.ipc.ts
  * @Description  :
@@ -9,7 +9,6 @@
 import path from 'path';
 import fs from 'fs/promises';
 import fsp from 'fs';
-import { ipcMain } from 'electron';
 import { APP_DATA_PATH, APP_NAME, IPC_CODE, COVER_PATH } from 'constant';
 import { Album, LyricScript, Track } from 'types';
 import { AlbumModel, TrackModel } from '../db/models';
@@ -33,10 +32,11 @@ import debug from '../utils/logger.util';
 
 export const mydebug = debug('ipc:track');
 
-/**
- * 获取音频列表（默认从缓存中）
- */
-ipcMain.handle(IPC_CODE.track.getTrackList, async () => {
+const sendMsgToRenderer = (msg: string) => {
+  myapp.mainWindow?.webContents.send(IPC_CODE.track.msg, msg);
+};
+
+export async function handleGetTrackList() {
   mydebug.debug('从缓存数据库中读取音频列表');
   try {
     const allTracks = (await TrackModel.findAll()).map((t) => t.get());
@@ -46,33 +46,24 @@ ipcMain.handle(IPC_CODE.track.getTrackList, async () => {
     mydebug.error('从数据库中读取音频列表失败');
     return resp(1, '从数据库中读取音频列表失败');
   }
-});
+}
 
-/**
- * 获取专辑列表
- */
-ipcMain.handle(
-  IPC_CODE.track.getAlbumList,
-  async (evt, limit = 20, offset = 0) => {
-    mydebug.debug('从缓存数据库中读取专辑列表');
-    try {
-      const albums = (await AlbumModel.findAll({ limit, offset })).map((a) =>
-        a.get()
-      );
-      mydebug.info('读取专辑列表成功');
-      return resp<Album[]>(1, '读取专辑列表成功', albums);
-    } catch (err) {
-      // console.error(err);
-      mydebug.error('读取专辑列表失败');
-      return resp(0, '读取专辑列表失败');
-    }
+export async function handleGetAlbumList(evt: unknown, limit = 20, offset = 0) {
+  mydebug.debug('从缓存数据库中读取专辑列表');
+  try {
+    const albums = (await AlbumModel.findAll({ limit, offset })).map((a) =>
+      a.get()
+    );
+    mydebug.info('读取专辑列表成功');
+    return resp<Album[]>(1, '读取专辑列表成功', albums);
+  } catch (err) {
+    // console.error(err);
+    mydebug.error('读取专辑列表失败');
+    return resp(0, '读取专辑列表失败');
   }
-);
+}
 
-/**
- * 重建音频列表缓存
- */
-ipcMain.handle(IPC_CODE.track.rebuildCache, async (evt, paths: string[]) => {
+export async function handleRebuildCache(evt: unknown, paths: string[]) {
   const rawFilePaths: string[] = [];
 
   for (const p of paths) {
@@ -164,12 +155,9 @@ ipcMain.handle(IPC_CODE.track.rebuildCache, async (evt, paths: string[]) => {
     myapp.mainWindow?.webContents.send(IPC_CODE.track.msg, '保存专辑列表失败');
     return resp(0, '保存专辑列表失败');
   }
-});
+}
 
-/**
- * 获取音频
- */
-ipcMain.handle(IPC_CODE.track.getBySrc, async (evt, src: string) => {
+export async function handleGetTrackBySrc(evt: unknown, src: string) {
   try {
     const result = await TrackModel.findOne({ where: { src } });
     if (result) {
@@ -183,12 +171,9 @@ ipcMain.handle(IPC_CODE.track.getBySrc, async (evt, src: string) => {
     mydebug.error('获取音频失败: ' + src);
     return resp(0, '获取音频失败');
   }
-});
+}
 
-/**
- * 获取专辑
- */
-ipcMain.handle(IPC_CODE.track.getAlbumByKey, async (evt, key) => {
+export async function handleGetAlbumByKey(evt: unknown, key: string) {
   try {
     const result = await TrackModel.findAll({ where: { albumKey: key } });
     const tracks = result.map((r) => r.toJSON()) as Track[];
@@ -202,12 +187,9 @@ ipcMain.handle(IPC_CODE.track.getAlbumByKey, async (evt, key) => {
     mydebug.error(`获取专辑内的音频失败 [${key}]`);
     return resp(0, `获取专辑内的音频失败 [${key}]`);
   }
-});
+}
 
-/**
- * 获取专辑封面
- */
-ipcMain.handle(IPC_CODE.track.getAlbumCover, async (evt, key) => {
+export async function handleGetAlbumCover(evt: unknown, key: string) {
   const albumHex = Buffer.from(key).toString('hex');
   const coverPath = path.join(APP_DATA_PATH, APP_NAME, 'Cache', 'cover');
   const imgPath = path.join(coverPath, albumHex + '.jpg');
@@ -220,12 +202,9 @@ ipcMain.handle(IPC_CODE.track.getAlbumCover, async (evt, key) => {
     mydebug.warning(`没有本地封面: ${imgPath}`);
     return resp(0, `没有本地封面: ${imgPath}`);
   }
-});
+};
 
-/**
- * 获取歌词
- */
-ipcMain.handle(IPC_CODE.track.lyric, async (evt, src: string) => {
+export async function handleGetTrackLyric(evt: unknown, src: string) {
   mydebug.debug('获取歌词: ' + src);
 
   try {
@@ -255,8 +234,4 @@ ipcMain.handle(IPC_CODE.track.lyric, async (evt, src: string) => {
     mydebug.error('获取歌词失败: ' + src);
     return resp(0, '获取歌词失败');
   }
-});
-
-const sendMsgToRenderer = (msg: string) => {
-  myapp.mainWindow?.webContents.send(IPC_CODE.track.msg, msg);
-};
+}

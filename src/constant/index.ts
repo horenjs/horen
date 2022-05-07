@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-22 01:51:07
- * @LastEditTime : 2022-02-01 15:53:16
+ * @LastEditTime : 2022-05-07 23:40:00
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\src\horen\constant\lyric.util.ts
+ * @FilePath     : \Horen\src\constant\index.ts
  * @Description  :
  */
 export { DEFAULT_SETTING } from './setting';
@@ -15,7 +15,7 @@ import * as path from 'path';
 /**
  * ipc 通信使用的信号字符
  */
-export const IPC_CODE = {
+const IPC_CODE = {
   track: {
     getTrackList: 'track:get-track-list',
     getAlbumList: 'track:get-album-list',
@@ -51,22 +51,21 @@ export const IPC_CODE = {
 /**
  * 用户目录
  */
-export const APP_DATA_PATH =
-  process.env.APPDATA || '.';
+const APP_DATA_PATH = process.env.APPDATA || '.';
 
 /**
  * 应用名
  * todo: 应当从 package.json 读取
  */
-export const APP_NAME = 'horen';
+const APP_NAME = 'horen';
 
-export const LOG_PATH = path.join(APP_DATA_PATH, APP_NAME, 'logs');
-export const COVER_PATH = path.join(APP_DATA_PATH, APP_NAME, 'Cache', 'cover');
+const LOG_PATH = path.join(APP_DATA_PATH, APP_NAME, 'logs');
+const COVER_PATH = path.join(APP_DATA_PATH, APP_NAME, 'Cache', 'cover');
 
 /**
  * 可以解析的音频文件格式
  */
-export const AUDIO_EXTS = [
+const AUDIO_EXTS = [
   'aiff',
   'aac',
   'ape',
@@ -96,7 +95,7 @@ export const AUDIO_EXTS = [
 /**
  * 页面
  */
-export const PAGES: Page[] = [
+const PAGES: Page[] = [
   {
     name: 'Library',
     path: '/library',
@@ -112,7 +111,7 @@ export const PAGES: Page[] = [
 /**
  * 动画持续时长
  */
-export const ANIMATION_DELAY = {
+const ANIMATION_DELAY = {
   slow: 500,
   normal: 250,
   fast: 100,
@@ -121,7 +120,7 @@ export const ANIMATION_DELAY = {
 /**
  * colors
  */
-export const THEME = {
+const THEME = {
   color: {
     primary: '#4CAF50',
     primaryTint: '#81C784',
@@ -142,4 +141,15 @@ const NETEASE_API_URL = {
   search: 'https://music.163.com/api/search/get/web',
 };
 
-export const API_URL = NETEASE_API_URL;
+export {
+  IPC_CODE,
+  APP_DATA_PATH,
+  APP_NAME,
+  LOG_PATH,
+  COVER_PATH,
+  AUDIO_EXTS,
+  PAGES,
+  ANIMATION_DELAY,
+  THEME,
+  NETEASE_API_URL as API_URL,
+};

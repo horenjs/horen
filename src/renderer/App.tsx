@@ -1,9 +1,9 @@
 /*
  * @Author       : Kevin Jobs
  * @Date         : 2022-01-13 23:01:58
- * @LastEditTime : 2022-02-01 17:34:48
+ * @LastEditTime : 2022-06-03 16:17:59
  * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\src\horen\renderer\App.tsx
+ * @FilePath     : \Horen\src\renderer\App.tsx
  * @Description  :
  */
 import React from 'react';
@@ -27,23 +27,18 @@ import styled from 'styled-components';
 import Library from './pages/library';
 import SettingPage from './pages/setting';
 import HomePage from './pages/home';
-import MiniPlayer from "@/pages/mini";
+import MiniPlayer from '@/pages/mini';
 import ControlPanel from './components/control-panel';
 import { PlayQueue } from './components/play-queue';
 import PlayShow from './components/play-show';
 import TitlePanel from './components/title-panel';
 import { notice } from './components/notification';
-import { DisplayCate} from "@/components/display-cate";
-import {SettingDC, TrackDC, PlayListDC, MainwindowDC} from './data-center';
-import {
-  Page,
-  PlayListItem,
-  PlayList,
-  Rectangle,
-} from 'types';
+import { DisplayCate } from '@/components/display-cate';
+import { SettingDC, TrackDC, PlayListDC, MainwindowDC } from './data-center';
+import { Page, PlayListItem, PlayList, Rectangle } from 'types';
 import { PAGES, MINI_PLAYER_BOUNDS } from 'constant';
 import Player from '@/utils/player';
-import {Cate} from "@/components/display-cate/cate";
+import { Cate } from '@/components/display-cate/cate';
 
 // 初始化一个播放器
 // 这个播放器是全局唯一的播放器
@@ -84,7 +79,9 @@ export default function App() {
   const [trackLoadProgress, setTrackLoadProgress] = React.useState<string>('');
 
   const currentTrackSeek = useRecoilValue(currentTrackSeekState);
-  const [isCurrentTrackPlaying, setIsCurrentTrackPlaying] = useRecoilState(currentTrackIsPlayingState);
+  const [isCurrentTrackPlaying, setIsCurrentTrackPlaying] = useRecoilState(
+    currentTrackIsPlayingState
+  );
   const [, setCurrentTrack] = useRecoilState(currentTrackState);
   const [, setAlbumList] = useRecoilState(albumListState);
   const [setting, setSetting] = useRecoilState(settingState);
@@ -105,7 +102,7 @@ export default function App() {
         seek = player.seek;
         currentIndex = i;
       }
-      children.push({src: t.src, status: 'paused', seek} as PlayListItem);
+      children.push({ src: t.src, status: 'paused', seek } as PlayListItem);
       i += 1;
     }
 
@@ -115,7 +112,7 @@ export default function App() {
       name: '默认列表',
       currentIndex,
       children,
-    }
+    };
 
     await PlayListDC.set(pyl);
   };
@@ -127,7 +124,9 @@ export default function App() {
     if (window.confirm('确定要重建缓存数据库吗?')) {
       if (!isRebuilding) {
         (async () => {
-          const rebuilt = await TrackDC.rebuildCache(setting['common.collectionPaths']);
+          const rebuilt = await TrackDC.rebuildCache(
+            setting['common.collectionPaths']
+          );
           if (rebuilt) {
             const res = await TrackDC.getAlbumList(albumListLimit);
             setIsRebuilding(false);
@@ -141,7 +140,7 @@ export default function App() {
         window.alert('正在重建缓存数据库请勿重复点击');
       }
     }
-  }
+  };
   /**
    * minimize the player
    */
@@ -157,7 +156,7 @@ export default function App() {
         setBounds(res.data);
       }
     })();
-  }
+  };
   /**
    * 渲染页面的标题
    * @param p 页面
@@ -191,7 +190,7 @@ export default function App() {
         <Route path="*" element={<Navigate to="library" />} />
       </Route>
     </Routes>
-  )
+  );
   /**
    * render the mini player
    */
@@ -218,9 +217,9 @@ export default function App() {
             setBounds(undefined);
           })();
         }
-      }
-      }/>
-  )
+      }}
+    />
+  );
   /**
    * 从设置项中获取上次的播放列表
    * 并加载到状态库中
@@ -301,60 +300,62 @@ export default function App() {
         if (al.code === 1) setAlbumList(al.data);
       }
 
-      const pyls = await PlayListDC.getList();  // 获取播放列表（存储为文件的）
-      await initPlaylist(pyls);                 // 初始化默认播放队列
+      const pyls = await PlayListDC.getList(); // 获取播放列表（存储为文件的）
+      await initPlaylist(pyls); // 初始化默认播放队列
     })();
-  }, [])
+  }, []);
 
   return (
     <MyApp className="app">
-      {
-        isMiniPlayer ?
-          <Routes>
-            <Route path={"/mini-player"}>
-              <Route index element={renderMiniPlayer()} />
-            </Route>
-          </Routes>
-          :
-          <>
-            <div className={'header'}>
-              <TitlePanel onSimp={handleSimpPlayer} />
-            </div>
-            <div className="pages">
-              <div className="page-header electron-drag">
-                <div className={'page-title'}>
-                  { PAGES.map(renderPageHeader) }
+      {isMiniPlayer ? (
+        <Routes>
+          <Route path={'/mini-player'}>
+            <Route index element={renderMiniPlayer()} />
+          </Route>
+        </Routes>
+      ) : (
+        <>
+          <div className={'header'}>
+            <TitlePanel onSimp={handleSimpPlayer} />
+          </div>
+          <div className="pages">
+            <div className="page-header electron-drag">
+              <div className={'page-title'}>{PAGES.map(renderPageHeader)}</div>
+              {location.pathname === '/library' && (
+                <div className={'page-cate'}>
+                  <DisplayCate
+                    cate={displayCate}
+                    onPick={(cate) => setDisplayCate(cate)}
+                  />
                 </div>
-                {
-                  location.pathname === '/library' &&
-                  <div className={'page-cate'}>
-                    <DisplayCate cate={displayCate} onPick={(cate) => setDisplayCate(cate)}/>
-                  </div>
-                }
-              </div>
-              <div className="page-container perfect-scrollbar electron-no-drag">
-                { renderPageRoutes() }
-              </div>
+              )}
             </div>
-            {/* 歌曲控制中心 */}
-            <div className="page-bottom">
-              <ControlPanel
-                onOpenShow={() => setIsPlayShowVisible(!isPlayShowVisible)}
-                onOpenQueue={() => setIsQueueVisible(true)}
-                onRebuildCache={handleRebuildCache}
-              />
+            <div className="page-container perfect-scrollbar electron-no-drag">
+              {renderPageRoutes()}
             </div>
-            {/* 当前播放队列 */}
-            <PlayQueue visible={isQueueVisible} onClose={() => setIsQueueVisible(false)}/>
-            {/* 正在播放展示页面 */}
-            <PlayShow
-              currentTrack={player.currentTrack}
-              seek={currentTrackSeek}
-              visible={isPlayShowVisible}
-              onClose={() => setIsPlayShowVisible(false)}
+          </div>
+          {/* 歌曲控制中心 */}
+          <div className="page-bottom">
+            <ControlPanel
+              onOpenShow={() => setIsPlayShowVisible(!isPlayShowVisible)}
+              onOpenQueue={() => setIsQueueVisible(true)}
+              onRebuildCache={handleRebuildCache}
             />
-          </>
-      }
+          </div>
+          {/* 当前播放队列 */}
+          <PlayQueue
+            visible={isQueueVisible}
+            onClose={() => setIsQueueVisible(false)}
+          />
+          {/* 正在播放展示页面 */}
+          <PlayShow
+            currentTrack={player.currentTrack}
+            seek={currentTrackSeek}
+            visible={isPlayShowVisible}
+            onClose={() => setIsPlayShowVisible(false)}
+          />
+        </>
+      )}
     </MyApp>
   );
 }

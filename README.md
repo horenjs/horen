@@ -2,6 +2,8 @@
 
 Horen 是一个用 React 和 electron 打造的本地音乐播放器，正在不断开发中
 
+There is another lite edition, you will like it! https://github.com/horenjs/horen-lite
+
 ![preview-gif](./screen-shoots/preview-gif.gif)
 
 ## 预览图

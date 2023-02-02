@@ -8,6 +8,11 @@ module.exports = {
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
   ],
+  settings: {
+    react: {
+      version: '17.0.2'
+    }
+  },
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaFeatures: {
@@ -17,7 +22,7 @@ module.exports = {
     sourceType: "module",
   },
   plugins: ["react", "@typescript-eslint"],
-  ignorePatterns: [".eslintrc.js", "webpack/*", "start.js", "config/", "dist/", "out/"],
+  ignorePatterns: [".eslintrc.js", "scripts/*", 'config/*'],
   rules: {
     indent: ["error", 2],
     // "linebreak-style": ["error", "unix"],

@@ -1,9 +1,17 @@
+/*
+ * @Author       : Kevin Jobs
+ * @Date         : 2022-01-15 19:14:15
+ * @LastEditTime : 2022-06-07 23:17:31
+ * @lastEditors  : Kevin Jobs
+ * @FilePath     : \react-ts\.prettierrc.js
+ * @Description  :
+ */
 module.exports = {
   printWidth: 80,                         // 每行字符数
   tabWidth: 2,                            // tab 的宽度
   useTabs: false,                         // 是否使用 tab
   semi: true,                             // 分号
-  singleQuote: true,                      // 单引号
+  singleQuote: false,                     // 单引号
   quoteProps: 'as-needed',                // 引号属性（针对特殊格式如 md 等）
   jsxSingleQuote: false,                  // jsx 使用单引号
   trailingComma: 'es5',                   // 

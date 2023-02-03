@@ -1,25 +1,29 @@
 import React from "react";
-
-import RouterExample from "./router.example";
-// only in electron renderer process
-import IpcExample from "./ipc.example";
-import ReduxExample from "./redux.example";
-import ApiExample from "./api.example";
-import HotLoaderExample from "./hot-loader.example";
+import Menu from "@components/menu";
+import {HiHome} from "react-icons/hi";
+import {MdFavorite} from "react-icons/md";
 
 function App() {
+  const items = [
+    {
+      icon: <HiHome />,
+      name: "Home",
+    },
+    {
+      icon: <MdFavorite />,
+      name: "Favorite",
+    }
+  ];
+
   return (
-    <div className="react-typescript-app">
-      <HotLoaderExample />
-      <hr />
-      <ApiExample />
-      <hr />
-      <ReduxExample />
-      <hr />
-      <RouterExample />
-      <hr />
-      {/* only in electron renderer process */}
-      { window.ipc && <IpcExample /> }
+    <div className="horen-app">
+      <div className={"header-container"}></div>
+      <div className={"main-container"}>
+        <div className={"menu-container"}>
+          <Menu items={items} />
+        </div>
+        <div className={"router-container"}></div>
+      </div>
     </div>
   );
 }

@@ -58,6 +58,7 @@ importers:
       prettier: 2.6.2
       react: ^17.0.2
       react-dom: ^17.0.2
+      react-icons: ^4.7.1
       react-redux: ^8.0.2
       react-refresh: ^0.13.0
       react-router-dom: ^6.6.1
@@ -74,6 +75,7 @@ importers:
       '@reduxjs/toolkit': 1.9.1_3m5k4ry2nwm36zz5ojtujpfkvq
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
+      react-icons: 4.7.1_react@17.0.2
       react-redux: 8.0.5_74b3ggvk3akyhuq4eydyx3fqim
       react-router-dom: 6.6.2_sfoxds7t5ydpegc3knd667wn6m
     devDependencies:
@@ -5730,6 +5732,14 @@ packages:
       object-assign: 4.1.1
       react: 17.0.2
       scheduler: 0.20.2
+    dev: false
+
+  /react-icons/4.7.1_react@17.0.2:
+    resolution: {integrity: sha512-yHd3oKGMgm7zxo3EA7H2n7vxSoiGmHk5t6Ou4bXsfcgWyhfDKMpyKfhHR6Bjnn63c+YXBLBPUql9H4wPJM6sXw==}
+    peerDependencies:
+      react: '*'
+    dependencies:
+      react: 17.0.2
     dev: false
 
   /react-is/16.13.1:

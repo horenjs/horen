@@ -1,12 +1,12 @@
 {
-  "name": "template-electron",
+  "name": "horen-electron",
   "version": "0.0.1",
   "description": "electron template with react and typescript",
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
     "start": "pnpm build && pnpm dev",
-    "dev": "cross-env NODE_ENV=development electron ./dist/main.js",
+    "dev": "cross-env NODE_ENV=development PORT=8080 electron ./dist/main.js",
     "build": "rollup -c rollup.config.mjs"
   },
   "keywords": [

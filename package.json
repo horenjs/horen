@@ -4,7 +4,7 @@
   "description": "some web front templates",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"pnpm -F template-web start\" \"pnpm -F template-electron start\""
+    "start": "concurrently \"pnpm -F horen-web start\" \"pnpm -F horen-electron start\""
   },
   "repository": {
     "type": "git",

@@ -9,7 +9,7 @@ const isDev = process.env["NODE_ENV"] === "development";
 
 app.whenReady().then(() => {
   // create main window
-  createWindow();
+  createWindow().then(r => {});
 
   // only in macOS
   app.on("activate", function () {
@@ -68,7 +68,7 @@ async function createWindow() {
 
   w.on("closed", () => {
     w.destroy();
-    // destory all ipc event handlers.
+    // destroy all ipc event handlers.
     eipc.destory();
   })
 

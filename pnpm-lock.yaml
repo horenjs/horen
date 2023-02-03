@@ -24,7 +24,7 @@ importers:
       '@rollup/plugin-node-resolve': 15.0.1_rollup@3.10.0
       '@rollup/plugin-typescript': 11.0.0_6xbyoujvh6bzbrau3o3neoxpya
       cross-env: 7.0.3
-      electron: 22.0.2
+      electron: 22.2.0
       reflect-metadata: 0.1.13
       rollup: 3.10.0
       tslib: 2.4.1
@@ -3253,8 +3253,8 @@ packages:
     resolution: {integrity: sha512-M8WEXFuKXMYMVr45fo8mq0wUrrJHheiKZf6BArTKk9ZBYCKJEOU5H8cdWgDT+qCVZf7Na4lVUaZsA+h6uA9+PA==}
     dev: true
 
-  /electron/22.0.2:
-    resolution: {integrity: sha512-NdJlA2+FMgDJBhQFKMPyWJY8ng/tWpFlrRsW2JkZgSzYPXOnIu9muO3b83YHGoDn+GTyS8ghPsgcAwPMXtxirA==}
+  /electron/22.2.0:
+    resolution: {integrity: sha512-puRZSF2vWJ4pz3oetL5Td8LcuivTWz3MoAk/gjImHSN1B/2VJNEQlw1jGdkte+ppid2craOswE2lmCOZ7SwF1g==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
     requiresBuild: true
@@ -4578,7 +4578,7 @@ packages:
     dev: true
 
   /json-buffer/3.0.1:
-    resolution: {integrity: sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ==}
+    resolution: {integrity: sha1-kziAKjDTtmBfvgYT4JQAjKjAWhM=, tarball: json-buffer/download/json-buffer-3.0.1.tgz}
     dev: true
 
   /json-parse-even-better-errors/2.3.1:

@@ -1,0 +1,36 @@
+{
+  "name": "example-main",
+  "version": "0.0.1",
+  "description": "electron template with react and typescript",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "pnpm build && pnpm dev",
+    "dev": "cross-env NODE_ENV=development electron ../../dist/main.js",
+    "prod": "cross-env NODE_ENV=production electron ../../dist/main.js",
+    "build": "rollup -c rollup.config.mjs"
+  },
+  "keywords": [
+    "electron",
+    "template",
+    "react",
+    "typescript"
+  ],
+  "author": "Kevin Jobs <me@kevinjobs.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^24.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "@types/node": "^18.15.11",
+    "cross-env": "^7.0.3",
+    "electron": "latest",
+    "reflect-metadata": "^0.1.13",
+    "rollup": "^3.10.0",
+    "tslib": "^2.4.1",
+    "typescript": "^4.6.4"
+  },
+  "dependencies": {
+    "eipc": "workspace:*"
+  }
+}

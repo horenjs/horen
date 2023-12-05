@@ -1,0 +1,6 @@
+packages:
+  - 'app/const'
+  - 'app/main'
+  - 'app/eipc'
+  - 'app/view-home'
+  - 'app/view-setting'

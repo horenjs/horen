@@ -1,0 +1,1 @@
+export { fetchUserInfo } from "./user";

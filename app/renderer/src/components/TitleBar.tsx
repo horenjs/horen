@@ -71,7 +71,7 @@ export default function TitleBar(props: TitleBarProps) {
   return (
     <TITLE className="">
       <TitleArea>
-        <span>{title || 'Horen Player'}</span>
+        <span>{title}</span>
       </TitleArea>
       <CloseArea>
         <Minimize onClick={handleMinimize}>

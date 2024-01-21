@@ -1,14 +1,34 @@
 import React, { useState } from 'react';
 import Header from './components/TitleBar';
 import Menu from './components/Menu';
+import Player from './components/Player';
 import Playing from './pages/Playing';
 import Setting from './pages/Setting';
 import styled from 'styled-components';
 
-const APP = styled.div``;
+const APP = styled.div`
+  min-width: 800px;
+`;
+
+const Top = styled.div`
+  min-width: 800px;
+`;
 
 const Main = styled.div`
-  display: flex;
+  height: calc(100vh - 96px);
+  width: 100%;
+  background-color: #333;
+  min-width: 800px;
+`;
+
+const Bottom = styled.div`
+  min-width: 800px;
+  height: 64px;
+`;
+
+const Page = styled.div`
+  padding: 16px 48px;
+  height: calc(100vh - 136px);
 `;
 
 export type PageName = 'playing' | 'setting';
@@ -18,12 +38,19 @@ export default function App() {
 
   return (
     <APP>
-      <Header />
-      <Main>
+      <Top className="app-top">
+        <Header />
+      </Top>
+      <Main className="app-main">
         <Menu onClick={(value) => setPage(value)} />
-        <Playing visible={page === 'playing'} />
-        <Setting visible={page === 'setting'} />
+        <Page>
+          <Playing visible={page === '列表'} />
+          <Setting visible={page === '设置'} />
+        </Page>
       </Main>
+      <Bottom className="app-bottom">
+        <Player />
+      </Bottom>
     </APP>
   );
 }

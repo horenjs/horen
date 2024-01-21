@@ -4,14 +4,11 @@
   "description": "electron example",
   "main": "./dist/main.js",
   "scripts": {
-    "start": "zx ./scripts/scripts.mjs start",
-    "build": "zx ./scripts/scripts.mjs build",
-    "package": "zx ./scripts/scripts.mjs package",
-    "make": "electron-forge make"
+    "start:web": "zx ./scripts/scripts.mjs start"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kevinjobs/electron-example.git"
+    "url": "git+https://github.com/horenjs/horen"
   },
   "keywords": [
     "template",
@@ -22,22 +19,11 @@
   "author": "Kevin Jobs <me@kevinjobs.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kevinjobs/electron-example/issues"
+    "url": "https://github.com/horenjs/horen/issues"
   },
-  "homepage": "https://github.com/kevinjobs/electron-example#readme",
+  "homepage": "https://github.com/horenjs/horen#readme",
   "devDependencies": {
-    "@electron-forge/cli": "^6.4.2",
-    "@electron-forge/maker-deb": "^6.4.2",
-    "@electron-forge/maker-rpm": "^6.4.2",
-    "@electron-forge/maker-squirrel": "^6.4.2",
-    "@electron-forge/maker-zip": "^6.4.2",
-    "@electron-forge/plugin-base": "^6.4.2",
-    "concurrently": "latest",
-    "electron": "24.0.0",
-    "shelljs": "^0.8.5",
-    "zx": "^4.3.0"
+    "electron": "24.0.0"
   },
-  "dependencies": {
-    "electron-squirrel-startup": "^1.0.0"
-  }
+  "dependencies": {}
 }

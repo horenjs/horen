@@ -1,5 +1,5 @@
 {
-  "name": "example-main",
+  "name": "horen-main",
   "version": "0.0.1",
   "description": "electron template with react and typescript",
   "main": "index.js",
@@ -25,12 +25,7 @@
     "@types/node": "^18.15.11",
     "cross-env": "^7.0.3",
     "electron": "latest",
-    "reflect-metadata": "^0.1.13",
-    "rollup": "^3.10.0",
-    "tslib": "^2.4.1",
-    "typescript": "^4.6.4"
-  },
-  "dependencies": {
-    "eipc": "workspace:*"
+    "rollup": "^4.9.6",
+    "tslib": "^2.6.2"
   }
 }

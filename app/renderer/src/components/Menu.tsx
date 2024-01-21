@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 const MENU = styled.div`
-  background-color: #333;
+  background-color: transparent;
   width: 100%;
   user-select: none;
   padding: 0 32px;
   height: 2.5rem;
   display: flex;
   align-items: center;
+  position: sticky;
+  top: 32px;
 `;
 
 const Item = styled.div`

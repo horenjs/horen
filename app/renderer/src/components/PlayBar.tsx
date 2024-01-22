@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import { HowlPlayer } from '../utils';
+import { getFile } from '../api';
 
 const PLAYBAR = styled.div`
   width: 100%;
@@ -87,10 +89,25 @@ export type PlayBarProps = {
 };
 
 export default function PlayBar(props: PlayBarProps) {
+  const player = new HowlPlayer();
   const { onExpand, visible = true } = props;
 
   const handleClick = () => {
     if (onExpand) onExpand();
+  };
+
+  const handlePlay = () => {
+    /*
+     */
+    const filename =
+      'D:\\Music\\歌手合集\\Westlife\\1999 - Westlife FLAC\\Westlife - (01) Swear It Again.flac';
+    getFile(filename).then((value: any) => {
+      player.trackList = [
+        {
+          src: 'data:audio/wav;base64,' + value,
+        },
+      ];
+    });
   };
 
   return (
@@ -109,7 +126,7 @@ export default function PlayBar(props: PlayBarProps) {
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <Mode></Mode>
             <Prev></Prev>
-            <Pause></Pause>
+            <Pause onClick={handlePlay}></Pause>
             <Next></Next>
             <Volume></Volume>
           </div>

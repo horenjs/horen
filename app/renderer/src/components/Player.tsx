@@ -31,13 +31,12 @@ const Cover = styled.div`
 `;
 
 const Picture = styled.div`
-  width: 320px;
-  height: 320px;
+  width: 360px;
+  height: 360px;
   background-color: #333;
 `;
 
 const Info = styled.div`
-  width: 300px;
   height: 200px;
   background-color: #111;
   margin-top: 16px;
@@ -75,8 +74,10 @@ export default function Player(props: PlayerProps) {
       </PlayBar>
       <div style={{ display: 'flex' }}>
         <Cover className="player-cover">
-          <Picture />
-          <Info />
+          <div>
+            <Picture />
+            <Info />
+          </div>
         </Cover>
         <Lyric className="player-lyric">
           <LyricText />

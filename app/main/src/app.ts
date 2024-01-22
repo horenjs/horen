@@ -25,7 +25,7 @@ export const createMainWindow = () => {
   });
 
   if (isDev) {
-    w.loadURL(`https://baidu.com`).then().catch(console.error);
+    w.loadURL(`http://localhost:3000`).then().catch(console.error);
     // open the chrome dev tools when in development mode.
     w.webContents.openDevTools();
   } else {

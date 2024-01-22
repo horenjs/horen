@@ -1,5 +1,5 @@
 {
-  "name": "horen-main",
+  "name": "main",
   "version": "0.0.1",
   "description": "electron template with react and typescript",
   "main": "index.js",
@@ -27,5 +27,8 @@
     "electron": "latest",
     "rollup": "^4.9.6",
     "tslib": "^2.6.2"
+  },
+  "dependencies": {
+    "lowdb": "^7.0.1"
   }
 }

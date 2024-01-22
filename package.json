@@ -4,7 +4,9 @@
   "description": "electron example",
   "main": "./dist/main.js",
   "scripts": {
-    "start:web": "zx ./scripts/scripts.mjs start"
+    "start": "concurrently \"pnpm start:web\" \"pnpm start:main\"",
+    "start:web": "pnpm -F renderer start",
+    "start:main": "pnpm -F main start"
   },
   "repository": {
     "type": "git",
@@ -23,7 +25,6 @@
   },
   "homepage": "https://github.com/horenjs/horen#readme",
   "devDependencies": {
-    "electron": "24.0.0"
-  },
-  "dependencies": {}
+    "concurrently": "^8.2.2"
+  }
 }

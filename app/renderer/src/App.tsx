@@ -43,7 +43,7 @@ export default function App() {
 
   return (
     <APP>
-      <Top className="app-top">
+      <Top className="app-top electron-drag">
         <Header />
       </Top>
       <Main className="app-main">

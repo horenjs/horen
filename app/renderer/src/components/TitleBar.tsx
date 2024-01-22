@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { closeMainWindow } from '../api';
 
 const TITLE = styled.div`
   height: 32px;
@@ -60,6 +61,7 @@ export default function TitleBar(props: TitleBarProps) {
     if (onClose) {
       onClose();
     }
+    closeMainWindow().then();
   };
 
   const handleMinimize = () => {
@@ -73,7 +75,7 @@ export default function TitleBar(props: TitleBarProps) {
       <TitleArea>
         <span>{title}</span>
       </TitleArea>
-      <CloseArea>
+      <CloseArea className="electron-no-drag">
         <Minimize onClick={handleMinimize}>
           <span>□</span>
         </Minimize>

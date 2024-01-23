@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
 import { getTrack, getTrackList, Track } from '../api';
 import { HorenContext } from '../App';
+import { includes } from '../components/PlayContext';
 
 const PLAYLIST = styled.ul`
   margin: 0;
@@ -42,10 +43,11 @@ export type TrackItemProps = {
   source: string;
   onPlay: (track: Track) => void;
   onAdd: (track: Track) => void;
+  trackList: Track[];
 };
 
 export default function PlayList(props: PlayListProps) {
-  const [trackList, setTrackList] = useState<string[] | null>(null);
+  const [trackSrcList, setTrackSrcList] = useState<string[] | null>(null);
   const { visible } = props;
   const { player } = useContext(HorenContext);
 
@@ -59,20 +61,26 @@ export default function PlayList(props: PlayListProps) {
 
   useEffect(() => {
     getTrackList().then((list) => {
-      setTrackList(list);
+      setTrackSrcList(list);
     });
   }, []);
 
   return (
     <PLAYLIST style={{ display: visible ? 'grid' : 'none' }}>
-      {trackList?.map((track) => (
-        <TrackItem source={track} onPlay={handlePlay} onAdd={handleAdd} />
+      {trackSrcList?.map((trackSrc) => (
+        <TrackItem
+          source={trackSrc}
+          onPlay={handlePlay}
+          onAdd={handleAdd}
+          key={trackSrc}
+          trackList={player.trackList}
+        />
       ))}
     </PLAYLIST>
   );
 }
 
-function TrackItem({ source, onPlay, onAdd }: TrackItemProps) {
+function TrackItem({ source, onPlay, onAdd, trackList }: TrackItemProps) {
   const [track, setTrack] = useState<Track | null>(null);
 
   const handlePlay = () => {
@@ -94,7 +102,11 @@ function TrackItem({ source, onPlay, onAdd }: TrackItemProps) {
       <div className="artist">{track?.artist}</div>
       <div className="duration">{track?.duration?.toFixed(2)}</div>
       <button onClick={handlePlay}>Play</button>
-      <button onClick={handleAdd}>Add</button>
+      {track && includes(trackList, track) ? (
+        ''
+      ) : (
+        <button onClick={handleAdd}>Add</button>
+      )}
     </Item>
   );
 }

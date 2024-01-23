@@ -55,11 +55,11 @@ export default function Menu(props: MenuProps) {
       <Item
         onClick={handleClick}
         style={{
-          fontSize: selected === '专辑' ? '1.4rem' : '1.2rem',
-          fontWeight: selected === '专辑' ? 600 : 500,
+          fontSize: selected === '列表' ? '1.4rem' : '1.2rem',
+          fontWeight: selected === '列表' ? 600 : 500,
         }}
       >
-        专辑
+        列表
       </Item>
       <Item
         onClick={handleClick}

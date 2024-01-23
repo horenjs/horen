@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
-import { player } from '../App';
+import { HorenContext } from '../App';
 
 const PLAYBAR = styled.div`
   width: 100%;
@@ -13,6 +13,9 @@ const Cover = styled.div`
   width: 52px;
   background-color: #333;
   margin-right: 8px;
+  img {
+    width: 100%;
+  }
 `;
 
 const Title = styled.div`
@@ -89,6 +92,7 @@ export type PlayBarProps = {
 
 export default function PlayBar(props: PlayBarProps) {
   const { onExpand, visible = true } = props;
+  const { player } = useContext(HorenContext);
 
   const handleClick = () => {
     if (onExpand) onExpand();
@@ -98,12 +102,17 @@ export default function PlayBar(props: PlayBarProps) {
 
   return (
     <PLAYBAR className="play-bar">
-      <Cover onClick={handleClick}></Cover>
+      <Cover onClick={handleClick}>
+        <img
+          src={player.currentTrack?.cover}
+          alt={player.currentTrack?.title}
+        />
+      </Cover>
       {visible && (
         <div>
-          <Title>{player.track?.title}</Title>
-          <Singer></Singer>
-          <AlbumTitle></AlbumTitle>
+          <Title>{player.currentTrack?.title}</Title>
+          <Singer>{player.currentTrack?.artist}</Singer>
+          <AlbumTitle>{player.currentTrack?.album}</AlbumTitle>
         </div>
       )}
       {visible && (
@@ -111,9 +120,9 @@ export default function PlayBar(props: PlayBarProps) {
           <Seeker></Seeker>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <Mode></Mode>
-            <Prev></Prev>
+            <Prev onClick={() => player.prev()}></Prev>
             <Pause onClick={handlePlay}></Pause>
-            <Next></Next>
+            <Next onClick={() => player.next()} />
             <Volume></Volume>
           </div>
         </div>

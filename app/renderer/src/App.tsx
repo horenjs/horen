@@ -6,6 +6,8 @@ import Playing from './pages/Playing';
 import Setting from './pages/Setting';
 import PlayList from './pages/PlayList';
 import styled from 'styled-components';
+import { SinglePlayer } from './utils';
+import { Track } from './api';
 
 const APP = styled.div`
   min-width: 800px;
@@ -35,6 +37,8 @@ const Page = styled.div`
   padding: 48px;
   height: calc(100vh - 136px);
 `;
+
+export const player = new SinglePlayer<Track>();
 
 export type PageName = 'playing' | 'setting';
 

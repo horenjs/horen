@@ -9,9 +9,6 @@ if (typeof window === 'undefined')
   );
 
 export interface HowlTrack {
-  title?: string;
-  artist?: string;
-  album?: string;
   src: string;
 }
 
@@ -91,7 +88,7 @@ export default class HowlPlayer<T extends HowlTrack> {
     // 如果没有播放器则重新生成一个
     if (!this._howler) {
       if (this._trackList[0]) {
-        this._playAudioSource(this._trackList[0].src);
+        this._playAudioSource(this._trackList[0]?.src);
         this._currentTrack = this._trackList[0];
       }
     }
@@ -324,4 +321,37 @@ export default class HowlPlayer<T extends HowlTrack> {
 function includesDeep(arr: any[], obj: object) {
   const filtered = arr.filter((value) => _.isEqual(value, obj));
   return filtered.length > 0;
+}
+
+export class SinglePlayer<T extends HowlTrack> {
+  protected _track?: T;
+  protected _source?: string;
+  protected _howler?: Howl;
+  protected _volume = 0.3;
+
+  protected _play() {
+    if (this._howler?.playing()) return;
+    this._howler?.play();
+  }
+
+  protected _playAudioSource(src: string) {
+    Howler.unload();
+
+    this._howler = new Howl({
+      src: [src],
+      format: ['flac', 'mp3'],
+      html5: true,
+      volume: this._volume,
+    });
+
+    this._play();
+  }
+
+  get track() {
+    return this._track;
+  }
+
+  play(track: T) {
+    this._playAudioSource(track.src);
+  }
 }

@@ -10,6 +10,7 @@ declare global {
       readLibraries: () => Promise<string[]>;
       writeLibraries: (libs: string[]) => Promise<void>;
       readAudioSource: (filepath: string) => Promise<string>;
+      readCoverSource: (filepath: string) => Promise<string>;
     };
   }
 }
@@ -41,4 +42,5 @@ export const {
   readLibraries,
   writeLibraries,
   readAudioSource,
+  readCoverSource,
 } = window?.ipc;

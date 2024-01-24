@@ -1,6 +1,6 @@
 import React, { useState, createContext } from 'react';
 import { HowlPlayer, PlayerOrder } from '../utils';
-import { Track, readAudioSource } from '../api';
+import { Track, readAudioSource, readCoverSource } from '../api';
 
 interface IHorenContext {
   player: {
@@ -50,10 +50,11 @@ export default function PlayContext({
   const [trackList, setTrackList] = useState<Track[]>([]);
 
   const play = (track: Track) => {
-    setCurrentTrack(track);
-
     readAudioSource(track.src).then((res) => {
-      player.currentTrack = { ...track, src: res };
+      readCoverSource(track.src).then((cover) => {
+        player.currentTrack = { ...track, src: res, cover };
+        setCurrentTrack({ ...track, src: res, cover });
+      });
     });
 
     if (!includes(playList, track)) {

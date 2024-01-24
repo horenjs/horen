@@ -31,6 +31,9 @@ const IPC_API: IPC = {
   readAudioSource: async (filepath: string) => {
     return await ipcRenderer.invoke(CHANNELS.readAudioSource, filepath);
   },
+  readCoverSource: async (filepath: string) => {
+    return await ipcRenderer.invoke(CHANNELS.readCoverSource, filepath);
+  },
 };
 
 contextBridge.exposeInMainWorld('ipc', IPC_API);

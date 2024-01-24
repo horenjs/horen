@@ -122,3 +122,13 @@ export const handleReadAudioSource = async (
   });
   return 'data:audio/wav;base64,' + base64;
 };
+
+////////////////////////////////////////////////////////////////////////////////
+
+export const handleReadCoverSource = async (
+  evt: IpcMainInvokeEvent,
+  filename: string
+) => {
+  const meta = await readMusicMeta(filename);
+  return meta.cover;
+};

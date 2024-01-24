@@ -1,6 +1,10 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { HorenContext } from '../App';
+import { IoIosPause } from 'react-icons/io';
+import { FaVolumeLow } from 'react-icons/fa6';
+import { MdSkipPrevious, MdSkipNext, MdMenuOpen } from 'react-icons/md';
+import { TfiLoop } from 'react-icons/tfi';
 
 const PLAYBAR = styled.div`
   width: 100%;
@@ -12,30 +16,31 @@ const Cover = styled.div`
   height: 52px;
   width: 52px;
   background-color: #333;
-  margin-right: 8px;
+  margin-right: 16px;
   img {
     width: 100%;
   }
 `;
 
 const Title = styled.div`
-  width: 180px;
+  width: 144px;
   height: 20px;
-  background-color: #333;
+  font-size: 14px;
+  color: #e6e6e6;
 `;
 
 const Singer = styled.div`
-  width: 40px;
   height: 14px;
-  background-color: #333;
   margin-top: 2px;
+  font-size: 10px;
+  color: #bebebe;
 `;
 
 const AlbumTitle = styled.div`
-  width: 60px;
   height: 14px;
-  background-color: #333;
   margin-top: 2px;
+  font-size: 10px;
+  color: #adadad;
 `;
 
 const Seeker = styled.div`
@@ -48,41 +53,60 @@ const Seeker = styled.div`
 const Mode = styled.div`
   height: 32px;
   width: 32px;
-  background-color: blue;
+  color: #e6e6e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const Prev = styled.div`
   height: 32px;
   width: 32px;
-  background-color: red;
   margin-left: 8px;
+  color: #e6e6e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const Pause = styled.div`
   height: 32px;
   width: 32px;
-  background-color: red;
   margin-left: 8px;
+  color: #e6e6e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const Next = styled.div`
   height: 32px;
   width: 32px;
-  background-color: red;
   margin-left: 8px;
+  color: #e6e6e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const Volume = styled.div`
   height: 32px;
   width: 64px;
-  background-color: cyan;
-  margin-left: 8px;
+  margin-left: 12px;
+  color: #e6e6e6;
+  display: flex;
+  align-items: center;
+  justify-content: start;
 `;
 
 const More = styled.div`
   width: 108px;
   height: 32px;
-  background-color: #333;
+  padding-right: 12px;
+  color: #e6e6e6;
+  display: flex;
+  align-items: center;
+  justify-content: end;
 `;
 
 export type PlayBarProps = {
@@ -119,17 +143,29 @@ export default function PlayBar(props: PlayBarProps) {
         <div style={{ flexGrow: 1, margin: '0 16px' }}>
           <Seeker></Seeker>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Mode></Mode>
-            <Prev onClick={() => player.prev()}></Prev>
-            <Pause onClick={handlePlay}></Pause>
-            <Next onClick={() => player.next()} />
-            <Volume></Volume>
+            <Mode>
+              <TfiLoop size={20} />
+            </Mode>
+            <Prev onClick={() => player.prev()}>
+              <MdSkipPrevious size={28} />
+            </Prev>
+            <Pause onClick={handlePlay}>
+              <IoIosPause size={28} />
+            </Pause>
+            <Next onClick={() => player.next()}>
+              <MdSkipNext size={28} />
+            </Next>
+            <Volume>
+              <FaVolumeLow size={19} />
+            </Volume>
           </div>
         </div>
       )}
       {visible && (
         <div>
-          <More />
+          <More>
+            <MdMenuOpen size={28} />
+          </More>
         </div>
       )}
     </PLAYBAR>

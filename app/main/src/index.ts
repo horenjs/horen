@@ -1,34 +1,29 @@
-import { BrowserWindow, app, dialog, ipcMain } from 'electron';
-import { createMainWindow } from './app';
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import fs from 'fs/promises';
 import path from 'path';
-import { APP_DATA_PATH, APP_NAME, CHANNELS, AUDIO_EXTS } from './constant';
-import { JSONFilePreset } from 'lowdb/node';
+
+import { createMainWindow } from './app';
+import { AUDIO_EXTS, CHANNELS } from './constant';
+import { handleRefreshTrackList, handleWriteLibraries } from './ipc';
+import {
+  DBDataType,
+  initDatabase,
+  initLogger,
+  readMusicMeta,
+  walkDir,
+} from './utils';
+
 import type { Low } from 'lowdb';
-import { Track, readMusicMeta, walkDir } from './utils';
-import { handleWriteLibraries, handleRefreshTrackList } from './ipc';
+import type { Logger } from 'winston';
 
-let win: BrowserWindow = null;
-export let db: Low<DBData> = null;
-
-type DBData = {
-  setting: {
-    language?: string;
-  };
-  libraries?: string[];
-  tracks: Track[];
-};
+export let mainWindow: BrowserWindow = null;
+export let db: Low<DBDataType> = null;
+export let logger: Logger = null;
 
 app.whenReady().then(async () => {
-  db = await JSONFilePreset<DBData>(
-    path.join(APP_DATA_PATH, APP_NAME, 'db.json'),
-    {
-      setting: {},
-      tracks: [],
-    }
-  );
-  await db.write();
-  win = createMainWindow();
+  logger = initLogger();
+  db = await initDatabase();
+  mainWindow = createMainWindow();
 });
 
 app.on('activate', () => {
@@ -56,7 +51,7 @@ ipcMain.handle('get-a-file', async (evt, filename: string) => {
 });
 
 ipcMain.handle('open-dialog', async (evt) => {
-  return await dialog.showOpenDialog(win, {
+  return await dialog.showOpenDialog(mainWindow, {
     properties: ['openDirectory', 'multiSelections'],
   });
 });
@@ -104,7 +99,7 @@ ipcMain.handle(CHANNELS.getTrack, async (evt, trackSource: string) => {
 });
 
 ipcMain.handle(CHANNELS.closeMainWindow, async (evt) => {
-  win.destroy();
+  mainWindow.destroy();
 });
 
 ipcMain.handle(CHANNELS.writeLibraries, handleWriteLibraries);

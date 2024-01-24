@@ -1,8 +1,12 @@
 import fs from 'fs/promises';
+import { JSONFilePreset } from 'lowdb/node';
 import mm from 'music-metadata';
-import type { IAudioMetadata } from 'music-metadata';
 import path from 'path';
+import winston from 'winston';
 
+import { APP_DATA_PATH, APP_NAME } from './constant';
+
+import type { IAudioMetadata } from 'music-metadata';
 export interface Track {
   uid: string;
   createAt?: string;
@@ -99,4 +103,41 @@ export const walkDir = async (dirname: string, storeList: string[] = []) => {
 
 export const getExt = (filename: string) => {
   return filename.split('.').pop();
+};
+
+export const initLogger = () => {
+  const logFilePath = path.join(APP_DATA_PATH, APP_NAME, 'logs', 'horen.log');
+  return winston.createLogger({
+    transports: [
+      new winston.transports.Console({ level: 'debug' }),
+      new winston.transports.File({ level: 'debug', filename: logFilePath }),
+    ],
+    format: winston.format.combine(
+      winston.format.timestamp(),
+      winston.format.printf((info) => {
+        return `${info.timestamp} [${info.level}] - ${info.message}`;
+      })
+    ),
+  });
+};
+
+export type DBDataType = {
+  setting: {
+    language?: string;
+  };
+  libraries?: string[];
+  tracks: Track[];
+};
+
+export const initDatabase = async () => {
+  const db = await JSONFilePreset<DBDataType>(
+    path.join(APP_DATA_PATH, APP_NAME, 'db.json'),
+    {
+      setting: {},
+      tracks: [],
+      libraries: [],
+    }
+  );
+  await db.write();
+  return db;
 };

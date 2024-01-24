@@ -5,13 +5,26 @@ export const APP_DATA_PATH = process.env.APPDATA;
 export const APP_NAME = 'horen';
 
 export const CHANNELS = {
-  setSetting: 'set-setting',
-  getSetting: 'get-setting',
-  closeMainWindow: 'close-main-window',
-  getTrack: 'get-track',
-  getTrackList: 'get-track-list',
-  writeLibraries: 'writeLibraries',
-  refreshTrackList: 'refreshTrackList',
+  setting: {
+    read: 'setting-read',
+    write: 'setting-write',
+  },
+  mainWindow: {
+    close: 'mainwindow-close',
+    minimize: 'mainwindow-minimize',
+    maximize: 'mainwindow-maximize',
+  },
+  track: {
+    read: 'track-read',
+  },
+  trackList: {
+    refresh: 'track-list-refresh',
+    read: 'track-list-read',
+    write: 'track-list-write',
+  },
+  libraries: {
+    write: 'libraries-write',
+  },
 };
 
 export const AUDIO_EXTS = [

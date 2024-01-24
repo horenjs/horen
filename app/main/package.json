@@ -20,6 +20,7 @@
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.0",
+    "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-typescript": "^11.0.0",
     "@types/node": "^18.15.11",
@@ -27,7 +28,8 @@
     "electron": "latest",
     "music-metadata": "^7.14.0",
     "rollup": "^4.9.6",
-    "tslib": "^2.6.2"
+    "tslib": "^2.6.2",
+    "winston": "^3.11.0"
   },
   "dependencies": {
     "lowdb": "^7.0.1"

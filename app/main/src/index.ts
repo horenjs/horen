@@ -6,15 +6,16 @@ import { APP_DATA_PATH, APP_NAME, CHANNELS, AUDIO_EXTS } from './constant';
 import { JSONFilePreset } from 'lowdb/node';
 import type { Low } from 'lowdb';
 import { Track, readMusicMeta } from './utils';
+import { handleWriteLibraries } from './ipc';
 
 let win: BrowserWindow = null;
-let db: Low<DBData> = null;
+export let db: Low<DBData> = null;
 
 type DBData = {
   setting: {
     language?: string;
-    libraries?: string[];
   };
+  libraries?: string[];
   tracks: Track[];
 };
 
@@ -105,6 +106,8 @@ ipcMain.handle(CHANNELS.getTrack, async (evt, trackSource: string) => {
 ipcMain.handle(CHANNELS.closeMainWindow, async (evt) => {
   win.destroy();
 });
+
+ipcMain.handle(CHANNELS.writeLibraries, handleWriteLibraries);
 
 const walkDir = async (dirname: string, storeList: string[] = []) => {
   const files = await fs.readdir(dirname);

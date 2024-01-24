@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { openDialog, setSetting, getSetting } from '../api';
+import { openDialog, setSetting, writeLibraries, getSetting } from '../api';
 
 const SETTING = styled.div``;
 
@@ -57,7 +57,7 @@ export default function Setting(props: SettingProps) {
           ...filePaths.filter((lib) => !libraries.includes(lib)),
         ];
         setLibraries(newLibs);
-        setSetting('libraries', newLibs);
+        writeLibraries(newLibs);
       }
     });
   };

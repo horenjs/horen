@@ -9,6 +9,7 @@ declare global {
       closeMainWindow: () => Promise<void>;
       getTrackList: () => Promise<string[]>;
       getTrack: (source: string) => Promise<Track>;
+      writeLibraries: (libs: string[]) => Promise<void>;
     };
   }
 }
@@ -37,3 +38,4 @@ export const getSetting = window?.ipc?.getSetting;
 export const closeMainWindow = window?.ipc?.closeMainWindow;
 export const getTrackList = window?.ipc?.getTrackList;
 export const getTrack = window?.ipc?.getTrack;
+export const writeLibraries = window?.ipc?.writeLibraries;

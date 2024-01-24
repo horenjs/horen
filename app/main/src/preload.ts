@@ -25,6 +25,9 @@ const IPC_API: IPC = {
   getTrackList: async () => {
     return await ipcRenderer.invoke(CHANNELS.getTrackList);
   },
+  writeLibraries: async (libs: string[]) => {
+    return await ipcRenderer.invoke(CHANNELS.writeLibraries, libs);
+  },
   getTrack: async (source: string) => {
     return await ipcRenderer.invoke(CHANNELS.getTrack, source);
   },

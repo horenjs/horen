@@ -10,6 +10,7 @@ export const CHANNELS = {
   closeMainWindow: 'close-main-window',
   getTrack: 'get-track',
   getTrackList: 'get-track-list',
+  writeLibraries: 'writeLibraries',
 };
 
 export const AUDIO_EXTS = [

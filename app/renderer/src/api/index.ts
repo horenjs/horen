@@ -10,11 +10,13 @@ declare global {
       getTrackList: () => Promise<string[]>;
       getTrack: (source: string) => Promise<Track>;
       writeLibraries: (libs: string[]) => Promise<void>;
+      refreshTrackList: () => Promise<void>;
     };
   }
 }
 
 export interface Track {
+  uid: string;
   createAt?: string;
   updateAt?: string;
   modifiedAt?: string;
@@ -39,3 +41,4 @@ export const closeMainWindow = window?.ipc?.closeMainWindow;
 export const getTrackList = window?.ipc?.getTrackList;
 export const getTrack = window?.ipc?.getTrack;
 export const writeLibraries = window?.ipc?.writeLibraries;
+export const refreshTrackList = window?.ipc?.refreshTrackList;

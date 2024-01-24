@@ -41,7 +41,6 @@ export default function PlayContext({
   const [playList, setPlayList] = useState<Track[]>([]);
 
   const play = (track: Track) => {
-    console.log(playList);
     setCurrentTrack(track);
 
     getFile(track.src).then((res) => {
@@ -58,7 +57,7 @@ export default function PlayContext({
   };
 
   const remove = (track: Track) => {
-    setPlayList((prev) => prev.filter((t) => t.title !== track.title));
+    setPlayList((prev) => prev.filter((t) => t.uid !== track.uid));
   };
 
   const next = () => {
@@ -106,7 +105,7 @@ export default function PlayContext({
 
 export const includes = (tracks: Track[], track: Track) => {
   for (const t of tracks) {
-    if (t.title === track.title) return true;
+    if (t.uid === track.uid) return true;
   }
   return false;
 };

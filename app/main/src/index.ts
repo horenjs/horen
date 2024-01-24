@@ -5,8 +5,8 @@ import path from 'path';
 import { APP_DATA_PATH, APP_NAME, CHANNELS, AUDIO_EXTS } from './constant';
 import { JSONFilePreset } from 'lowdb/node';
 import type { Low } from 'lowdb';
-import { Track, readMusicMeta } from './utils';
-import { handleWriteLibraries } from './ipc';
+import { Track, readMusicMeta, walkDir } from './utils';
+import { handleWriteLibraries, handleRefreshTrackList } from './ipc';
 
 let win: BrowserWindow = null;
 export let db: Low<DBData> = null;
@@ -109,17 +109,4 @@ ipcMain.handle(CHANNELS.closeMainWindow, async (evt) => {
 
 ipcMain.handle(CHANNELS.writeLibraries, handleWriteLibraries);
 
-const walkDir = async (dirname: string, storeList: string[] = []) => {
-  const files = await fs.readdir(dirname);
-
-  for (const file of files) {
-    const fullpath = path.join(dirname, file);
-    const stats = await fs.stat(fullpath);
-    if (stats.isFile()) storeList.push(fullpath);
-    if (stats.isDirectory()) {
-      await walkDir(fullpath, storeList);
-    }
-  }
-
-  return storeList;
-};
+ipcMain.handle(CHANNELS.refreshTrackList, handleRefreshTrackList);

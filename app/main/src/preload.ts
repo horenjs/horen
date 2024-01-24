@@ -31,6 +31,9 @@ const IPC_API: IPC = {
   getTrack: async (source: string) => {
     return await ipcRenderer.invoke(CHANNELS.getTrack, source);
   },
+  refreshTrackList: async () => {
+    return await ipcRenderer.invoke(CHANNELS.refreshTrackList);
+  },
 };
 
 contextBridge.exposeInMainWorld('ipc', IPC_API);

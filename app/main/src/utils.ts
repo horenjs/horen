@@ -1,8 +1,10 @@
 import fs from 'fs/promises';
 import mm from 'music-metadata';
 import type { IAudioMetadata } from 'music-metadata';
+import path from 'path';
 
 export interface Track {
+  uid: string;
   createAt?: string;
   updateAt?: string;
   modifiedAt?: string;
@@ -36,10 +38,11 @@ export async function readMusicMeta(trackSrc: string): Promise<Track> {
     : null;
 
   return {
+    uid: strToBase64(trackSrc),
     createAt: stats.birthtime.toJSON(),
     updateAt: stats.ctime.toJSON(),
     modifiedAt: stats.mtime.toJSON(),
-    //uuid
+    //
     src: trackSrc,
     title: String(meta?.common?.title),
     artist: String(meta?.common?.artist),
@@ -71,10 +74,29 @@ function arrayBufferToBase64(u8Arr: Buffer | null) {
 
 const strToBase64 = (str: string) => {
   const buf = Buffer.from(str, 'utf-8');
-  return buf.toString('base64');
+  return buf.toString('base64url');
 };
 
 const base64toStr = (base64str: string) => {
-  const buf = Buffer.from(base64str, 'base64');
+  const buf = Buffer.from(base64str, 'base64url');
   return buf.toString('utf-8');
+};
+
+export const walkDir = async (dirname: string, storeList: string[] = []) => {
+  const files = await fs.readdir(dirname);
+
+  for (const file of files) {
+    const fullpath = path.join(dirname, file);
+    const stats = await fs.stat(fullpath);
+    if (stats.isFile()) storeList.push(fullpath);
+    if (stats.isDirectory()) {
+      await walkDir(fullpath, storeList);
+    }
+  }
+
+  return storeList;
+};
+
+export const getExt = (filename: string) => {
+  return filename.split('.').pop();
 };

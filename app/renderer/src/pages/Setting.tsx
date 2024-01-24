@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { openDialog, setSetting, writeLibraries, getSetting } from '../api';
+import {
+  openDialog,
+  setSetting,
+  writeLibraries,
+  getSetting,
+  refreshTrackList,
+} from '../api';
 
 const SETTING = styled.div``;
 
@@ -74,6 +80,10 @@ export default function Setting(props: SettingProps) {
     setSetting('language', e.target.value);
   };
 
+  const handleRefresh = () => {
+    refreshTrackList().then();
+  };
+
   useEffect(() => {
     getSetting('language').then((value) => setLanguage(value));
     getSetting('libraries').then((libs) => {
@@ -95,6 +105,7 @@ export default function Setting(props: SettingProps) {
           ))}
         </Libraries>
         <button onClick={handleAdd}>Add Path to Libraries</button>
+        <button onClick={handleRefresh}>Refresh Track List</button>
       </Item>
       <Item label="Language">
         <select value={language} onChange={handleChangeLang}>

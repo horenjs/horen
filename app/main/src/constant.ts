@@ -11,6 +11,7 @@ export const CHANNELS = {
   getTrack: 'get-track',
   getTrackList: 'get-track-list',
   writeLibraries: 'writeLibraries',
+  refreshTrackList: 'refreshTrackList',
 };
 
 export const AUDIO_EXTS = [

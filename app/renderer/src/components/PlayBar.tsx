@@ -5,6 +5,7 @@ import { IoIosPause } from 'react-icons/io';
 import { FaVolumeLow } from 'react-icons/fa6';
 import { MdSkipPrevious, MdSkipNext, MdMenuOpen } from 'react-icons/md';
 import { TfiLoop } from 'react-icons/tfi';
+import { IoIosArrowDown } from 'react-icons/io';
 
 const PLAYBAR = styled.div`
   width: 100%;
@@ -15,10 +16,14 @@ const PLAYBAR = styled.div`
 const Cover = styled.div`
   height: 52px;
   width: 52px;
-  background-color: #333;
   margin-right: 16px;
   img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .arrow {
+    color: #d6d6d6;
   }
 `;
 
@@ -126,11 +131,17 @@ export default function PlayBar(props: PlayBarProps) {
 
   return (
     <PLAYBAR className="play-bar">
-      <Cover onClick={handleClick}>
-        <img
-          src={player.currentTrack?.cover}
-          alt={player.currentTrack?.title}
-        />
+      <Cover onClick={handleClick} className="electron-no-drag">
+        {visible ? (
+          <img
+            src={player.currentTrack?.cover}
+            alt={player.currentTrack?.title}
+          />
+        ) : (
+          <span className="arrow">
+            <IoIosArrowDown size={28} />
+          </span>
+        )}
       </Cover>
       {visible && (
         <div>

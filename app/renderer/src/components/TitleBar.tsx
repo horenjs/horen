@@ -71,7 +71,7 @@ export default function TitleBar(props: TitleBarProps) {
   };
 
   return (
-    <TITLE className="">
+    <TITLE className="electron-drag">
       <TitleArea>
         <span>{title}</span>
       </TitleArea>

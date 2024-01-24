@@ -33,7 +33,7 @@ export type MenuProps = {
 
 export default function Menu(props: MenuProps) {
   const { onClick } = props;
-  const [selected, setSelected] = useState('列表');
+  const [selected, setSelected] = useState('播放列表');
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
@@ -46,20 +46,20 @@ export default function Menu(props: MenuProps) {
       <Item
         onClick={handleClick}
         style={{
-          fontSize: selected === '歌曲' ? '1.4rem' : '1.2rem',
-          fontWeight: selected === '歌曲' ? 600 : 500,
+          fontSize: selected === '全部' ? '1.4rem' : '1.2rem',
+          fontWeight: selected === '全部' ? 600 : 500,
         }}
       >
-        歌曲
+        全部
       </Item>
       <Item
         onClick={handleClick}
         style={{
-          fontSize: selected === '列表' ? '1.4rem' : '1.2rem',
-          fontWeight: selected === '列表' ? 600 : 500,
+          fontSize: selected === '播放列表' ? '1.4rem' : '1.2rem',
+          fontWeight: selected === '播放列表' ? 600 : 500,
         }}
       >
-        列表
+        播放列表
       </Item>
       <Item
         onClick={handleClick}

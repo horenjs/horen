@@ -1,5 +1,5 @@
 import React, { useState, createContext } from 'react';
-import { HowlPlayer } from '../utils';
+import { HowlPlayer, PlayerOrder } from '../utils';
 import { Track, getFile } from '../api';
 
 interface IHorenContext {
@@ -9,6 +9,7 @@ interface IHorenContext {
     play: (track: Track) => void;
     next: () => void;
     prev: () => void;
+    isAdd: (track: Track) => boolean;
     trackList: Track[];
     currentTrack: Track | null;
   };
@@ -23,6 +24,7 @@ export const HorenContext = createContext<IHorenContext>({
     play: () => {},
     next: () => {},
     prev: () => {},
+    isAdd: () => false,
     trackList: [],
     currentTrack: null,
   },
@@ -36,52 +38,65 @@ export default function PlayContext({
   children: React.ReactNode;
 }) {
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
-  const [trackList, setTrackList] = useState<Track[]>([]);
+  const [playList, setPlayList] = useState<Track[]>([]);
 
   const play = (track: Track) => {
-    console.log(trackList);
+    console.log(playList);
     setCurrentTrack(track);
 
     getFile(track.src).then((res) => {
       player.currentTrack = { ...track, src: res };
     });
 
-    if (!includes(trackList, track)) {
-      setTrackList((prev) => [...prev, track]);
+    if (!includes(playList, track)) {
+      setPlayList((prev) => [...prev, track]);
     }
   };
 
   const add = (track: Track) => {
-    if (!includes(trackList, track)) setTrackList((prev) => [...prev, track]);
+    if (!includes(playList, track)) setPlayList((prev) => [...prev, track]);
   };
 
   const remove = (track: Track) => {
-    setTrackList((prev) => prev.filter((t) => t.title !== track.title));
+    setPlayList((prev) => prev.filter((t) => t.title !== track.title));
   };
 
   const next = () => {
     if (currentTrack) {
-      const idx = trackList.indexOf(currentTrack);
-      const length = trackList.length;
+      const idx = playList.indexOf(currentTrack);
+      const length = playList.length;
       if (idx < length - 1) {
-        play(trackList[idx + 1]);
+        play(playList[idx + 1]);
       }
     }
   };
 
   const prev = () => {
     if (currentTrack) {
-      const idx = trackList.indexOf(currentTrack);
+      const idx = playList.indexOf(currentTrack);
       if (idx > 0) {
-        play(trackList[idx - 1]);
+        play(playList[idx - 1]);
       }
     }
+  };
+
+  const isAdd = (track: Track) => {
+    return includes(playList, track);
   };
 
   return (
     <HorenContext.Provider
       value={{
-        player: { add, play, remove, prev, next, currentTrack, trackList },
+        player: {
+          add,
+          play,
+          remove,
+          prev,
+          next,
+          isAdd,
+          currentTrack,
+          trackList: playList,
+        },
       }}
     >
       {children}
@@ -93,4 +108,5 @@ export const includes = (tracks: Track[], track: Track) => {
   for (const t of tracks) {
     if (t.title === track.title) return true;
   }
+  return false;
 };

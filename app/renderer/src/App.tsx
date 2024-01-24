@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import Header from './components/TitleBar';
 import Menu from './components/Menu';
 import Player from './components/Player';
-import Playing from './pages/Playing';
-import Setting from './pages/Setting';
 import PlayList from './pages/PlayList';
+import Setting from './pages/Setting';
+import TrackList from './pages/TrackList';
 import styled from 'styled-components';
 import PlayContext, { HorenContext } from './components/PlayContext';
 
@@ -51,9 +51,9 @@ export default function App() {
         <Main className="app-main">
           <Menu onClick={(value) => setPage(value)} />
           <Page className="page-container">
-            <Playing visible={page === '列表'} />
+            <PlayList visible={page === '播放列表'} />
             <Setting visible={page === '设置'} />
-            <PlayList visible={page === '歌曲'} />
+            <TrackList visible={page === '全部'} />
           </Page>
         </Main>
         <Bottom className="app-bottom">

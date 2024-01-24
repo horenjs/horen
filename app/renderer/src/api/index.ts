@@ -1,16 +1,15 @@
 declare global {
   interface Window {
     ipc: {
-      getFile: (filename: string) => Promise<string>;
-      walkDir: (dirname: string) => Promise<string[]>;
+      readSetting: (key: string) => Promise<any>;
+      writeSetting: (key: string, value: any) => Promise<void>;
+      closeMainwindow: () => Promise<void>;
       openDialog: () => Promise<any>;
-      setSetting: (key: string, value: any) => Promise<void>;
-      getSetting: (key: string) => Promise<any>;
-      closeMainWindow: () => Promise<void>;
-      getTrackList: () => Promise<string[]>;
-      getTrack: (source: string) => Promise<Track>;
-      writeLibraries: (libs: string[]) => Promise<void>;
+      readTrackList: () => Promise<Track[]>;
       refreshTrackList: () => Promise<void>;
+      readLibraries: () => Promise<string[]>;
+      writeLibraries: (libs: string[]) => Promise<void>;
+      readAudioSource: (filepath: string) => Promise<string>;
     };
   }
 }
@@ -32,13 +31,14 @@ export interface Track {
   cover?: string;
 }
 
-export const getFile = window?.ipc?.getFile;
-export const walkDir = window?.ipc?.walkDir;
-export const openDialog = window?.ipc?.openDialog;
-export const setSetting = window?.ipc?.setSetting;
-export const getSetting = window?.ipc?.getSetting;
-export const closeMainWindow = window?.ipc?.closeMainWindow;
-export const getTrackList = window?.ipc?.getTrackList;
-export const getTrack = window?.ipc?.getTrack;
-export const writeLibraries = window?.ipc?.writeLibraries;
-export const refreshTrackList = window?.ipc?.refreshTrackList;
+export const {
+  readSetting,
+  writeSetting,
+  closeMainwindow,
+  openDialog,
+  readTrackList,
+  refreshTrackList,
+  readLibraries,
+  writeLibraries,
+  readAudioSource,
+} = window?.ipc;

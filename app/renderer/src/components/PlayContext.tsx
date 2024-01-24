@@ -1,6 +1,6 @@
 import React, { useState, createContext } from 'react';
 import { HowlPlayer, PlayerOrder } from '../utils';
-import { Track, getFile } from '../api';
+import { Track, readAudioSource } from '../api';
 
 interface IHorenContext {
   player: {
@@ -10,8 +10,12 @@ interface IHorenContext {
     next: () => void;
     prev: () => void;
     isAdd: (track: Track) => boolean;
-    trackList: Track[];
+    playList: Track[];
     currentTrack: Track | null;
+  };
+  trackList: {
+    value: Track[];
+    set: (trackList: Track[]) => void;
   };
 }
 
@@ -25,8 +29,12 @@ export const HorenContext = createContext<IHorenContext>({
     next: () => {},
     prev: () => {},
     isAdd: () => false,
-    trackList: [],
+    playList: [],
     currentTrack: null,
+  },
+  trackList: {
+    value: [],
+    set: () => {},
   },
 });
 
@@ -39,11 +47,12 @@ export default function PlayContext({
 }) {
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [playList, setPlayList] = useState<Track[]>([]);
+  const [trackList, setTrackList] = useState<Track[]>([]);
 
   const play = (track: Track) => {
     setCurrentTrack(track);
 
-    getFile(track.src).then((res) => {
+    readAudioSource(track.src).then((res) => {
       player.currentTrack = { ...track, src: res };
     });
 
@@ -94,7 +103,11 @@ export default function PlayContext({
           next,
           isAdd,
           currentTrack,
-          trackList: playList,
+          playList,
+        },
+        trackList: {
+          value: trackList,
+          set: setTrackList,
         },
       }}
     >

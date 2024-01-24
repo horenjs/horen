@@ -1,29 +1,52 @@
-import type { IpcMainInvokeEvent } from 'electron';
+import { dialog, type IpcMainInvokeEvent } from 'electron';
 import fs from 'fs/promises';
-import { db, logger } from './index';
+import { db, logger, mainWindow } from './index';
 import { walkDir, readMusicMeta, getExt } from './utils';
 import { AUDIO_EXTS } from './constant';
 
-export const handleGetAudioFile = async (
+////////////////////////////////////////////////////////////////////////////////
+
+export const handleReadSetting = async (
   evt: IpcMainInvokeEvent,
-  filename: string
+  key: string
 ) => {
-  const base64 = await fs.readFile(filename, {
-    encoding: 'base64',
-  });
-  return 'data:audio/wav;base64,' + base64;
+  await db.read();
+  return db.data.setting[key];
 };
 
-export async function handleWriteLibraries(
+////////////////////////////////////////////////////////////////////////////////
+
+export const handleCloseMainwindow = async () => {
+  mainWindow.destroy();
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+export const handleOpenDialog = async () => {
+  return await dialog.showOpenDialog(mainWindow, {
+    properties: ['openDirectory', 'multiSelections'],
+  });
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+export const handleReadTrack = async (
   evt: IpcMainInvokeEvent,
-  libs: string[]
-) {
-  if (libs instanceof Array) {
-    console.log('write libs: ', libs);
-    db.data.libraries = libs;
-    await db.write();
+  trackSource: string
+) => {
+  if (typeof trackSource === 'string') {
+    return await readMusicMeta(trackSource);
   }
-}
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+export const handleReadTrackList = async () => {
+  await db.read();
+  return db.data.tracks;
+};
+
+////////////////////////////////////////////////////////////////////////////////
 
 export async function handleRefreshTrackList(evt: IpcMainInvokeEvent) {
   logger.debug('to fresh track list');
@@ -64,3 +87,38 @@ export async function handleRefreshTrackList(evt: IpcMainInvokeEvent) {
   db.data.tracks = trackList;
   await db.write();
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+export async function handleWriteLibraries(
+  evt: IpcMainInvokeEvent,
+  libs: string[]
+) {
+  if (libs instanceof Array) {
+    console.log('write libs: ', libs);
+    db.data.libraries = libs;
+    await db.write();
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+export async function handleReadLibraries(
+  evt: IpcMainInvokeEvent,
+  libs: string[]
+) {
+  await db.read();
+  return db.data.libraries;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+export const handleReadAudioSource = async (
+  evt: IpcMainInvokeEvent,
+  filename: string
+) => {
+  const base64 = await fs.readFile(filename, {
+    encoding: 'base64',
+  });
+  return 'data:audio/wav;base64,' + base64;
+};

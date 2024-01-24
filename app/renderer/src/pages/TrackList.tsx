@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import styled from 'styled-components';
-import { getTrack, getTrackList, Track } from '../api';
+import { readTrackList, Track } from '../api';
 import { HorenContext } from '../App';
 import { includes } from '../components/PlayContext';
 
@@ -40,16 +40,15 @@ export type PlayListProps = {
 };
 
 export type TrackItemProps = {
-  source: string;
+  track: Track;
   onPlay: (track: Track) => void;
   onAdd: (track: Track) => void;
   isAdd: (track: Track) => boolean;
 };
 
 export default function TrackList(props: PlayListProps) {
-  const [trackSrcList, setTrackSrcList] = useState<string[] | null>(null);
   const { visible } = props;
-  const { player } = useContext(HorenContext);
+  const { player, trackList } = useContext(HorenContext);
 
   const handlePlay = (track: Track) => {
     player.play(track);
@@ -60,19 +59,19 @@ export default function TrackList(props: PlayListProps) {
   };
 
   useEffect(() => {
-    getTrackList().then((list) => {
-      setTrackSrcList(list);
+    readTrackList().then((tracks) => {
+      trackList.set(tracks);
     });
-  }, []);
+  }, [visible]);
 
   return (
     <TRACKLIST style={{ display: visible ? 'grid' : 'none' }}>
-      {trackSrcList?.map((trackSrc) => (
+      {trackList.value?.map((track: Track) => (
         <TrackItem
-          source={trackSrc}
+          track={track}
           onPlay={handlePlay}
           onAdd={handleAdd}
-          key={trackSrc}
+          key={track.src}
           isAdd={player.isAdd}
         />
       ))}
@@ -80,9 +79,7 @@ export default function TrackList(props: PlayListProps) {
   );
 }
 
-function TrackItem({ source, onPlay, onAdd, isAdd }: TrackItemProps) {
-  const [track, setTrack] = useState<Track | null>(null);
-
+function TrackItem({ track, onPlay, onAdd, isAdd }: TrackItemProps) {
   const handlePlay = () => {
     if (onPlay && track) onPlay(track);
   };
@@ -90,10 +87,6 @@ function TrackItem({ source, onPlay, onAdd, isAdd }: TrackItemProps) {
   const handleAdd = () => {
     if (onAdd && track) onAdd(track);
   };
-
-  useEffect(() => {
-    getTrack(source).then(setTrack);
-  }, [source]);
 
   return (
     <Item key={track?.src}>

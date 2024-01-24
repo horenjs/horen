@@ -23,7 +23,7 @@ export default function Playing(props: PlayingProps) {
 
   return (
     <PLAYING style={{ display: visible ? 'block' : 'none' }}>
-      {player.trackList?.map((track) => (
+      {player.playList?.map((track: Track) => (
         <div
           className="song"
           key={track.title}

@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import {
   openDialog,
-  setSetting,
+  writeSetting,
   writeLibraries,
-  getSetting,
+  readSetting,
   refreshTrackList,
+  readLibraries,
 } from '../api';
 
 const SETTING = styled.div``;
@@ -72,12 +73,12 @@ export default function Setting(props: SettingProps) {
     const newLibs = [...libraries];
     const libs = newLibs.filter((l) => l !== lib);
     setLibraries(libs);
-    setSetting('libraries', libs);
+    writeLibraries(libs);
   };
 
   const handleChangeLang = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setLanguage(e.target.value);
-    setSetting('language', e.target.value);
+    writeSetting('language', e.target.value);
   };
 
   const handleRefresh = () => {
@@ -85,8 +86,8 @@ export default function Setting(props: SettingProps) {
   };
 
   useEffect(() => {
-    getSetting('language').then((value) => setLanguage(value));
-    getSetting('libraries').then((libs) => {
+    readSetting('language').then((value) => setLanguage(value));
+    readLibraries().then((libs) => {
       if (libs instanceof Array) setLibraries(libs);
     });
   }, []);

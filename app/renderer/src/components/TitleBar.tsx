@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { closeMainWindow } from '../api';
+import { closeMainwindow } from '../api';
 
 const TITLE = styled.div`
   height: 32px;
@@ -61,7 +61,7 @@ export default function TitleBar(props: TitleBarProps) {
     if (onClose) {
       onClose();
     }
-    closeMainWindow().then();
+    closeMainwindow().then();
   };
 
   const handleMinimize = () => {

@@ -14,6 +14,7 @@ export const CHANNELS = {
     minimize: 'mainwindow-minimize',
     maximize: 'mainwindow-maximize',
   },
+  openDialog: 'open-dialog',
   track: {
     read: 'track-read',
   },
@@ -24,7 +25,10 @@ export const CHANNELS = {
   },
   libraries: {
     write: 'libraries-write',
+    read: 'libraries-read',
   },
+  readAudioSource: 'read-audio-source',
+  readCoverSource: 'read-cover-source',
 };
 
 export const AUDIO_EXTS = [

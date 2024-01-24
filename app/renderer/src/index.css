@@ -24,3 +24,12 @@ code {
 .electron-no-drag {
   -webkit-app-region: no-drag;
 }
+
+.perfect-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.perfect-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #666666;
+}

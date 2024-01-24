@@ -21,7 +21,8 @@ const Top = styled.div`
 `;
 
 const Main = styled.div`
-  height: calc(100vh - 96px);
+  height: calc(100vh - 72px - 64px);
+  margin-top: 72px;
   width: 100%;
   background-color: #333;
   min-width: 800px;
@@ -33,8 +34,9 @@ const Bottom = styled.div`
 `;
 
 const Page = styled.div`
-  padding: 48px;
+  padding: 8px 8px 8px 48px;
   height: calc(100vh - 136px);
+  width: 100%;
 `;
 
 export type PageName = 'playing' | 'setting';
@@ -47,9 +49,9 @@ export default function App() {
       <APP>
         <Top className="app-top electron-drag">
           <Header />
+          <Menu onClick={(value) => setPage(value)} />
         </Top>
         <Main className="app-main">
-          <Menu onClick={(value) => setPage(value)} />
           <Page className="page-container">
             <PlayList visible={page === '播放列表'} />
             <Setting visible={page === '设置'} />

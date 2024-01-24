@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 const MENU = styled.div`
-  background-color: transparent;
+  background-color: #333;
   width: 100%;
   user-select: none;
   padding: 0 32px;
@@ -33,7 +33,7 @@ export type MenuProps = {
 
 export default function Menu(props: MenuProps) {
   const { onClick } = props;
-  const [selected, setSelected] = useState('播放列表');
+  const [selected, setSelected] = useState('全部');
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
@@ -49,6 +49,7 @@ export default function Menu(props: MenuProps) {
           fontSize: selected === '全部' ? '1.4rem' : '1.2rem',
           fontWeight: selected === '全部' ? 600 : 500,
         }}
+        className="electron-no-drag"
       >
         全部
       </Item>
@@ -58,6 +59,7 @@ export default function Menu(props: MenuProps) {
           fontSize: selected === '播放列表' ? '1.4rem' : '1.2rem',
           fontWeight: selected === '播放列表' ? 600 : 500,
         }}
+        className="electron-no-drag"
       >
         播放列表
       </Item>
@@ -67,6 +69,7 @@ export default function Menu(props: MenuProps) {
           fontSize: selected === '艺术家' ? '1.4rem' : '1.2rem',
           fontWeight: selected === '艺术家' ? 600 : 500,
         }}
+        className="electron-no-drag"
       >
         艺术家
       </Item>
@@ -76,6 +79,7 @@ export default function Menu(props: MenuProps) {
           fontSize: selected === '收藏' ? '1.4rem' : '1.2rem',
           fontWeight: selected === '收藏' ? 600 : 500,
         }}
+        className="electron-no-drag"
       >
         收藏
       </Item>
@@ -85,6 +89,7 @@ export default function Menu(props: MenuProps) {
           fontSize: selected === '设置' ? '1.4rem' : '1.2rem',
           fontWeight: selected === '设置' ? 600 : 500,
         }}
+        className="electron-no-drag"
       >
         设置
       </Item>

@@ -1,7 +1,7 @@
 import { dialog, type IpcMainInvokeEvent } from 'electron';
 import fs from 'fs/promises';
 import { db, logger, mainWindow } from './index';
-import { walkDir, readMusicMeta, getExt } from './utils';
+import { walkDir, readMusicMeta, getExt, Track } from './utils';
 import { AUDIO_EXTS } from './constant';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -71,15 +71,28 @@ export async function handleRefreshTrackList(evt: IpcMainInvokeEvent) {
 
   logger.debug('track file paths ' + filePaths);
   logger.debug('use new Set() to in-depulicate');
-  const paths = new Set(filePaths);
+  const paths = new Set<string>(filePaths);
   const trackList = [];
+  const oldTracks = db.data.tracks || [];
+
+  const includes = (tracks: Track[], track: Partial<Track>) => {
+    for (const t of tracks) {
+      if (t.src === track.src) return t;
+    }
+    return false;
+  };
 
   let i = 1;
   for (const p of paths) {
-    logger.debug('read meta: ' + p);
-    const meta = await readMusicMeta(p);
-    meta.cover = '';
-    trackList.push({ ...meta, index: i });
+    if (includes(oldTracks, { src: p })) {
+      logger.debug('existed in tracks: ' + p);
+      trackList.push({ ...includes(oldTracks, { src: p }), index: 1 });
+    } else {
+      logger.debug('read meta: ' + p);
+      const meta = await readMusicMeta(p);
+      meta.cover = '';
+      trackList.push({ ...meta, index: i });
+    }
     i += 1;
   }
 

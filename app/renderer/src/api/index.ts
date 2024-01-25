@@ -11,6 +11,7 @@ declare global {
       writeLibraries: (libs: string[]) => Promise<void>;
       readAudioSource: (filepath: string) => Promise<string>;
       readCoverSource: (filepath: string) => Promise<string>;
+      readDBStore: (key: string) => Promise<any>;
     };
   }
 }
@@ -43,4 +44,5 @@ export const {
   writeLibraries,
   readAudioSource,
   readCoverSource,
+  readDBStore,
 } = window?.ipc;

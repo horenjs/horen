@@ -34,6 +34,9 @@ const IPC_API: IPC = {
   readCoverSource: async (filepath: string) => {
     return await ipcRenderer.invoke(CHANNELS.readCoverSource, filepath);
   },
+  readDBStore: async (key: string) => {
+    return await ipcRenderer.invoke(CHANNELS.readDBStore, key);
+  },
 };
 
 contextBridge.exposeInMainWorld('ipc', IPC_API);

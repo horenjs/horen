@@ -8,6 +8,7 @@ import { APP_DATA_PATH, APP_NAME } from './constant';
 
 import type { IAudioMetadata } from 'music-metadata';
 export interface Track {
+  index?: number;
   uid: string;
   createAt?: string;
   updateAt?: string;
@@ -23,6 +24,17 @@ export interface Track {
   genre?: string;
   cover?: string;
 }
+export type Album = {
+  index: number;
+  title: string;
+  tracks: number[];
+};
+
+export type Artist = {
+  index: number;
+  name: string;
+  tracks: number[];
+};
 
 /**
  * 解析音频文件元数据
@@ -127,6 +139,8 @@ export type DBDataType = {
   };
   libraries?: string[];
   tracks: Track[];
+  albums: Record<string, number[]>;
+  artists: Record<string, number[]>;
 };
 
 export const initDatabase = async () => {
@@ -136,6 +150,8 @@ export const initDatabase = async () => {
       setting: {},
       tracks: [],
       libraries: [],
+      albums: {},
+      artists: {},
     }
   );
   await db.write();

@@ -8,6 +8,7 @@ import {
   refreshTrackList,
   readLibraries,
 } from '../api';
+import Page, { PageProps } from './_page';
 
 const SETTING = styled.div``;
 
@@ -41,16 +42,14 @@ const Libraries = styled.div`
   }
 `;
 
-export type SettingProps = {
-  visible?: boolean;
-};
+export type SettingPageProps = {} & PageProps;
 
 export type SettingItemProps = {
   label: string;
   children: React.ReactNode;
 };
 
-export default function Setting(props: SettingProps) {
+export default function Setting(props: SettingPageProps) {
   const { visible } = props;
   const [libraries, setLibraries] = useState<any[]>([]);
   const [language, setLanguage] = useState<string>('en');
@@ -93,28 +92,30 @@ export default function Setting(props: SettingProps) {
   }, []);
 
   return (
-    <SETTING style={{ display: visible ? 'block' : 'none' }}>
-      <Item label="libraries">
-        <Libraries>
-          {libraries?.map((lib) => (
-            <div key={lib}>
-              <span>{lib}</span>
-              <span className="delete" onClick={() => handleDelete(lib)}>
-                x
-              </span>
-            </div>
-          ))}
-        </Libraries>
-        <button onClick={handleAdd}>Add Path to Libraries</button>
-        <button onClick={handleRefresh}>Refresh Track List</button>
-      </Item>
-      <Item label="Language">
-        <select value={language} onChange={handleChangeLang}>
-          <option value="cn">Chinese</option>
-          <option value="en">English</option>
-        </select>
-      </Item>
-    </SETTING>
+    <Page visible={visible}>
+      <SETTING style={{ display: visible ? 'block' : 'none' }}>
+        <Item label="libraries">
+          <Libraries>
+            {libraries?.map((lib) => (
+              <div key={lib}>
+                <span>{lib}</span>
+                <span className="delete" onClick={() => handleDelete(lib)}>
+                  x
+                </span>
+              </div>
+            ))}
+          </Libraries>
+          <button onClick={handleAdd}>Add Path to Libraries</button>
+          <button onClick={handleRefresh}>Refresh Track List</button>
+        </Item>
+        <Item label="Language">
+          <select value={language} onChange={handleChangeLang}>
+            <option value="cn">Chinese</option>
+            <option value="en">English</option>
+          </select>
+        </Item>
+      </SETTING>
+    </Page>
   );
 }
 

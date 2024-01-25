@@ -5,6 +5,7 @@ import Player from './components/Player';
 import PlayList from './pages/PlayList';
 import Setting from './pages/Setting';
 import TrackList from './pages/TrackList';
+import { AlbumListPage } from './pages/AlbumList';
 import styled from 'styled-components';
 import PlayContext, { HorenContext } from './components/PlayContext';
 
@@ -18,6 +19,7 @@ const Top = styled.div`
   top: 0px;
   width: 100%;
   left: 0;
+  z-index: 1;
 `;
 
 const Main = styled.div`
@@ -44,6 +46,13 @@ export type PageName = 'playing' | 'setting';
 export default function App() {
   const [page, setPage] = useState<PageName | string>('playing');
 
+  const pages: Record<string, React.ReactNode> = {
+    播放列表: <PlayList visible={page === '播放列表'} />,
+    设置: <Setting visible={page === '设置'} />,
+    全部: <TrackList visible={page === '全部'} />,
+    专辑: <AlbumListPage visible={page === '专辑'} />,
+  };
+
   return (
     <PlayContext>
       <APP>
@@ -52,11 +61,7 @@ export default function App() {
           <Menu onClick={(value) => setPage(value)} />
         </Top>
         <Main className="app-main">
-          <Page className="page-container">
-            <PlayList visible={page === '播放列表'} />
-            <Setting visible={page === '设置'} />
-            <TrackList visible={page === '全部'} />
-          </Page>
+          <Page className="page-container">{pages[page]}</Page>
         </Main>
         <Bottom className="app-bottom">
           <Player />

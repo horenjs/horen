@@ -7,6 +7,7 @@ import styled from 'styled-components';
 
 import { readTrackList, Track } from '../api';
 import { HorenContext } from '../App';
+import Page, { PageProps } from './_page';
 
 const TRACKLIST = styled.div`
   margin: 0;
@@ -19,29 +20,6 @@ const TRACKLIST = styled.div`
   ul {
     margin: 0;
     padding: 0;
-  }
-`;
-
-const Item = styled.li`
-  background-color: #999;
-  height: 240px;
-  margin: 8px;
-  list-style: none;
-  img {
-    width: 100%;
-  }
-  .title {
-    max-width: 100%;
-    height: 20px;
-    overflow: hidden;
-  }
-  .artist {
-    max-width: 100%;
-    height: 20px;
-    overflow: hidden;
-  }
-  .duration {
-    max-width: 100%;
   }
 `;
 
@@ -87,9 +65,7 @@ const PureItem = styled.li`
   }
 `;
 
-export type PlayListProps = {
-  visible?: boolean;
-};
+export type PlayListPageProps = {} & PageProps;
 
 export type TrackItemProps = {
   index?: number;
@@ -100,7 +76,7 @@ export type TrackItemProps = {
   isAdd: (track: Track) => boolean;
 };
 
-export default function TrackList(props: PlayListProps) {
+export default function TrackList(props: PlayListPageProps) {
   const { visible } = props;
   const { player, trackList } = useContext(HorenContext);
 
@@ -119,24 +95,26 @@ export default function TrackList(props: PlayListProps) {
   }, [visible]);
 
   return (
-    <TRACKLIST
-      className="track-list perfect-scrollbar"
-      style={{ display: visible ? 'block' : 'none' }}
-    >
-      <ul>
-        {trackList.value?.map((track: Track, index: number) => (
-          <TrackPureItem
-            index={index}
-            track={track}
-            onPlay={handlePlay}
-            onAdd={handleAdd}
-            key={track.src}
-            isAdd={player.isAdd}
-            playing={player.currentTrack?.uid === track.uid}
-          />
-        ))}
-      </ul>
-    </TRACKLIST>
+    <Page visible={visible}>
+      <TRACKLIST
+        className="track-list perfect-scrollbar"
+        style={{ display: visible ? 'block' : 'none' }}
+      >
+        <ul>
+          {trackList.value?.map((track: Track, index: number) => (
+            <TrackPureItem
+              index={index}
+              track={track}
+              onPlay={handlePlay}
+              onAdd={handleAdd}
+              key={track.src}
+              isAdd={player.isAdd}
+              playing={player.currentTrack?.uid === track.uid}
+            />
+          ))}
+        </ul>
+      </TRACKLIST>
+    </Page>
   );
 }
 
@@ -188,28 +166,5 @@ function TrackPureItem({
       <div className="album">{track?.album}</div>
       <div className="duration">{track?.duration?.toFixed(2)}</div>
     </PureItem>
-  );
-}
-
-function TrackItem({ track, onPlay, onAdd, isAdd }: TrackItemProps) {
-  const handlePlay = () => {
-    if (onPlay && track) onPlay(track);
-  };
-
-  const handleAdd = () => {
-    if (onAdd && track) onAdd(track);
-  };
-
-  return (
-    <Item key={track?.src}>
-      <img src={track?.cover} alt={track?.title} />
-      <div className="title">{track?.title}</div>
-      <div className="artist">{track?.artist}</div>
-      <div className="duration">{track?.duration?.toFixed(2)}</div>
-      <button onClick={handlePlay}>
-        <FaPlay />
-      </button>
-      {track && !isAdd(track) && <button onClick={handleAdd}>Add</button>}
-    </Item>
   );
 }

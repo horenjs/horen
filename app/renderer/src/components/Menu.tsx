@@ -66,6 +66,16 @@ export default function Menu(props: MenuProps) {
       <Item
         onClick={handleClick}
         style={{
+          fontSize: selected === '专辑' ? '1.4rem' : '1.2rem',
+          fontWeight: selected === '专辑' ? 600 : 500,
+        }}
+        className="electron-no-drag"
+      >
+        专辑
+      </Item>
+      <Item
+        onClick={handleClick}
+        style={{
           fontSize: selected === '艺术家' ? '1.4rem' : '1.2rem',
           fontWeight: selected === '艺术家' ? 600 : 500,
         }}

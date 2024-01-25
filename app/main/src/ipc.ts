@@ -1,7 +1,7 @@
 import { dialog, type IpcMainInvokeEvent } from 'electron';
 import fs from 'fs/promises';
 import { db, logger, mainWindow } from './index';
-import { walkDir, readMusicMeta, getExt, Track } from './utils';
+import { walkDir, readMusicMeta, getExt, Track, Album } from './utils';
 import { AUDIO_EXTS } from './constant';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -72,8 +72,14 @@ export async function handleRefreshTrackList(evt: IpcMainInvokeEvent) {
   logger.debug('track file paths ' + filePaths);
   logger.debug('use new Set() to in-depulicate');
   const paths = new Set<string>(filePaths);
-  const trackList = [];
+
+  const albumList = {};
+  const trackList: Track[] = [];
+  const artistList = {};
+
   const oldTracks = db.data.tracks || [];
+  const oldArtists = db.data.artists || {};
+  const oldAlbums = db.data.albums || {};
 
   const includes = (tracks: Track[], track: Partial<Track>) => {
     for (const t of tracks) {
@@ -82,11 +88,13 @@ export async function handleRefreshTrackList(evt: IpcMainInvokeEvent) {
     return false;
   };
 
+  // tracks
   let i = 1;
   for (const p of paths) {
-    if (includes(oldTracks, { src: p })) {
+    const existed = includes(oldTracks, { src: p });
+    if (existed) {
       logger.debug('existed in tracks: ' + p);
-      trackList.push({ ...includes(oldTracks, { src: p }), index: 1 });
+      trackList.push({ ...existed, index: i });
     } else {
       logger.debug('read meta: ' + p);
       const meta = await readMusicMeta(p);
@@ -96,8 +104,46 @@ export async function handleRefreshTrackList(evt: IpcMainInvokeEvent) {
     i += 1;
   }
 
+  // albums
+
+  const albumIncludes = (albums: Record<string, number[]>, title: string) => {
+    if (albums?.[title]) return true;
+    else return false;
+  };
+  for (const track of trackList) {
+    const albumName = track?.album || 'unknown';
+    if (albumIncludes(oldAlbums, albumName)) {
+      if (!albumList[albumName]) {
+        albumList[albumName] = [];
+      }
+      albumList[albumName].push(track.index);
+    } else {
+      albumList[albumName] = [track.index];
+    }
+  }
+
+  // artists
+
+  const artistIncludes = (artists: Record<string, number[]>, name: string) => {
+    if (artists?.[name]) return true;
+    else return false;
+  };
+  for (const track of trackList) {
+    const artistName = track?.artist || 'unknown';
+    if (artistIncludes(oldArtists, artistName)) {
+      if (!artistList[artistName]) {
+        artistList[artistName] = [];
+      }
+      artistList[artistName].push(track.index);
+    } else {
+      artistList[artistName] = [track.index];
+    }
+  }
+
   logger.debug('write track list to lowdb');
   db.data.tracks = trackList;
+  db.data.albums = albumList;
+  db.data.artists = artistList;
   await db.write();
 }
 
@@ -116,10 +162,7 @@ export async function handleWriteLibraries(
 
 ////////////////////////////////////////////////////////////////////////////////
 
-export async function handleReadLibraries(
-  evt: IpcMainInvokeEvent,
-  libs: string[]
-) {
+export async function handleReadLibraries(evt: IpcMainInvokeEvent) {
   await db.read();
   return db.data.libraries;
 }
@@ -144,4 +187,12 @@ export const handleReadCoverSource = async (
 ) => {
   const meta = await readMusicMeta(filename);
   return meta.cover;
+};
+
+export const handleReadDBStore = async (
+  evt: IpcMainInvokeEvent,
+  key: string
+) => {
+  await db.read();
+  return db.data[key];
 };

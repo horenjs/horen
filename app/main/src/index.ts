@@ -13,6 +13,7 @@ import {
   handleReadAudioSource,
   handleReadLibraries,
   handleReadCoverSource,
+  handleReadDBStore,
 } from './ipc';
 import { DBDataType, initDatabase, initLogger } from './utils';
 
@@ -61,3 +62,4 @@ ipcMain.handle(CHANNELS.libraries.read, handleReadLibraries);
 
 ipcMain.handle(CHANNELS.readAudioSource, handleReadAudioSource);
 ipcMain.handle(CHANNELS.readCoverSource, handleReadCoverSource);
+ipcMain.handle(CHANNELS.readDBStore, handleReadDBStore);

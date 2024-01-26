@@ -15,13 +15,20 @@ import {
   handleReadCoverSource,
   handleReadDBStore,
 } from './ipc';
-import { DBDataType, initDatabase, initLogger } from './utils';
+import {
+  DBDataType,
+  initCacheDB,
+  initDatabase,
+  initLogger,
+  Track,
+} from './utils';
 
 import type { Low } from 'lowdb';
 import type { Logger } from 'winston';
 
 export let mainWindow: BrowserWindow = null;
 export let db: Low<DBDataType> = null;
+export let cacheDB: Low<{ tracks: Track[] }> = null;
 export let logger: Logger = null;
 
 app.whenReady().then(async () => {
@@ -29,6 +36,7 @@ app.whenReady().then(async () => {
   logger.debug('app is ready');
   logger.debug('init the database');
   db = await initDatabase();
+  cacheDB = await initCacheDB();
   logger.debug('create main window');
   mainWindow = createMainWindow();
 });

@@ -72,19 +72,33 @@ export default function PlayContext({
 
   const next = () => {
     if (currentTrack) {
-      const idx = playList.indexOf(currentTrack);
+      const idx = () => {
+        let i = 0;
+        for (const t of playList) {
+          if (t.uid === currentTrack.uid) return i;
+          i += 1;
+        }
+        return 1;
+      };
       const length = playList.length;
-      if (idx < length - 1) {
-        play(playList[idx + 1]);
+      if (idx() < length - 1) {
+        play(playList[idx() + 1]);
       }
     }
   };
 
   const prev = () => {
     if (currentTrack) {
-      const idx = playList.indexOf(currentTrack);
-      if (idx > 0) {
-        play(playList[idx - 1]);
+      const idx = () => {
+        let i = 0;
+        for (const t of playList) {
+          if (t.uid === currentTrack.uid) return i;
+          i += 1;
+        }
+        return 1;
+      };
+      if (idx() > 0) {
+        play(playList[idx() - 1]);
       }
     }
   };

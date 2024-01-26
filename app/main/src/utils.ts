@@ -199,3 +199,12 @@ export const initDatabase = async () => {
   await db.write();
   return db;
 };
+
+export const initCacheDB = async () => {
+  const db = await JSONFilePreset<{ tracks: Track[] }>(
+    path.join(APP_DATA_PATH, APP_NAME, 'cache.json'),
+    { tracks: [] }
+  );
+  await db.write();
+  return db;
+};

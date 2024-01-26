@@ -1,6 +1,6 @@
 import { dialog, type IpcMainInvokeEvent } from 'electron';
 import fs from 'fs/promises';
-import { db, logger, mainWindow } from './index';
+import { cacheDB, db, logger, mainWindow } from './index';
 import {
   walkDir,
   readMusicMeta,
@@ -64,9 +64,11 @@ export async function handleRefreshTrackList(evt: IpcMainInvokeEvent) {
   logger.debug('to fresh track list');
 
   await db.read();
+  await cacheDB.read();
+
   const libs = db.data.libraries;
   const trackPathnames = await findAllAudios(libs);
-  const trackList = await disposeTrackList(trackPathnames, db.data.tracks);
+  const trackList = await disposeTrackList(trackPathnames, cacheDB.data.tracks);
   const albumList = await disposeAlbumList(trackList);
   const artistList = await disposeArtistList(trackList);
 
@@ -102,7 +104,7 @@ const findAllAudios = async (libraries: string[]) => {
 
 const disposeTrackList = async (
   trackPathnames: string[],
-  oldTracks: Track[]
+  cacheTracks: Track[]
 ) => {
   const includes = (tracks: Track[], track: Partial<Track>) => {
     for (const t of tracks) {
@@ -115,7 +117,7 @@ const disposeTrackList = async (
   // tracks
   let i = 1;
   for (const p of trackPathnames) {
-    const existed = includes(oldTracks, { src: p });
+    const existed = includes(cacheTracks, { src: p });
     mainWindow.webContents.send(
       CHANNELS.trackList.refreshMsg,
       i,
@@ -131,6 +133,10 @@ const disposeTrackList = async (
         const meta = await readMusicMeta(p);
         meta.cover = '';
         trackList.push({ ...meta, index: i });
+
+        cacheDB.update(({ tracks }) => {
+          tracks.push({ ...meta, index: cacheTracks.length + i });
+        });
       } catch (err) {
         logger.debug('read meta err: ' + err);
       }

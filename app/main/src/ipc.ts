@@ -1,9 +1,18 @@
 import { dialog, type IpcMainInvokeEvent } from 'electron';
 import fs from 'fs/promises';
 import { db, logger, mainWindow } from './index';
-import { walkDir, readMusicMeta, getExt, Track, strToBase64 } from './utils';
-import { AUDIO_EXTS, APP_DATA_PATH, APP_NAME } from './constant';
+import {
+  walkDir,
+  readMusicMeta,
+  getExt,
+  Track,
+  strToBase64,
+  Album,
+  Artist,
+} from './utils';
+import { AUDIO_EXTS, APP_DATA_PATH, APP_NAME, CHANNELS } from './constant';
 import path from 'path';
+import defaultCover from './static/defaultCover';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -48,40 +57,53 @@ export const handleReadTrackList = async () => {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 export async function handleRefreshTrackList(evt: IpcMainInvokeEvent) {
   logger.debug('to fresh track list');
 
   await db.read();
   const libs = db.data.libraries;
-  const filePaths = [];
+  const trackPathnames = await findAllAudios(libs);
+  const trackList = await disposeTrackList(trackPathnames, db.data.tracks);
+  const albumList = await disposeAlbumList(trackList);
+  const artistList = await disposeArtistList(trackList);
 
-  for (const lib of libs) {
+  logger.debug('write track list to lowdb');
+  db.data.tracks = trackList;
+  logger.debug('write album list to lowdb');
+  db.data.albums = albumList;
+  logger.debug('write artist list to lowdb');
+  db.data.artists = artistList;
+  await db.write();
+}
+
+const findAllAudios = async (libraries: string[]) => {
+  const trackPathnames = [];
+  for (const lib of libraries) {
     logger.debug(`read files from ${lib}`);
     const files = await walkDir(lib);
 
     files.forEach((f) => {
       if (AUDIO_EXTS.includes(getExt(f))) {
         logger.debug('add track: ' + f);
-        filePaths.push(f);
+        trackPathnames.push(f);
       } else {
         logger.debug('not support audio format: ' + f);
       }
     });
   }
-
-  logger.debug('track file paths ' + filePaths);
   logger.debug('use new Set() to in-depulicate');
-  const paths = new Set<string>(filePaths);
+  const paths = Array.from(new Set<string>(trackPathnames));
+  logger.debug('track list length: ' + paths.length);
+  return paths;
+};
 
-  const albumList = {};
-  const trackList: Track[] = [];
-  const artistList = {};
-
-  const oldTracks = db.data.tracks || [];
-  const oldArtists = db.data.artists || {};
-  const oldAlbums = db.data.albums || {};
-
+const disposeTrackList = async (
+  trackPathnames: string[],
+  oldTracks: Track[]
+) => {
   const includes = (tracks: Track[], track: Partial<Track>) => {
     for (const t of tracks) {
       if (t.src === track.src) return t;
@@ -89,65 +111,101 @@ export async function handleRefreshTrackList(evt: IpcMainInvokeEvent) {
     return false;
   };
 
+  const trackList: Track[] = [];
   // tracks
   let i = 1;
-  for (const p of paths) {
+  for (const p of trackPathnames) {
     const existed = includes(oldTracks, { src: p });
+    mainWindow.webContents.send(
+      CHANNELS.trackList.refreshMsg,
+      i,
+      trackPathnames.length,
+      p
+    );
     if (existed) {
       logger.debug('existed in tracks: ' + p);
       trackList.push({ ...existed, index: i });
     } else {
       logger.debug('read meta: ' + p);
-      const meta = await readMusicMeta(p);
-      meta.cover = '';
-      trackList.push({ ...meta, index: i });
+      try {
+        const meta = await readMusicMeta(p);
+        meta.cover = '';
+        trackList.push({ ...meta, index: i });
+      } catch (err) {
+        logger.debug('read meta err: ' + err);
+      }
     }
     i += 1;
   }
+  return trackList;
+};
 
-  // albums
+// albums
+const disposeAlbumList = async (trackList: Track[]) => {
+  const platAlbums = new Map<
+    string,
+    { artist: Set<string>; tracks: Set<number> }
+  >();
 
-  const albumIncludes = (albums: Record<string, number[]>, title: string) => {
-    if (albums?.[title]) return true;
-    else return false;
-  };
   for (const track of trackList) {
-    const albumName = track?.album || 'unknown';
-    if (albumIncludes(oldAlbums, albumName)) {
-      if (!albumList[albumName]) {
-        albumList[albumName] = [];
-      }
-      albumList[albumName].push(track.index);
+    const index = track.index;
+    const album = track.album;
+    const artist = track.artist;
+
+    if (!platAlbums[album]) {
+      logger.debug('create album: ' + album);
+      platAlbums[album] = {
+        artist: new Set([artist]),
+        tracks: new Set([index]),
+      };
     } else {
-      albumList[albumName] = [track.index];
+      platAlbums[album]['tracks'].add(index);
+      platAlbums[album]['artist'].add(artist);
     }
   }
 
-  // artists
+  const albumList: Album[] = [];
+  let i = 1;
+  for (const key in platAlbums) {
+    const tracks = Array.from(platAlbums[key]['tracks']).join(',');
+    const title = key;
+    const artist = Array.from(platAlbums[key]['artist']).join(',');
+    albumList.push({ index: i, title, artist, tracks });
+    i += 1;
+  }
 
-  const artistIncludes = (artists: Record<string, number[]>, name: string) => {
-    if (artists?.[name]) return true;
-    else return false;
-  };
+  return albumList;
+};
+
+// artists
+const disposeArtistList = async (trackList: Track[]) => {
+  const artists = new Map<string, Set<number>>();
+
   for (const track of trackList) {
-    const artistName = track?.artist || 'unknown';
-    if (artistIncludes(oldArtists, artistName)) {
-      if (!artistList[artistName]) {
-        artistList[artistName] = [];
-      }
-      artistList[artistName].push(track.index);
+    const index = track.index;
+    const artist = track.artist;
+
+    if (!artists[artist]) {
+      logger.debug('create artist: ' + artist);
+      artists[artist] = new Set([index]);
     } else {
-      artistList[artistName] = [track.index];
+      artists[artist].add(index);
     }
   }
 
-  logger.debug('write track list to lowdb');
-  db.data.tracks = trackList;
-  db.data.albums = albumList;
-  db.data.artists = artistList;
-  await db.write();
-}
+  const artistList: Artist[] = [];
+  let i = 1;
+  for (const key in artists) {
+    const tracks = Array.from(artists[key]).join(',');
+    artistList.push({ index: i, name: key, tracks });
+    i += 1;
+  }
 
+  return artistList;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 export async function handleWriteLibraries(
@@ -192,12 +250,12 @@ export const handleReadCoverSource = async (
     'Cover',
     strToBase64(albumName) + '.png'
   );
-  logger.debug('cover path: ' + coverPath);
+  logger.debug('read from cover file: ' + coverPath);
   let cover: string;
   try {
     cover = await fs.readFile(coverPath, { encoding: 'base64' });
   } catch (err) {
-    cover = '';
+    cover = defaultCover;
   }
 
   return 'data:image/png;base64,' + cover;

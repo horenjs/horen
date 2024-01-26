@@ -30,7 +30,7 @@ export const createMainWindow = () => {
     logger.debug('start development');
     w.loadURL(`http://localhost:3000`).then().catch(console.error);
     // open the chrome dev tools when in development mode.
-    w.webContents.openDevTools();
+    // w.webContents.openDevTools();
   } else {
     // 生产环境应使用相对地址
     // 打包后的根目录为 app/

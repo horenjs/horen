@@ -4,10 +4,14 @@ import mm from 'music-metadata';
 import path from 'path';
 import winston from 'winston';
 import fse from 'fs-extra';
+import defaultCover from './static/defaultCover';
+import { logger } from './index';
+import { fetchAlbumCover } from './apis';
 
 import { APP_DATA_PATH, APP_NAME } from './constant';
 
 import type { IAudioMetadata } from 'music-metadata';
+import axios from 'axios';
 
 export interface Track {
   index?: number;
@@ -29,13 +33,14 @@ export interface Track {
 export type Album = {
   index: number;
   title: string;
-  tracks: number[];
+  artist: string;
+  tracks: string;
 };
 
 export type Artist = {
   index: number;
   name: string;
-  tracks: number[];
+  tracks: string;
 };
 
 /**
@@ -54,16 +59,40 @@ export async function readMusicMeta(trackSrc: string): Promise<Track> {
   let cover: string;
 
   const albumName = meta.common?.album || 'unknown';
+  const artistName = meta.common?.artist || '';
+
   const coverPath = path.join(APP_DATA_PATH, APP_NAME, 'Cover');
   await fse.ensureDir(coverPath);
   const albumPath = path.join(coverPath, strToBase64(albumName) + '.png');
 
-  try {
+  if (await fse.exists(albumPath)) {
+    logger.debug('read cover from file: ' + albumPath);
     cover = await fs.readFile(albumPath, { encoding: 'base64url' });
-  } catch (err) {
+  } else {
+    logger.debug('no cover file, read from music meta');
     const data = meta.common?.picture ? meta.common.picture[0].data : null;
-    cover = arrayBufferToBase64(data);
-    if (data) await fs.writeFile(albumPath, data);
+    if (data) {
+      logger.debug('read cover from music meta');
+      await fs.writeFile(albumPath, data);
+      cover = arrayBufferToBase64(data);
+    } else {
+      logger.debug('cannot read cover from meta, try to get cover from apis');
+      const url = await fetchAlbumCover(albumName, artistName);
+      if (typeof url !== 'string') {
+        logger.debug('cannot read from api, using default cover');
+        await fs.writeFile(albumPath, Buffer.from(defaultCover, 'base64'));
+        cover = defaultCover;
+      } else {
+        logger.debug('read from api success.');
+        const resp = await axios.get(url, { responseType: 'arraybuffer' });
+        const data = resp?.data;
+        if (data) {
+          await fse.writeFile(albumPath, data);
+        } else {
+          logger.debug('cannot save cover from url');
+        }
+      }
+    }
   }
 
   return {
@@ -152,8 +181,8 @@ export type DBDataType = {
   };
   libraries?: string[];
   tracks: Track[];
-  albums: Record<string, number[]>;
-  artists: Record<string, number[]>;
+  albums: Album[];
+  artists: Artist[];
 };
 
 export const initDatabase = async () => {
@@ -163,8 +192,8 @@ export const initDatabase = async () => {
       setting: {},
       tracks: [],
       libraries: [],
-      albums: {},
-      artists: {},
+      albums: [],
+      artists: [],
     }
   );
   await db.write();

@@ -22,6 +22,16 @@ const IPC_API: IPC = {
   refreshTrackList: async () => {
     return await ipcRenderer.invoke(CHANNELS.trackList.refresh);
   },
+  refreshTrackListMsg: async (
+    listener: (
+      evt: Electron.IpcRendererEvent,
+      current: number,
+      total: number,
+      msg: string
+    ) => void
+  ) => {
+    ipcRenderer.on(CHANNELS.trackList.refreshMsg, listener);
+  },
   readLibraries: async () => {
     return await ipcRenderer.invoke(CHANNELS.libraries.read);
   },

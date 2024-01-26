@@ -7,6 +7,7 @@ import {
   readSetting,
   refreshTrackList,
   readLibraries,
+  refreshTrackListMsg,
 } from '../api';
 import Page, { PageProps } from './_page';
 
@@ -22,6 +23,14 @@ const SettingItem = styled.div`
     display: flex;
     align-items: center;
     justify-content: right;
+  }
+  .refresh-msg {
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+    max-width: 100%;
+    overflow: hidden;
+    color: #fff;
+    font-weight: 300;
   }
 `;
 
@@ -53,6 +62,7 @@ export default function Setting(props: SettingPageProps) {
   const { visible } = props;
   const [libraries, setLibraries] = useState<any[]>([]);
   const [language, setLanguage] = useState<string>('en');
+  const [refreshMsg, setFreshMsg] = useState<string>('');
 
   const handleAdd = () => {
     openDialog().then((res: any) => {
@@ -86,6 +96,13 @@ export default function Setting(props: SettingPageProps) {
 
   useEffect(() => {
     readSetting('language').then((value) => setLanguage(value));
+
+    refreshTrackListMsg((evt, current, total, msg) => {
+      console.log(current, total, msg);
+      const m = current === total ? '' : `[${current}/${total}] ${msg}`;
+      setFreshMsg(m);
+    });
+
     readLibraries().then((libs) => {
       if (libs instanceof Array) setLibraries(libs);
     });
@@ -95,6 +112,7 @@ export default function Setting(props: SettingPageProps) {
     <Page visible={visible}>
       <SETTING style={{ display: visible ? 'block' : 'none' }}>
         <Item label="libraries">
+          <div className="refresh-msg">{refreshMsg}</div>
           <Libraries>
             {libraries?.map((lib) => (
               <div key={lib}>

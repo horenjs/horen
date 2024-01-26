@@ -22,6 +22,7 @@ export const CHANNELS = {
     refresh: 'track-list-refresh',
     read: 'track-list-read',
     write: 'track-list-write',
+    refreshMsg: 'track-list-refresh-msg',
   },
   libraries: {
     write: 'libraries-write',

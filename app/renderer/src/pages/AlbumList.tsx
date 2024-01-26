@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Page, { PageProps } from './_page';
 import styled from 'styled-components';
 import { Track, readDBStore, readCoverSource } from '../api';
-import { FaPlay } from 'react-icons/fa6';
 
 const ALBUM = styled.ul`
   margin: 0;
@@ -15,31 +14,38 @@ const ALBUM = styled.ul`
 export type AlbumListPageProps = {} & PageProps;
 
 export type Album = {
+  index: string;
   title: string;
+  artist: string;
   tracks: Track[];
+};
+
+export type OriginAlbum = {
+  index: string;
+  title: string;
+  artist: string;
+  tracks: string;
 };
 
 export function AlbumListPage({ visible }: AlbumListPageProps) {
   const [albumList, setAlbumList] = useState<Album[]>([]);
-  const [trackList, setTrackList] = useState([]);
+  const [trackList, setTrackList] = useState<Track[]>([]);
 
   useEffect(() => {
     (async () => {
       const tracks = await readDBStore('tracks');
-      const albums = await readDBStore('albums');
-      setTrackList(tracks);
-      const als = [];
-      for (const album in albums) {
-        const a = {
-          title: '',
-          artist: '',
-          tracks: [],
+      const albums: OriginAlbum[] = await readDBStore('albums');
+      const finals = albums.map((album) => {
+        return {
+          index: album.index,
+          title: album.title,
+          artist: album.artist,
+          tracks: album.tracks
+            .split(',')
+            .map((trackIndex) => tracks[Number(trackIndex)]),
         };
-        a.title = album;
-        a.tracks = albums[album].map((i: number) => tracks[i]);
-        als.push(a);
-      }
-      setAlbumList(als);
+      });
+      setAlbumList(finals);
     })();
   }, []);
 
@@ -49,9 +55,9 @@ export function AlbumListPage({ visible }: AlbumListPageProps) {
         {albumList?.map((album) => {
           return (
             <AlbumItem
-              key={album.title}
+              key={album.index + album.title}
               albumName={album.title}
-              artistName=""
+              artistName={album.artist}
             />
           );
         })}
@@ -92,7 +98,13 @@ export type AlbumItemProps = {
   isAdd?: (track: Track) => boolean;
 };
 
-function AlbumItem({ albumName, onPlay, onAdd, isAdd }: AlbumItemProps) {
+function AlbumItem({
+  albumName,
+  artistName,
+  onPlay,
+  onAdd,
+  isAdd,
+}: AlbumItemProps) {
   const [cover, setCover] = useState('');
 
   const handlePlay = () => {};
@@ -109,6 +121,7 @@ function AlbumItem({ albumName, onPlay, onAdd, isAdd }: AlbumItemProps) {
     <Item key={albumName}>
       <img src={cover} alt={albumName} />
       <div className="title">{albumName}</div>
+      <div className="title">{artistName}</div>
     </Item>
   );
 }

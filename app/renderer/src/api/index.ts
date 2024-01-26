@@ -7,6 +7,14 @@ declare global {
       openDialog: () => Promise<any>;
       readTrackList: () => Promise<Track[]>;
       refreshTrackList: () => Promise<void>;
+      refreshTrackListMsg: (
+        listener: (
+          evt: any,
+          current: number,
+          total: number,
+          msg: string
+        ) => void
+      ) => void;
       readLibraries: () => Promise<string[]>;
       writeLibraries: (libs: string[]) => Promise<void>;
       readAudioSource: (filepath: string) => Promise<string>;
@@ -40,6 +48,7 @@ export const {
   openDialog,
   readTrackList,
   refreshTrackList,
+  refreshTrackListMsg,
   readLibraries,
   writeLibraries,
   readAudioSource,

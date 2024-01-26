@@ -1,8 +1,9 @@
 import { dialog, type IpcMainInvokeEvent } from 'electron';
 import fs from 'fs/promises';
 import { db, logger, mainWindow } from './index';
-import { walkDir, readMusicMeta, getExt, Track, Album } from './utils';
-import { AUDIO_EXTS } from './constant';
+import { walkDir, readMusicMeta, getExt, Track, strToBase64 } from './utils';
+import { AUDIO_EXTS, APP_DATA_PATH, APP_NAME } from './constant';
+import path from 'path';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -183,10 +184,23 @@ export const handleReadAudioSource = async (
 
 export const handleReadCoverSource = async (
   evt: IpcMainInvokeEvent,
-  filename: string
+  albumName: string
 ) => {
-  const meta = await readMusicMeta(filename);
-  return meta.cover;
+  const coverPath = path.join(
+    APP_DATA_PATH,
+    APP_NAME,
+    'Cover',
+    strToBase64(albumName) + '.png'
+  );
+  logger.debug('cover path: ' + coverPath);
+  let cover: string;
+  try {
+    cover = await fs.readFile(coverPath, { encoding: 'base64' });
+  } catch (err) {
+    cover = '';
+  }
+
+  return 'data:image/png;base64,' + cover;
 };
 
 export const handleReadDBStore = async (

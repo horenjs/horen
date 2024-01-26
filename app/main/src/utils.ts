@@ -3,10 +3,12 @@ import { JSONFilePreset } from 'lowdb/node';
 import mm from 'music-metadata';
 import path from 'path';
 import winston from 'winston';
+import fse from 'fs-extra';
 
 import { APP_DATA_PATH, APP_NAME } from './constant';
 
 import type { IAudioMetadata } from 'music-metadata';
+
 export interface Track {
   index?: number;
   uid: string;
@@ -49,9 +51,20 @@ export async function readMusicMeta(trackSrc: string): Promise<Track> {
   meta = await mm.parseBuffer(buffer);
   if (!meta) return;
 
-  const pictureBuffer = meta.common?.picture
-    ? meta.common.picture[0].data
-    : null;
+  let cover: string;
+
+  const albumName = meta.common?.album || 'unknown';
+  const coverPath = path.join(APP_DATA_PATH, APP_NAME, 'Cover');
+  await fse.ensureDir(coverPath);
+  const albumPath = path.join(coverPath, strToBase64(albumName) + '.png');
+
+  try {
+    cover = await fs.readFile(albumPath, { encoding: 'base64url' });
+  } catch (err) {
+    const data = meta.common?.picture ? meta.common.picture[0].data : null;
+    cover = arrayBufferToBase64(data);
+    if (data) await fs.writeFile(albumPath, data);
+  }
 
   return {
     uid: strToBase64(trackSrc),
@@ -68,7 +81,7 @@ export async function readMusicMeta(trackSrc: string): Promise<Track> {
     duration: meta?.format?.duration,
     date: String(meta?.common?.date),
     genre: String(meta?.common?.genre),
-    cover: 'data:image/png;base64,' + arrayBufferToBase64(pictureBuffer),
+    cover: 'data:image/png;base64,' + cover,
     //
   };
 }
@@ -88,12 +101,12 @@ function arrayBufferToBase64(u8Arr: Buffer | null) {
   return btoa(result);
 }
 
-const strToBase64 = (str: string) => {
+export const strToBase64 = (str: string) => {
   const buf = Buffer.from(str, 'utf-8');
   return buf.toString('base64url');
 };
 
-const base64toStr = (base64str: string) => {
+export const base64toStr = (base64str: string) => {
   const buf = Buffer.from(base64str, 'base64url');
   return buf.toString('utf-8');
 };

@@ -32,6 +32,7 @@ export function AlbumListPage({ visible }: AlbumListPageProps) {
       for (const album in albums) {
         const a = {
           title: '',
+          artist: '',
           tracks: [],
         };
         a.title = album;
@@ -46,7 +47,13 @@ export function AlbumListPage({ visible }: AlbumListPageProps) {
     <Page visible={visible}>
       <ALBUM>
         {albumList?.map((album) => {
-          return <TrackItem key={album.title} track={album.tracks[0]} />;
+          return (
+            <AlbumItem
+              key={album.title}
+              albumName={album.title}
+              artistName=""
+            />
+          );
         })}
       </ALBUM>
     </Page>
@@ -77,46 +84,31 @@ const Item = styled.li`
   }
 `;
 
-export type TrackItemProps = {
-  index?: number;
-  track: Track;
-  playing?: boolean;
+export type AlbumItemProps = {
+  albumName: string;
+  artistName: string;
   onPlay?: (track: Track) => void;
   onAdd?: (track: Track) => void;
   isAdd?: (track: Track) => boolean;
 };
 
-function TrackItem({ track, onPlay, onAdd, isAdd }: TrackItemProps) {
+function AlbumItem({ albumName, onPlay, onAdd, isAdd }: AlbumItemProps) {
   const [cover, setCover] = useState('');
 
-  const handlePlay = () => {
-    if (onPlay && track) onPlay(track);
-  };
+  const handlePlay = () => {};
 
-  const handleAdd = () => {
-    if (onAdd && track) onAdd(track);
-  };
+  const handleAdd = () => {};
 
   useEffect(() => {
-    if (track?.src) {
-      readCoverSource(track?.src).then((source) => {
-        setCover(source);
-      });
-    }
-  }, [track]);
+    readCoverSource(albumName).then((source) => {
+      setCover(source);
+    });
+  }, [albumName]);
 
   return (
-    <Item key={track?.src}>
-      <img src={cover} alt={track?.title} />
-      <div className="title">{track?.title}</div>
-      <div className="artist">{track?.artist}</div>
-      <div className="duration">{track?.duration?.toFixed(2)}</div>
-      <button onClick={handlePlay}>
-        <FaPlay />
-      </button>
-      {isAdd && track && !isAdd(track) && (
-        <button onClick={handleAdd}>Add</button>
-      )}
+    <Item key={albumName}>
+      <img src={cover} alt={albumName} />
+      <div className="title">{albumName}</div>
     </Item>
   );
 }

@@ -23,6 +23,7 @@
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-typescript": "^11.0.0",
+    "@types/fs-extra": "^11.0.4",
     "@types/node": "^18.15.11",
     "cross-env": "^7.0.3",
     "electron": "latest",
@@ -32,6 +33,7 @@
     "winston": "^3.11.0"
   },
   "dependencies": {
+    "fs-extra": "^11.2.0",
     "lowdb": "^7.0.1"
   }
 }

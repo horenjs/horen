@@ -26,17 +26,22 @@ export let logger: Logger = null;
 
 app.whenReady().then(async () => {
   logger = initLogger();
+  logger.debug('app is ready');
+  logger.debug('init the database');
   db = await initDatabase();
+  logger.debug('create main window');
   mainWindow = createMainWindow();
 });
 
 app.on('activate', () => {
+  logger.debug('app is activate');
   if (BrowserWindow.getAllWindows().length === 0) {
     createMainWindow();
   }
 });
 
 app.on('window-all-closed', () => {
+  logger.debug('window all closed');
   if (process.platform !== 'darwin') {
     app.quit();
   }

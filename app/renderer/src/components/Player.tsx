@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { default as PlayerBar } from './PlayBar';
+import PlayerBar from './PlayBar';
 import { HorenContext } from '../App';
 import { readCoverSource } from '../api';
 

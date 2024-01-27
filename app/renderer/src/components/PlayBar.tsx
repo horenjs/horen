@@ -123,7 +123,7 @@ export type PlayBarProps = {
   visible?: boolean;
 };
 
-export default function PlayBar(props: PlayBarProps) {
+function PlayBar(props: PlayBarProps) {
   const { onExpand, visible = true } = props;
   const [seek, setSeek] = useState(0);
   const [cover, setCover] = useState('');
@@ -134,7 +134,9 @@ export default function PlayBar(props: PlayBarProps) {
     if (onExpand) onExpand();
   };
 
-  const handlePlay = () => {};
+  const handlePlay = () => {
+    player.isPlaying ? player.pause() : player.play();
+  };
 
   const hanleChangeSeek = (per: number) => {
     setSeek(per * duration);
@@ -148,7 +150,7 @@ export default function PlayBar(props: PlayBarProps) {
       if (player.native) {
         setSeek(player.native?.seek);
       }
-    }, 1000);
+    }, 500);
     return () => clearInterval(timer);
   }, [player.native?.seek]);
 
@@ -215,3 +217,7 @@ export default function PlayBar(props: PlayBarProps) {
     </PLAYBAR>
   );
 }
+
+const Final = React.memo(PlayBar);
+
+export default Final;

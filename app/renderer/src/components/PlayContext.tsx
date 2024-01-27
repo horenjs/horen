@@ -1,4 +1,4 @@
-import React, { useState, createContext } from 'react';
+import React, { useState, createContext, useEffect, useRef } from 'react';
 import { HowlPlayer, PlayerOrder } from '../utils';
 import { Track, readAudioSource, readCoverSource } from '../api';
 
@@ -6,7 +6,7 @@ interface IHorenContext {
   player: {
     add: (track: Track) => void;
     remove: (track: Track) => void;
-    play: (track: Track) => void;
+    play: (track?: Track) => void;
     pause: () => void;
     next: () => void;
     prev: () => void;
@@ -51,28 +51,47 @@ export default function PlayContext({
 }: {
   children: React.ReactNode;
 }) {
+  const currentTrackRef = useRef<Track | null>(null);
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [playList, setPlayList] = useState<Track[]>([]);
   const [trackList, setTrackList] = useState<Track[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const play = (track: Track) => {
-    if (currentTrack && track.uid === currentTrack.uid) {
+  const play = (track?: Track) => {
+    if (!track || (currentTrack && track.uid === currentTrack.uid)) {
       player.playOrPause();
     } else {
       readAudioSource(track.src).then((res) => {
         readCoverSource(track.album || '', track.artist || '').then((cover) => {
-          player.currentTrack = { ...track, src: res, cover };
-          setCurrentTrack({ ...track, src: res, cover });
+          player.currentTrack = { ...track, source: res, cover };
+          currentTrackRef.current = { ...track, source: res, cover };
+          setCurrentTrack({ ...track, source: res, cover });
         });
       });
 
-      if (!includes(playList, track)) {
-        setPlayList((prev) => [...prev, track]);
-      }
+      disPosePlaylist(track);
     }
-
     setIsPlaying(true);
+  };
+
+  const disPosePlaylist = (track: Track) => {
+    if (!includes(playList, track)) {
+      (async () => {
+        const audioSource = await readAudioSource(track.src);
+        const coverSource = await readCoverSource(
+          track?.album || '',
+          track.artist
+        );
+        player.trackList = [
+          ...player.trackList,
+          { ...track, source: audioSource, cover: coverSource },
+        ];
+        setPlayList((prev) => [
+          ...prev,
+          { ...track, source: audioSource, cover: coverSource },
+        ]);
+      })();
+    }
   };
 
   const pause = () => {
@@ -81,7 +100,7 @@ export default function PlayContext({
   };
 
   const add = (track: Track) => {
-    if (!includes(playList, track)) setPlayList((prev) => [...prev, track]);
+    disPosePlaylist(track);
   };
 
   const remove = (track: Track) => {
@@ -89,41 +108,29 @@ export default function PlayContext({
   };
 
   const next = () => {
-    if (currentTrack) {
-      const idx = () => {
-        let i = 0;
-        for (const t of playList) {
-          if (t.uid === currentTrack.uid) return i;
-          i += 1;
-        }
-        return 1;
-      };
-      const length = playList.length;
-      if (idx() < length - 1) {
-        play(playList[idx() + 1]);
-      }
-    }
+    player.skip('next');
   };
 
   const prev = () => {
-    if (currentTrack) {
-      const idx = () => {
-        let i = 0;
-        for (const t of playList) {
-          if (t.uid === currentTrack.uid) return i;
-          i += 1;
-        }
-        return 1;
-      };
-      if (idx() > 0) {
-        play(playList[idx() - 1]);
-      }
-    }
+    player.skip('prev');
   };
 
   const isAdd = (track: Track) => {
     return includes(playList, track);
   };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (player.currentTrack?.uid !== currentTrackRef.current?.uid) {
+        console.log('track changed');
+        setCurrentTrack((prev) => {
+          return { ...prev, ...player.currentTrack };
+        });
+        currentTrackRef.current = player.currentTrack;
+      }
+    }, 500);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <HorenContext.Provider

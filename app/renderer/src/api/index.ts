@@ -37,6 +37,7 @@ export interface Track {
   updateAt?: string;
   modifiedAt?: string;
   src: string;
+  source: string;
   title?: string;
   artist?: string;
   artists?: string;

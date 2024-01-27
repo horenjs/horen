@@ -9,7 +9,8 @@ if (typeof window === 'undefined')
   );
 
 export interface HowlTrack {
-  src: string;
+  source: string;
+  uid: string;
 }
 
 export type PlayerOrder = 'order' | 'repeat' | 'loop' | 'shuffle';
@@ -70,7 +71,7 @@ export default class HowlPlayer<T extends HowlTrack> {
   /**
    * play mode
    */
-  protected _mode: PlayerOrder = 'repeat';
+  protected _mode: PlayerOrder = 'order';
   /**
    * auto play
    */
@@ -78,20 +79,17 @@ export default class HowlPlayer<T extends HowlTrack> {
 
   public set trackList(list: T[]) {
     // 歌曲不允许重复
-    this._trackList = list.reduce((prev, curr) => {
-      if (prev.length === 0) return [curr];
-      // 深比较是否相等
-      // 防止切换路由后 Track 对象重新生成
-      else return includesDeep(prev, curr) ? prev : [...prev, curr];
-    }, [] as T[]);
+    this._trackList = list;
 
     // 如果没有播放器则重新生成一个
-    if (!this._howler) {
+    /**
+     * if (!this._howler) {
       if (this._trackList[0]) {
-        this._playAudioSource(this._trackList[0]?.src);
+        this._playAudioSource(this._trackList[0]?.source);
         this._currentTrack = this._trackList[0];
       }
     }
+     */
   }
 
   /**
@@ -127,7 +125,7 @@ export default class HowlPlayer<T extends HowlTrack> {
    */
   public set currentTrack(track: T) {
     this._currentTrack = track;
-    if (track.src) this._playAudioSource(track.src);
+    if (track.source) this._playAudioSource(track.source);
   }
 
   /**
@@ -237,9 +235,17 @@ export default class HowlPlayer<T extends HowlTrack> {
   public skip(order: 'prev' | 'next') {
     if (!this.currentTrack || !this.trackList.length) return;
 
-    const index = this.trackList.indexOf(this.currentTrack);
+    const index = () => {
+      let i = 0;
+      for (const track of this._trackList) {
+        if (track.uid === this.currentTrack.uid) return i;
+        i += 1;
+      }
 
-    this._skipTo(order, index, this.trackList.length);
+      return 0;
+    };
+
+    this._skipTo(order, index(), this.trackList.length);
   }
 
   protected _skipTo(order: 'prev' | 'next', index: number, length: number) {
@@ -318,11 +324,6 @@ export default class HowlPlayer<T extends HowlTrack> {
   }
 }
 
-function includesDeep(arr: any[], obj: object) {
-  const filtered = arr.filter((value) => _.isEqual(value, obj));
-  return filtered.length > 0;
-}
-
 export class SinglePlayer<T extends HowlTrack> {
   protected _track?: T;
   protected _source?: string;
@@ -352,6 +353,6 @@ export class SinglePlayer<T extends HowlTrack> {
   }
 
   play(track: T) {
-    this._playAudioSource(track.src);
+    this._playAudioSource(track.source);
   }
 }

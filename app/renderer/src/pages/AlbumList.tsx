@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Page, { PageProps } from './_page';
 import styled from 'styled-components';
-import { Track, readDBStore, readCoverSource } from '../api';
+import { Track, readDBStore, readCoverSource, fetchCoverFromApi } from '../api';
+import { IoMdRefresh } from 'react-icons/io';
 
 const ALBUM = styled.ul`
   margin: 0;
@@ -80,9 +81,11 @@ const Item = styled.li`
     padding: 0 4px;
     font-size: 0.9rem;
     color: #f1f1f1;
-    max-width: 100%;
+    width: 100%;
     height: 20px;
     overflow: hidden;
+    display: flex;
+    align-items: center;
   }
   .artistName {
     padding: 0 4px;
@@ -92,6 +95,21 @@ const Item = styled.li`
     font-size: 0.8rem;
     font-weight: 300;
     color: #969696;
+  }
+  .cover {
+    position: relative;
+    &:hover {
+      .refresh {
+        visibility: visible;
+      }
+    }
+  }
+  .refresh {
+    position: absolute;
+    left: 4px;
+    bottom: 8px;
+    color: #8b8b8b;
+    visibility: hidden;
   }
 `;
 
@@ -116,6 +134,13 @@ function AlbumItem({
 
   const handleAdd = () => {};
 
+  const handleFresh = async () => {
+    if (window.confirm('从网络获取专辑封面?')) {
+      await fetchCoverFromApi(albumName, artistName);
+      readCoverSource(albumName, artistName).then(setCover);
+    }
+  };
+
   useEffect(() => {
     readCoverSource(albumName, artistName).then((source) => {
       setCover(source);
@@ -124,8 +149,13 @@ function AlbumItem({
 
   return (
     <Item key={albumName}>
-      <img src={cover} alt={albumName} />
-      <div className="albumName">{albumName}</div>
+      <div className="cover">
+        <img src={cover} alt={albumName} />
+        <span onClick={handleFresh} className="refresh">
+          <IoMdRefresh />
+        </span>
+      </div>
+      <div className="albumName single-line">{albumName}</div>
       <div className="artistName">{artistName}</div>
     </Item>
   );

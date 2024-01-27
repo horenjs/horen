@@ -59,10 +59,14 @@ export async function readMusicMeta(trackSrc: string): Promise<Track> {
   let cover: string;
 
   const albumName = meta.common?.album || 'unknown';
+  const artistName = meta.common?.artist || 'unknown';
 
   const coverPath = path.join(APP_DATA_PATH, APP_NAME, 'Cover');
   await fse.ensureDir(coverPath);
-  const albumPath = path.join(coverPath, strToBase64(albumName) + '.png');
+  const albumPath = path.join(
+    coverPath,
+    strToBase64(albumName + artistName) + '.png'
+  );
 
   if (await fse.exists(albumPath)) {
     logger.debug('read cover from file: ' + albumPath);
@@ -195,13 +199,13 @@ export const initCacheDB = async () => {
 
 export const fetchCoverAndSave = async (
   albumName: string,
-  artistName?: string
+  artistName: string
 ) => {
   const coverPath = path.join(
     APP_DATA_PATH,
     APP_NAME,
     'Cover',
-    strToBase64(albumName) + '.png'
+    strToBase64(albumName + artistName) + '.png'
   );
 
   const url = await fetchAlbumCover(albumName, artistName);

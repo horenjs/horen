@@ -22,6 +22,10 @@ declare global {
         albumName: string,
         artistName?: string
       ) => Promise<string>;
+      fetchCoverFromApi: (
+        albumName: string,
+        artistName?: string
+      ) => Promise<void>;
       readDBStore: (key: string) => Promise<any>;
     };
   }
@@ -56,5 +60,6 @@ export const {
   writeLibraries,
   readAudioSource,
   readCoverSource,
+  fetchCoverFromApi,
   readDBStore,
 } = window?.ipc;

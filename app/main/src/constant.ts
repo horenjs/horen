@@ -30,6 +30,7 @@ export const CHANNELS = {
   },
   readAudioSource: 'read-audio-source',
   readCoverSource: 'read-cover-source',
+  fetchCoverFromApi: 'fetch-cover-from-api',
   readDBStore: 'read-db-store',
   readLyricSource: 'read-lyric-source',
 };

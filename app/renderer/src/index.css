@@ -33,3 +33,10 @@ code {
   border-radius: 10px;
   background: #4b4949;
 }
+
+.single-line {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
+  white-space: nowrap;
+}

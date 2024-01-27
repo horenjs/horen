@@ -48,6 +48,13 @@ const IPC_API: IPC = {
       artistName
     );
   },
+  fetchCoverFromApi: async (albumName: string, artistName: string) => {
+    return await ipcRenderer.invoke(
+      CHANNELS.fetchCoverFromApi,
+      albumName,
+      artistName
+    );
+  },
   readDBStore: async (key: string) => {
     return await ipcRenderer.invoke(CHANNELS.readDBStore, key);
   },

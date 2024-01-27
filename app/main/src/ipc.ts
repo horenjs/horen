@@ -9,13 +9,11 @@ import {
   strToBase64,
   Album,
   Artist,
-  arrayBufferToBase64,
+  fetchCoverAndSave,
 } from './utils';
 import { AUDIO_EXTS, APP_DATA_PATH, APP_NAME, CHANNELS } from './constant';
 import path from 'path';
 import defaultCover from './static/defaultCover';
-import { fetchAlbumCover } from './apis';
-import axios from 'axios';
 import fse from 'fs-extra';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -259,7 +257,7 @@ export const handleReadCoverSource = async (
     APP_DATA_PATH,
     APP_NAME,
     'Cover',
-    strToBase64(albumName) + '.png'
+    strToBase64(albumName + artistName) + '.png'
   );
   let cover = defaultCover;
   if (await fse.exists(coverPath)) {
@@ -283,4 +281,14 @@ export const handleReadDBStore = async (
 ) => {
   await db.read();
   return db.data[key];
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+export const handleFetchCoverFromApi = async (
+  evt: IpcMainInvokeEvent,
+  albumName: string,
+  artist: string
+) => {
+  await fetchCoverAndSave(albumName, artist);
 };

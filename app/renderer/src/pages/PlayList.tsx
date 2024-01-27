@@ -1,10 +1,13 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { FaPause, FaPlay } from 'react-icons/fa';
+import { GrLinkTop } from 'react-icons/gr';
+import { IoCloseSharp } from 'react-icons/io5';
 import styled from 'styled-components';
+
+import { Track, readCoverSource } from '../api';
 import { HorenContext } from '../App';
-import { Track } from '../api';
-import Page, { PageProps } from './_page';
-import { CiPlay1, CiPause1 } from 'react-icons/ci';
 import { normalizeDuration } from '../utils';
+import Page, { PageProps } from './_page';
 
 const PLAYING = styled.div`
   .song {
@@ -45,6 +48,7 @@ const PLAYING = styled.div`
     color: #d4d4d4;
   }
   .trackTitle {
+    max-height: 80px;
     padding: 8px 12px;
     display: flex;
     align-items: center;
@@ -58,9 +62,51 @@ const PLAYING = styled.div`
       font-weight: 300;
     }
   }
+  .cover-thumbnail {
+    height: 44px;
+    width: 44px;
+    margin-right: 12px;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  .to-top {
+    visibility: hidden;
+    margin-right: 24px;
+    display: flex;
+    align-items: center;
+  }
   .play-or-pause {
-    margin-right: 32px;
+    visibility: hidden;
+    margin-right: 16px;
     user-select: none;
+    span {
+      display: flex;
+      align-items: center;
+    }
+  }
+  .delete {
+    visibility: hidden;
+    user-select: none;
+    margin-right: 32px;
+    display: flex;
+    align-items: center;
+    color: #c50d0d;
+  }
+  .play-list-item {
+    &:hover {
+      .to-top {
+        visibility: visible;
+      }
+      .play-or-pause {
+        visibility: visible;
+      }
+      .delete {
+        visibility: visible;
+      }
+    }
   }
 `;
 
@@ -76,6 +122,10 @@ export default function PlayList(props: PlayListPageProps) {
 
   const handlePause = () => {
     player.pause();
+  };
+
+  const handleDel = (track: Track) => {
+    player.remove(track);
   };
 
   return (
@@ -95,6 +145,7 @@ export default function PlayList(props: PlayListPageProps) {
                 track={track}
                 onPlay={handlePlay}
                 onPause={handlePause}
+                onDel={handleDel}
                 isPlaying={
                   player.isPlaying && player.currentTrack?.uid === track.uid
                 }
@@ -112,13 +163,17 @@ export function PlayListItem({
   track,
   onPlay,
   onPause,
+  onDel,
   isPlaying,
 }: {
   track: Track;
   onPlay: (track: Track) => void;
   onPause: () => void;
+  onDel: (track: Track) => void;
   isPlaying: boolean;
 }) {
+  const [cover, setCover] = useState('');
+
   const handlePlay = () => {
     if (onPlay) onPlay(track);
   };
@@ -127,24 +182,41 @@ export function PlayListItem({
     if (onPause) onPause();
   };
 
+  const handleDel = (track: Track) => {
+    if (onDel) onDel(track);
+  };
+
+  useEffect(() => {
+    readCoverSource(track.album || '', track.artist).then(setCover);
+  }, []);
+
   return (
-    <tr>
+    <tr className="play-list-item">
       <td>
         <div className="trackTitle">
+          <div className="cover-thumbnail">
+            <img src={cover} alt={track.title} />
+          </div>
           <div style={{ flexGrow: 1 }}>
             <div className="trackTitle-title">{track.title}</div>
             <div className="trackTitle-artist">{track.artist}</div>
           </div>
+          <div className="to-top">
+            <GrLinkTop />
+          </div>
           <div className="play-or-pause">
             {isPlaying ? (
               <span onClick={handlePause}>
-                <CiPause1 />
+                <FaPause size={16} />
               </span>
             ) : (
               <span onClick={handlePlay}>
-                <CiPlay1 />
+                <FaPlay size={16} />
               </span>
             )}
+          </div>
+          <div className="delete" onClick={() => handleDel(track)}>
+            <IoCloseSharp size={22} />
           </div>
         </div>
       </td>

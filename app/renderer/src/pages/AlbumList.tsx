@@ -67,26 +67,31 @@ export function AlbumListPage({ visible }: AlbumListPageProps) {
 }
 
 const Item = styled.li`
-  background-color: #999;
-  height: 240px;
+  height: 188px;
   margin: 8px;
   list-style: none;
   img {
     width: 100%;
-    max-height: 132px;
+    height: 132px;
+    margin-bottom: 4px;
+    object-fit: cover;
   }
-  .title {
+  .albumName {
+    padding: 0 4px;
+    font-size: 0.9rem;
+    color: #f1f1f1;
     max-width: 100%;
     height: 20px;
     overflow: hidden;
   }
-  .artist {
-    max-width: 100%;
-    height: 20px;
+  .artistName {
+    padding: 0 4px;
+    margin-top: 4px;
+    height: 18px;
     overflow: hidden;
-  }
-  .duration {
-    max-width: 100%;
+    font-size: 0.8rem;
+    font-weight: 300;
+    color: #969696;
   }
 `;
 
@@ -120,8 +125,8 @@ function AlbumItem({
   return (
     <Item key={albumName}>
       <img src={cover} alt={albumName} />
-      <div className="title">{albumName}</div>
-      <div className="title">{artistName}</div>
+      <div className="albumName">{albumName}</div>
+      <div className="artistName">{artistName}</div>
     </Item>
   );
 }

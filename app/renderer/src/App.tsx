@@ -24,6 +24,7 @@ const Top = styled.div`
 
 const Main = styled.div`
   height: calc(100vh - 72px - 64px);
+  padding-right: 8px;
   margin-top: 72px;
   width: 100%;
   background-color: #333;
@@ -36,9 +37,10 @@ const Bottom = styled.div`
 `;
 
 const Page = styled.div`
-  padding: 8px 8px 8px 48px;
-  height: calc(100vh - 136px);
+  padding: 8px 16px 8px 48px;
+  height: calc(100vh - 140px);
   width: 100%;
+  overflow-y: auto;
 `;
 
 export type PageName = 'playing' | 'setting';
@@ -61,7 +63,9 @@ export default function App() {
           <Menu onClick={(value) => setPage(value)} />
         </Top>
         <Main className="app-main">
-          <Page className="page-container">{pages[page]}</Page>
+          <Page className="page-container perfect-scrollbar">
+            {pages[page]}
+          </Page>
         </Main>
         <Bottom className="app-bottom">
           <Player />

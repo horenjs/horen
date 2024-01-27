@@ -111,7 +111,7 @@ export default function Setting(props: SettingPageProps) {
   return (
     <Page visible={visible}>
       <SETTING style={{ display: visible ? 'block' : 'none' }}>
-        <Item label="libraries">
+        <Item label="曲  库">
           <div className="refresh-msg">{refreshMsg}</div>
           <Libraries>
             {libraries?.map((lib) => (
@@ -126,7 +126,7 @@ export default function Setting(props: SettingPageProps) {
           <button onClick={handleAdd}>Add Path to Libraries</button>
           <button onClick={handleRefresh}>Refresh Track List</button>
         </Item>
-        <Item label="Language">
+        <Item label="语  言">
           <select value={language} onChange={handleChangeLang}>
             <option value="cn">Chinese</option>
             <option value="en">English</option>

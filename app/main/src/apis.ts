@@ -2,8 +2,9 @@ import axios from 'axios';
 
 export const fetchAlbumCover = async (
   albumName: string,
-  artistName: string
+  artistName: string = null
 ) => {
+  await sleep(1000);
   const data = {
     s: albumName + ' ' + artistName,
     type: 10,
@@ -18,13 +19,18 @@ export const fetchAlbumCover = async (
       const albums = res.data.result?.albums;
       if (albums.length > 0) {
         for (const album of albums) {
-          if (album?.artist?.name === artistName) {
+          if (artistName && album?.artist?.name === artistName) {
             return album.picUrl;
           }
         }
+        return albums[0].picUrl;
       }
     }
   } catch (err) {
     return null;
   }
 };
+
+function sleep(time = 1000) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}

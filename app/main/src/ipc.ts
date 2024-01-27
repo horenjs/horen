@@ -9,10 +9,14 @@ import {
   strToBase64,
   Album,
   Artist,
+  arrayBufferToBase64,
 } from './utils';
 import { AUDIO_EXTS, APP_DATA_PATH, APP_NAME, CHANNELS } from './constant';
 import path from 'path';
 import defaultCover from './static/defaultCover';
+import { fetchAlbumCover } from './apis';
+import axios from 'axios';
+import fse from 'fs-extra';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -248,7 +252,8 @@ export const handleReadAudioSource = async (
 
 export const handleReadCoverSource = async (
   evt: IpcMainInvokeEvent,
-  albumName: string
+  albumName: string,
+  artistName: string
 ) => {
   const coverPath = path.join(
     APP_DATA_PATH,
@@ -256,14 +261,13 @@ export const handleReadCoverSource = async (
     'Cover',
     strToBase64(albumName) + '.png'
   );
-  logger.debug('read from cover file: ' + coverPath);
-  let cover: string;
-  try {
+  let cover = defaultCover;
+  if (await fse.exists(coverPath)) {
     cover = await fs.readFile(coverPath, { encoding: 'base64' });
-  } catch (err) {
-    cover = defaultCover;
+    logger.debug('read from cover file success: ' + coverPath);
+  } else {
+    logger.debug('there is no local cover, using default');
   }
-
   return 'data:image/png;base64,' + cover;
 };
 

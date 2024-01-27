@@ -59,7 +59,6 @@ export async function readMusicMeta(trackSrc: string): Promise<Track> {
   let cover: string;
 
   const albumName = meta.common?.album || 'unknown';
-  const artistName = meta.common?.artist || '';
 
   const coverPath = path.join(APP_DATA_PATH, APP_NAME, 'Cover');
   await fse.ensureDir(coverPath);
@@ -76,22 +75,7 @@ export async function readMusicMeta(trackSrc: string): Promise<Track> {
       await fs.writeFile(albumPath, data);
       cover = arrayBufferToBase64(data);
     } else {
-      logger.debug('cannot read cover from meta, try to get cover from apis');
-      const url = await fetchAlbumCover(albumName, artistName);
-      if (typeof url !== 'string') {
-        logger.debug('cannot read from api, using default cover');
-        await fs.writeFile(albumPath, Buffer.from(defaultCover, 'base64'));
-        cover = defaultCover;
-      } else {
-        logger.debug('read from api success.');
-        const resp = await axios.get(url, { responseType: 'arraybuffer' });
-        const data = resp?.data;
-        if (data) {
-          await fse.writeFile(albumPath, data);
-        } else {
-          logger.debug('cannot save cover from url');
-        }
-      }
+      logger.debug('cannot read cover from meta');
     }
   }
 
@@ -115,7 +99,7 @@ export async function readMusicMeta(trackSrc: string): Promise<Track> {
   };
 }
 
-function arrayBufferToBase64(u8Arr: Buffer | null) {
+export function arrayBufferToBase64(u8Arr: Buffer | null) {
   if (!u8Arr) return '';
   let chunk = 0x8000;
   let index = 0;
@@ -207,4 +191,29 @@ export const initCacheDB = async () => {
   );
   await db.write();
   return db;
+};
+
+export const fetchCoverAndSave = async (
+  albumName: string,
+  artistName?: string
+) => {
+  const coverPath = path.join(
+    APP_DATA_PATH,
+    APP_NAME,
+    'Cover',
+    strToBase64(albumName) + '.png'
+  );
+
+  const url = await fetchAlbumCover(albumName, artistName);
+  if (typeof url === 'string') {
+    const resp = await axios.get(url, { responseType: 'arraybuffer' });
+    const data = resp?.data;
+    if (data) {
+      logger.debug('fetch cover from api success');
+      await fse.writeFile(coverPath, data);
+      return arrayBufferToBase64(data);
+    }
+  } else {
+    logger.debug('cannot save cover from url.');
+  }
 };

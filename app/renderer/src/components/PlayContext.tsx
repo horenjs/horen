@@ -61,7 +61,7 @@ export default function PlayContext({
       player.playOrPause();
     } else {
       readAudioSource(track.src).then((res) => {
-        readCoverSource(track.src).then((cover) => {
+        readCoverSource(track.album || '', track.artist || '').then((cover) => {
           player.currentTrack = { ...track, src: res, cover };
           setCurrentTrack({ ...track, src: res, cover });
         });

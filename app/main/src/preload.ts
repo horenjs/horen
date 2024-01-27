@@ -41,8 +41,12 @@ const IPC_API: IPC = {
   readAudioSource: async (filepath: string) => {
     return await ipcRenderer.invoke(CHANNELS.readAudioSource, filepath);
   },
-  readCoverSource: async (filepath: string) => {
-    return await ipcRenderer.invoke(CHANNELS.readCoverSource, filepath);
+  readCoverSource: async (albumName: string, artistName: string) => {
+    return await ipcRenderer.invoke(
+      CHANNELS.readCoverSource,
+      albumName,
+      artistName
+    );
   },
   readDBStore: async (key: string) => {
     return await ipcRenderer.invoke(CHANNELS.readDBStore, key);

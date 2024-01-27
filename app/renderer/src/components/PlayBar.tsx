@@ -154,7 +154,10 @@ export default function PlayBar(props: PlayBarProps) {
 
   useEffect(() => {
     if (player.currentTrack?.album) {
-      readCoverSource(player.currentTrack?.album).then((c) => {
+      readCoverSource(
+        player.currentTrack?.album,
+        player.currentTrack?.artist || ''
+      ).then((c) => {
         setCover(c);
       });
     }
@@ -164,7 +167,7 @@ export default function PlayBar(props: PlayBarProps) {
     <PLAYBAR className="play-bar">
       <Cover onClick={handleClick} className="electron-no-drag">
         {visible ? (
-          <img src={cover} alt={player.currentTrack?.title} />
+          cover && <img src={cover} alt={player.currentTrack?.title} />
         ) : (
           <span className="arrow">
             <IoIosArrowDown size={28} />

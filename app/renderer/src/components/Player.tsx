@@ -87,7 +87,10 @@ export default function Player(props: PlayerProps) {
 
   useEffect(() => {
     if (player.currentTrack?.album) {
-      readCoverSource(player.currentTrack.album).then(setCover);
+      readCoverSource(
+        player.currentTrack.album,
+        player.currentTrack?.artist || ''
+      ).then(setCover);
     }
   }, [player.currentTrack]);
 

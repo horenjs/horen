@@ -18,7 +18,10 @@ declare global {
       readLibraries: () => Promise<string[]>;
       writeLibraries: (libs: string[]) => Promise<void>;
       readAudioSource: (filepath: string) => Promise<string>;
-      readCoverSource: (filepath: string) => Promise<string>;
+      readCoverSource: (
+        albumName: string,
+        artistName?: string
+      ) => Promise<string>;
       readDBStore: (key: string) => Promise<any>;
     };
   }

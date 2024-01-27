@@ -117,7 +117,7 @@ function AlbumItem({
   const handleAdd = () => {};
 
   useEffect(() => {
-    readCoverSource(albumName).then((source) => {
+    readCoverSource(albumName, artistName).then((source) => {
       setCover(source);
     });
   }, [albumName]);

@@ -171,6 +171,7 @@ export type DBDataType = {
   tracks: Track[];
   albums: Album[];
   artists: Artist[];
+  playlist: Track[];
 };
 
 export const initDatabase = async () => {
@@ -182,6 +183,7 @@ export const initDatabase = async () => {
       libraries: [],
       albums: [],
       artists: [],
+      playlist: [],
     }
   );
   await db.write();

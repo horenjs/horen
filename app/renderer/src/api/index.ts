@@ -27,6 +27,8 @@ declare global {
         artistName?: string
       ) => Promise<void>;
       readDBStore: (key: string) => Promise<any>;
+      readPlaylist: () => Promise<Track[]>;
+      writePlaylist: (playlist: Track[]) => Promise<void>;
     };
   }
 }
@@ -63,4 +65,6 @@ export const {
   readCoverSource,
   fetchCoverFromApi,
   readDBStore,
+  readPlaylist,
+  writePlaylist,
 } = window?.ipc;

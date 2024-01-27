@@ -46,7 +46,7 @@ const PageContainer = styled.div`
 export type PageName = 'playing' | 'setting';
 
 export default function App() {
-  const [page, setPage] = useState<PageName | string>('playing');
+  const [page, setPage] = useState<PageName | string>('全部');
 
   const pages: Record<string, React.ReactNode> = {
     播放列表: <PlayList visible={page === '播放列表'} />,

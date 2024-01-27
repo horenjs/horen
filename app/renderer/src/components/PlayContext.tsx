@@ -1,6 +1,12 @@
 import React, { useState, createContext, useEffect, useRef } from 'react';
 import { HowlPlayer, PlayerOrder } from '../utils';
-import { Track, readAudioSource, readCoverSource } from '../api';
+import {
+  Track,
+  readAudioSource,
+  readCoverSource,
+  readPlaylist,
+  writePlaylist,
+} from '../api';
 
 interface IHorenContext {
   player: {
@@ -90,6 +96,14 @@ export default function PlayContext({
           ...prev,
           { ...track, source: audioSource, cover: coverSource },
         ]);
+        // save play list
+        await writePlaylist(
+          player.trackList.map((p) => {
+            p.cover = '';
+            p.source = '';
+            return p;
+          })
+        );
       })();
     }
   };
@@ -105,6 +119,15 @@ export default function PlayContext({
 
   const remove = (track: Track) => {
     setPlayList((prev) => prev.filter((t) => t.uid !== track.uid));
+    const pls = player.trackList.filter((t) => t.uid !== track.uid);
+    player.trackList = pls;
+    writePlaylist(
+      pls.map((p) => {
+        p.cover = '';
+        p.source = '';
+        return p;
+      })
+    ).then();
   };
 
   const next = () => {
@@ -130,6 +153,27 @@ export default function PlayContext({
       }
     }, 500);
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    readPlaylist().then((pls) => {
+      if (pls && pls instanceof Array) {
+        const playlist: Track[] = [];
+        for (const p of pls) {
+          (async () => {
+            const coverSource = await readCoverSource(p.album || '');
+            const sourceSource = await readAudioSource(p.src);
+            playlist.push({
+              ...p,
+              source: sourceSource,
+              cover: coverSource,
+            });
+          })();
+        }
+        setPlayList(playlist);
+        player.trackList = playlist;
+      }
+    });
   }, []);
 
   return (

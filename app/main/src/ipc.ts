@@ -292,3 +292,20 @@ export const handleFetchCoverFromApi = async (
 ) => {
   await fetchCoverAndSave(albumName, artist);
 };
+
+////////////////////////////////////////////////////////////////////////////////
+
+export const handleReadPlaylist = async () => {
+  await db.read();
+  return db.data.playlist;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+export const handleWritePlaylist = async (
+  evt: IpcMainInvokeEvent,
+  playlist: Track[]
+) => {
+  db.data.playlist = playlist;
+  await db.write();
+};

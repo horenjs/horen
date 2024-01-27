@@ -58,6 +58,12 @@ const IPC_API: IPC = {
   readDBStore: async (key: string) => {
     return await ipcRenderer.invoke(CHANNELS.readDBStore, key);
   },
+  readPlaylist: async () => {
+    return await ipcRenderer.invoke(CHANNELS.playlist.read);
+  },
+  writePlaylist: async (playlist: any[]) => {
+    return await ipcRenderer.invoke(CHANNELS.playlist.write, playlist);
+  },
 };
 
 contextBridge.exposeInMainWorld('ipc', IPC_API);

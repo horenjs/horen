@@ -28,6 +28,10 @@ export const CHANNELS = {
     write: 'libraries-write',
     read: 'libraries-read',
   },
+  playlist: {
+    write: 'playlist-write',
+    read: 'playlist-read',
+  },
   readAudioSource: 'read-audio-source',
   readCoverSource: 'read-cover-source',
   fetchCoverFromApi: 'fetch-cover-from-api',

@@ -15,6 +15,8 @@ import {
   handleReadCoverSource,
   handleReadDBStore,
   handleFetchCoverFromApi,
+  handleReadPlaylist,
+  handleWritePlaylist,
 } from './ipc';
 import {
   DBDataType,
@@ -78,3 +80,6 @@ ipcMain.handle(CHANNELS.readAudioSource, handleReadAudioSource);
 ipcMain.handle(CHANNELS.readCoverSource, handleReadCoverSource);
 ipcMain.handle(CHANNELS.readDBStore, handleReadDBStore);
 ipcMain.handle(CHANNELS.fetchCoverFromApi, handleFetchCoverFromApi);
+
+ipcMain.handle(CHANNELS.playlist.read, handleReadPlaylist);
+ipcMain.handle(CHANNELS.playlist.write, handleWritePlaylist);

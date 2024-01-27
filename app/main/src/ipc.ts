@@ -267,6 +267,12 @@ export const handleReadCoverSource = async (
   return 'data:image/png;base64,' + cover;
 };
 
+////////////////////////////////////////////////////////////////////////////////
+
+export const handleReadLyricSource = async () => {};
+
+////////////////////////////////////////////////////////////////////////////////
+
 export const handleReadDBStore = async (
   evt: IpcMainInvokeEvent,
   key: string

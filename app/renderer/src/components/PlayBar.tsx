@@ -19,6 +19,7 @@ const Cover = styled.div`
   height: 52px;
   width: 52px;
   margin-right: 16px;
+  position: relative;
   img {
     width: 100%;
     height: 100%;
@@ -26,6 +27,7 @@ const Cover = styled.div`
   }
   .arrow {
     color: #d6d6d6;
+    cursor: pointer;
   }
 `;
 

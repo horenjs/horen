@@ -1,7 +1,8 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { default as PlayerBar } from './PlayBar';
 import { HorenContext } from '../App';
+import { readCoverSource } from '../api';
 
 const PLAYER = styled.div`
   position: fixed;
@@ -11,6 +12,7 @@ const PLAYER = styled.div`
   height: 100%;
   background-color: #555;
   transition: top 0.25s ease-in-out;
+  z-index: 999;
 `;
 
 const PlayBar = styled.div`
@@ -23,7 +25,7 @@ const PlayBar = styled.div`
 
 const Cover = styled.div`
   display: flex;
-  width: 45%;
+  width: 50%;
   height: calc(100vh - 64px);
   padding: 16px 16px 32px 32px;
   justify-content: center;
@@ -35,8 +37,7 @@ const Cover = styled.div`
 `;
 
 const Picture = styled.div`
-  width: 320px;
-  height: 320px;
+  width: 100%;
   img {
     width: 100%;
     height: 100%;
@@ -44,33 +45,39 @@ const Picture = styled.div`
   }
 `;
 
-const Info = styled.div`
-  width: 320px;
-  height: 200px;
-  max-width: 480px;
-  background-color: #111;
-  margin-top: 16px;
-`;
-
 const Lyric = styled.div`
   display: flex;
-  width: 55%;
+  width: 50%;
   height: calc(100vh - 64px);
-  padding: 16px 32px 32px 16px;
+  padding: 16px 32px 64px 16px;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
+`;
+
+const TrackInfo = styled.div`
+  width: 100%;
+  padding: 0 4px;
+  .title {
+    font-size: 1.2rem;
+    color: #e0e0e0;
+  }
+  .artist {
+    font-size: 0.8rem;
+    color: #aeaeae;
+  }
 `;
 
 const LyricText = styled.div`
-  height: 100%;
+  height: calc(100% - 64px);
   width: 100%;
-  background-color: #333;
 `;
 
 export type PlayerProps = {};
 
 export default function Player(props: PlayerProps) {
   const [expanded, setExpanded] = useState(false);
+  const [cover, setCover] = useState('');
   const top = !expanded ? 'calc(100vh - 64px)' : '0';
   const { player } = useContext(HorenContext);
 
@@ -78,21 +85,30 @@ export default function Player(props: PlayerProps) {
     setExpanded(!expanded);
   };
 
+  useEffect(() => {
+    if (player.currentTrack?.album) {
+      readCoverSource(player.currentTrack.album).then(setCover);
+    }
+  }, [player.currentTrack]);
+
   return (
     <PLAYER className="player" style={{ top }}>
       <PlayBar>
         <PlayerBar onExpand={handleClick} visible={!expanded} />
       </PlayBar>
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', padding: '0 32px' }}>
         <Cover className="player-cover">
           <div className="frame">
             <Picture>
-              <img src={player.currentTrack?.cover} />
+              <img src={cover} alt={player.currentTrack?.title} />
             </Picture>
-            <Info />
           </div>
         </Cover>
         <Lyric className="player-lyric">
+          <TrackInfo>
+            <div className="title">{player.currentTrack?.title}</div>
+            <div className="artist">{player.currentTrack?.artist}</div>
+          </TrackInfo>
           <LyricText />
         </Lyric>
       </div>

@@ -7,9 +7,11 @@ interface IHorenContext {
     add: (track: Track) => void;
     remove: (track: Track) => void;
     play: (track: Track) => void;
+    pause: () => void;
     next: () => void;
     prev: () => void;
     isAdd: (track: Track) => boolean;
+    isPlaying: boolean;
     playList: Track[];
     currentTrack: Track | null;
     native: HowlPlayer<Track> | null;
@@ -27,9 +29,11 @@ export const HorenContext = createContext<IHorenContext>({
     add: () => {},
     remove: () => {},
     play: () => {},
+    pause: () => {},
     next: () => {},
     prev: () => {},
     isAdd: () => false,
+    isPlaying: false,
     playList: [],
     currentTrack: null,
     native: null,
@@ -50,18 +54,30 @@ export default function PlayContext({
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [playList, setPlayList] = useState<Track[]>([]);
   const [trackList, setTrackList] = useState<Track[]>([]);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const play = (track: Track) => {
-    readAudioSource(track.src).then((res) => {
-      readCoverSource(track.src).then((cover) => {
-        player.currentTrack = { ...track, src: res, cover };
-        setCurrentTrack({ ...track, src: res, cover });
+    if (currentTrack && track.uid === currentTrack.uid) {
+      player.playOrPause();
+    } else {
+      readAudioSource(track.src).then((res) => {
+        readCoverSource(track.src).then((cover) => {
+          player.currentTrack = { ...track, src: res, cover };
+          setCurrentTrack({ ...track, src: res, cover });
+        });
       });
-    });
 
-    if (!includes(playList, track)) {
-      setPlayList((prev) => [...prev, track]);
+      if (!includes(playList, track)) {
+        setPlayList((prev) => [...prev, track]);
+      }
     }
+
+    setIsPlaying(true);
+  };
+
+  const pause = () => {
+    player.pause();
+    setIsPlaying(false);
   };
 
   const add = (track: Track) => {
@@ -115,10 +131,12 @@ export default function PlayContext({
         player: {
           add,
           play,
+          pause,
           remove,
           prev,
           next,
           isAdd,
+          isPlaying,
           currentTrack,
           playList,
           native: player,

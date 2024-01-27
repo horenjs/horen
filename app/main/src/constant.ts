@@ -31,6 +31,7 @@ export const CHANNELS = {
   readAudioSource: 'read-audio-source',
   readCoverSource: 'read-cover-source',
   readDBStore: 'read-db-store',
+  readLyricSource: 'read-lyric-source',
 };
 
 export const AUDIO_EXTS = [

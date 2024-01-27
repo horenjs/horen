@@ -9,8 +9,6 @@ const MENU = styled.div`
   height: 2.5rem;
   display: flex;
   align-items: center;
-  position: sticky;
-  top: 32px;
 `;
 
 const Item = styled.div`

@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import { readTrackList, Track } from '../api';
 import { HorenContext } from '../App';
 import Page, { PageProps } from './_page';
+import { normalizeDuration } from '../utils';
 
 const TRACKLIST = styled.div`
   margin: 0;
@@ -17,30 +18,46 @@ const TRACKLIST = styled.div`
   // display: grid;
   // padding-bottom: 88px;
   // grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  ul {
-    margin: 0;
-    padding: 0;
+  table {
+    color: #c6c6c6;
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th {
+    text-align: left;
+    font-size: 0.8rem;
+  }
+  tr {
+    &:nth-child(2n) {
+      background-color: #3c3c3c;
+    }
+    &:hover {
+      background-color: #595959e1;
+    }
   }
 `;
 
-const PureItem = styled.li`
-  display: flex;
+const PureItem = styled.tr`
   color: #f1f1f1;
   margin: 4px 0;
   align-items: center;
   font-size: 0.9rem;
   .index {
-    width: 24px;
     text-align: center;
     margin-right: 16px;
   }
   .first {
-    width: 300px;
+    width: 100%;
     display: flex;
     margin: 4px 0;
     align-items: center;
     justify-content: space-between;
     padding-right: 32px;
+    .title {
+      flex-grow: 1;
+      min-width: 240px;
+      width: 100%;
+    }
     .operate {
       display: flex;
       align-items: center;
@@ -58,10 +75,14 @@ const PureItem = styled.li`
     }
   }
   .artist {
-    width: 120px;
+    font-weight: 300;
   }
   .album {
-    width: 200px;
+    font-weight: 300;
+  }
+  .date {
+    min-width: 80px;
+    text-align: center;
   }
 `;
 
@@ -100,19 +121,32 @@ export default function TrackList(props: PlayListPageProps) {
         className="track-list perfect-scrollbar"
         style={{ display: visible ? 'block' : 'none' }}
       >
-        <ul>
-          {trackList.value?.map((track: Track, index: number) => (
-            <TrackPureItem
-              index={index}
-              track={track}
-              onPlay={handlePlay}
-              onAdd={handleAdd}
-              key={track.src}
-              isAdd={player.isAdd}
-              playing={player.currentTrack?.uid === track.uid}
-            />
-          ))}
-        </ul>
+        <table>
+          <thead>
+            <tr>
+              <th style={{ textAlign: 'center' }}>序号</th>
+              <th>歌曲名</th>
+              <th>歌手</th>
+              <th>专辑</th>
+              <th>时长</th>
+              <th style={{ textAlign: 'center' }}>发行日期</th>
+              <th>流派</th>
+            </tr>
+          </thead>
+          <tbody>
+            {trackList.value?.map((track: Track, index: number) => (
+              <TrackPureItem
+                index={index + 1}
+                track={track}
+                onPlay={handlePlay}
+                onAdd={handleAdd}
+                key={track.src}
+                isAdd={player.isAdd}
+                playing={player.currentTrack?.uid === track.uid}
+              />
+            ))}
+          </tbody>
+        </table>
       </TRACKLIST>
     </Page>
   );
@@ -138,33 +172,53 @@ function TrackPureItem({
 
   return (
     <PureItem key={track?.src}>
-      <div className="index">
-        <span>{index}</span>
-      </div>
-      <div className="first">
-        <div className="title">{track?.title}</div>
-        <div className="operate">
-          {playing ? (
-            <div onClick={handlePause} className="play">
-              <FaPause size={20} />
-            </div>
-          ) : (
-            <div onClick={handlePlay} className="play">
-              <FaPlay />
-            </div>
-          )}
-          {track && !isAdd(track) ? (
-            <div onClick={handleAdd} className="add">
-              <IoMdAdd size={24} />
-            </div>
-          ) : (
-            <MdOutlineDownloadDone size={24} />
-          )}
+      <td>
+        <div className="index">
+          <span>{index}</span>
         </div>
-      </div>
-      <div className="artist">{track?.artist}</div>
-      <div className="album">{track?.album}</div>
-      <div className="duration">{track?.duration?.toFixed(2)}</div>
+      </td>
+      <td>
+        <div className="first">
+          <div className="title">{track?.title}</div>
+          <div className="operate">
+            {playing ? (
+              <div onClick={handlePause} className="play">
+                <FaPause size={20} />
+              </div>
+            ) : (
+              <div onClick={handlePlay} className="play">
+                <FaPlay />
+              </div>
+            )}
+            {track && !isAdd(track) ? (
+              <div onClick={handleAdd} className="add">
+                <IoMdAdd size={24} />
+              </div>
+            ) : (
+              <MdOutlineDownloadDone size={24} />
+            )}
+          </div>
+        </div>
+      </td>
+      <td>
+        <div className="artist">{track?.artist}</div>
+      </td>
+      <td>
+        <div className="album">{track?.album}</div>
+      </td>
+      <td>
+        <div className="duration">
+          {track?.duration !== undefined && normalizeDuration(track?.duration)}
+        </div>
+      </td>
+      <td>
+        <div className="date">
+          {track?.date !== 'undefined' ? track?.date?.slice(0, 4) : '未知'}
+        </div>
+      </td>
+      <td>
+        <div className="genre">{track?.genre}</div>
+      </td>
     </PureItem>
   );
 }

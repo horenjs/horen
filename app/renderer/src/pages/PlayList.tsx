@@ -4,6 +4,7 @@ import { HorenContext } from '../App';
 import { Track } from '../api';
 import Page, { PageProps } from './_page';
 import { CiPlay1, CiPause1 } from 'react-icons/ci';
+import { normalizeDuration } from '../utils';
 
 const PLAYING = styled.div`
   .song {
@@ -151,7 +152,7 @@ export function PlayListItem({
         <div>{track.album}</div>
       </td>
       <td>
-        <div>{track.duration?.toFixed(2)}</div>
+        <div>{track.duration && normalizeDuration(track.duration)}</div>
       </td>
     </tr>
   );

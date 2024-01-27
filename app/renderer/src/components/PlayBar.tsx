@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { HorenContext } from '../App';
 import { IoIosPause } from 'react-icons/io';
@@ -6,6 +6,8 @@ import { FaVolumeLow } from 'react-icons/fa6';
 import { MdSkipPrevious, MdSkipNext, MdMenuOpen } from 'react-icons/md';
 import { TfiLoop } from 'react-icons/tfi';
 import { IoIosArrowDown } from 'react-icons/io';
+import { Slider } from './Slider';
+import { readCoverSource } from '../api';
 
 const PLAYBAR = styled.div`
   width: 100%;
@@ -32,6 +34,7 @@ const Title = styled.div`
   height: 20px;
   font-size: 14px;
   color: #e6e6e6;
+  overflow: hidden;
 `;
 
 const Singer = styled.div`
@@ -50,9 +53,8 @@ const AlbumTitle = styled.div`
 
 const Seeker = styled.div`
   width: 100%;
-  height: 4px;
-  background-color: green;
-  margin-bottom: 8px;
+  height: 8px;
+  margin-bottom: 5px;
 `;
 
 const Mode = styled.div`
@@ -121,7 +123,10 @@ export type PlayBarProps = {
 
 export default function PlayBar(props: PlayBarProps) {
   const { onExpand, visible = true } = props;
+  const [seek, setSeek] = useState(0);
+  const [cover, setCover] = useState('');
   const { player } = useContext(HorenContext);
+  const duration = player.native?.duration || Infinity;
 
   const handleClick = () => {
     if (onExpand) onExpand();
@@ -129,14 +134,35 @@ export default function PlayBar(props: PlayBarProps) {
 
   const handlePlay = () => {};
 
+  const hanleChangeSeek = (per: number) => {
+    setSeek(per * duration);
+    if (player.native) {
+      player.native.seek = per * duration;
+    }
+  };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (player.native) {
+        setSeek(player.native?.seek);
+      }
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [player.native?.seek]);
+
+  useEffect(() => {
+    if (player.currentTrack?.album) {
+      readCoverSource(player.currentTrack?.album).then((c) => {
+        setCover(c);
+      });
+    }
+  }, [player.currentTrack]);
+
   return (
     <PLAYBAR className="play-bar">
       <Cover onClick={handleClick} className="electron-no-drag">
         {visible ? (
-          <img
-            src={player.currentTrack?.cover}
-            alt={player.currentTrack?.title}
-          />
+          <img src={cover} alt={player.currentTrack?.title} />
         ) : (
           <span className="arrow">
             <IoIosArrowDown size={28} />
@@ -152,7 +178,9 @@ export default function PlayBar(props: PlayBarProps) {
       )}
       {visible && (
         <div style={{ flexGrow: 1, margin: '0 16px' }}>
-          <Seeker></Seeker>
+          <Seeker>
+            <Slider value={seek / duration} onChangeEnd={hanleChangeSeek} />
+          </Seeker>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <Mode>
               <TfiLoop size={20} />

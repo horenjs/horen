@@ -12,6 +12,7 @@ interface IHorenContext {
     isAdd: (track: Track) => boolean;
     playList: Track[];
     currentTrack: Track | null;
+    native: HowlPlayer<Track> | null;
   };
   trackList: {
     value: Track[];
@@ -31,6 +32,7 @@ export const HorenContext = createContext<IHorenContext>({
     isAdd: () => false,
     playList: [],
     currentTrack: null,
+    native: null,
   },
   trackList: {
     value: [],
@@ -119,6 +121,7 @@ export default function PlayContext({
           isAdd,
           currentTrack,
           playList,
+          native: player,
         },
         trackList: {
           value: trackList,

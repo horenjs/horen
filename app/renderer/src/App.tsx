@@ -36,7 +36,7 @@ const Bottom = styled.div`
   height: 64px;
 `;
 
-const Page = styled.div`
+const PageContainer = styled.div`
   padding: 8px 16px 8px 48px;
   height: calc(100vh - 140px);
   width: 100%;
@@ -63,9 +63,9 @@ export default function App() {
           <Menu onClick={(value) => setPage(value)} />
         </Top>
         <Main className="app-main">
-          <Page className="page-container perfect-scrollbar">
+          <PageContainer className="page-container perfect-scrollbar">
             {pages[page]}
-          </Page>
+          </PageContainer>
         </Main>
         <Bottom className="app-bottom">
           <Player />

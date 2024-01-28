@@ -45,17 +45,17 @@ export const handleOpenDialog = async () => {
 export const handleReadTrack = async (
   evt: IpcMainInvokeEvent,
   trackSource: string
-) => {
-  if (typeof trackSource === 'string') {
-    return await readMusicMeta(trackSource);
-  }
-};
+) => {};
 
 ////////////////////////////////////////////////////////////////////////////////
 
-export const handleReadTrackList = async () => {
+export const handleReadTrackList = async (
+  evt: IpcMainInvokeEvent,
+  offset = 0,
+  limit = 20
+) => {
   await db.read();
-  return db.data.tracks;
+  return db.data.tracks.slice(offset, limit);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -178,7 +178,13 @@ const disposeAlbumList = async (trackList: Track[]) => {
     const tracks = Array.from(platAlbums[key]['tracks']).join(',');
     const title = key;
     const artist = Array.from(platAlbums[key]['artist']).join(',');
-    albumList.push({ index: i, title, artist, tracks });
+    const cover = path.join(
+      APP_DATA_PATH,
+      APP_NAME,
+      'Cover',
+      strToBase64(title + artist) + '.png'
+    );
+    albumList.push({ index: i, title, artist, tracks, cover });
     i += 1;
   }
 
@@ -307,5 +313,22 @@ export const handleWritePlaylist = async (
   playlist: Track[]
 ) => {
   db.data.playlist = playlist;
+  await db.write();
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+export const handleReadAlbumList = async () => {
+  await db.read();
+  return db.data.albums;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+export const handleWriteAlbumList = async (
+  evt: IpcMainInvokeEvent,
+  albumList: Album[]
+) => {
+  db.data.albums = albumList;
   await db.write();
 };

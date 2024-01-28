@@ -1,3 +1,5 @@
+import { Album } from '../pages/AlbumList';
+
 declare global {
   interface Window {
     ipc: {
@@ -26,9 +28,10 @@ declare global {
         albumName: string,
         artistName?: string
       ) => Promise<void>;
-      readDBStore: (key: string) => Promise<any>;
       readPlaylist: () => Promise<Track[]>;
       writePlaylist: (playlist: Track[]) => Promise<void>;
+      readAlbumList: () => Promise<Album[]>;
+      writeAlbumList: (albumList: Album[]) => Promise<void>;
     };
   }
 }
@@ -64,7 +67,8 @@ export const {
   readAudioSource,
   readCoverSource,
   fetchCoverFromApi,
-  readDBStore,
   readPlaylist,
   writePlaylist,
+  readAlbumList,
+  writeAlbumList,
 } = window?.ipc;

@@ -4,7 +4,7 @@ import { GrLinkTop } from 'react-icons/gr';
 import { IoCloseSharp } from 'react-icons/io5';
 import styled from 'styled-components';
 
-import { Track, readCoverSource } from '../api';
+import { Track } from '../api';
 import { HorenContext } from '../App';
 import { normalizeDuration } from '../utils';
 import Page, { PageProps } from './_page';
@@ -185,10 +185,6 @@ export function PlayListItem({
   const handleDel = (track: Track) => {
     if (onDel) onDel(track);
   };
-
-  useEffect(() => {
-    readCoverSource(track.album || '', track.artist).then(setCover);
-  }, []);
 
   return (
     <tr className="play-list-item">

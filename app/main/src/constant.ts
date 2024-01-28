@@ -32,10 +32,13 @@ export const CHANNELS = {
     write: 'playlist-write',
     read: 'playlist-read',
   },
+  albumList: {
+    write: 'albumList-write',
+    read: 'albumList-read',
+  },
   readAudioSource: 'read-audio-source',
   readCoverSource: 'read-cover-source',
   fetchCoverFromApi: 'fetch-cover-from-api',
-  readDBStore: 'read-db-store',
   readLyricSource: 'read-lyric-source',
 };
 

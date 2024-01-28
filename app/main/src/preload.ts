@@ -55,14 +55,17 @@ const IPC_API: IPC = {
       artistName
     );
   },
-  readDBStore: async (key: string) => {
-    return await ipcRenderer.invoke(CHANNELS.readDBStore, key);
-  },
   readPlaylist: async () => {
     return await ipcRenderer.invoke(CHANNELS.playlist.read);
   },
   writePlaylist: async (playlist: any[]) => {
     return await ipcRenderer.invoke(CHANNELS.playlist.write, playlist);
+  },
+  readAlbumList: async () => {
+    return await ipcRenderer.invoke(CHANNELS.albumList.read);
+  },
+  writeAlbumList: async (albumList: any[]) => {
+    return await ipcRenderer.invoke(CHANNELS.albumList.write, albumList);
   },
 };
 

@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Page, { PageProps } from './_page';
 import styled from 'styled-components';
-import { Track, readDBStore, readCoverSource, fetchCoverFromApi } from '../api';
+import { Track, readAlbumList, fetchCoverFromApi } from '../api';
 import { IoMdRefresh } from 'react-icons/io';
 import Modal from '../components/Modal';
 import { FaPlay, FaPause } from 'react-icons/fa6';
 import { MdAdd } from 'react-icons/md';
 import { HorenContext } from '../App';
 import { IoCloseSharp } from 'react-icons/io5';
+import defaultCover from '../defaultCover';
 
 const ALBUM = styled.ul`
   margin: 0;
@@ -27,13 +28,6 @@ export type Album = {
   cover?: string;
 };
 
-export type OriginAlbum = {
-  index: string;
-  title: string;
-  artist: string;
-  tracks: string;
-};
-
 export function AlbumListPage({ visible }: AlbumListPageProps) {
   const [albumList, setAlbumList] = useState<Album[]>([]);
   const [pickAlbum, setPickAlbum] = useState<Album | null>(null);
@@ -45,19 +39,8 @@ export function AlbumListPage({ visible }: AlbumListPageProps) {
 
   useEffect(() => {
     (async () => {
-      const tracks = await readDBStore('tracks');
-      const albums: OriginAlbum[] = await readDBStore('albums');
-      const finals = albums.map((album) => {
-        return {
-          index: album.index,
-          title: album.title,
-          artist: album.artist,
-          tracks: album.tracks
-            .split(',')
-            .map((trackIndex) => tracks[Number(trackIndex) - 1]),
-        };
-      });
-      setAlbumList(finals);
+      const albums: Album[] = await readAlbumList();
+      setAlbumList(albums);
     })();
   }, []);
 
@@ -336,10 +319,9 @@ export type AlbumItemProps = {
 };
 
 function AlbumItem({ album, onOpen }: AlbumItemProps) {
-  const [cover, setCover] = useState('');
-
+  const [key, setKey] = useState(0);
   const handleOpen = () => {
-    if (onOpen) onOpen({ ...album, cover });
+    if (onOpen) onOpen({ ...album });
   };
 
   const handleFresh = async (e: React.MouseEvent<HTMLSpanElement>) => {
@@ -347,20 +329,18 @@ function AlbumItem({ album, onOpen }: AlbumItemProps) {
     e.preventDefault();
     if (window.confirm('从网络获取专辑封面?')) {
       await fetchCoverFromApi(album.title, album.artist.split(',')[0]);
-      readCoverSource(album.title, album.artist).then(setCover);
+      setKey(new Date().valueOf());
     }
   };
-
-  useEffect(() => {
-    readCoverSource(album.title, album.artist).then((source) => {
-      setCover(source);
-    });
-  }, [album]);
 
   return (
     <Item key={album.title + album.artist}>
       <div className="cover" onClick={handleOpen}>
-        <img src={cover} alt={album.title + album.artist} />
+        <AlbumCover
+          src={'horen:///' + album.cover?.replaceAll('\\\\', '\\')}
+          alt={album.title + album.artist}
+          key={key}
+        />
         <span onClick={handleFresh} className="refresh">
           <IoMdRefresh />
         </span>
@@ -370,3 +350,15 @@ function AlbumItem({ album, onOpen }: AlbumItemProps) {
     </Item>
   );
 }
+
+const AlbumCover = (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
+  const [isError, setIsError] = useState(true);
+  const handleError = (e: any) => {
+    if (isError) {
+      setIsError(false);
+      (e.target as HTMLImageElement).src =
+        'data:image/png;base64,' + defaultCover;
+    }
+  };
+  return <img onError={handleError} {...props} />;
+};

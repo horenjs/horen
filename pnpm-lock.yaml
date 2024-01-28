@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      cross-env:
+        specifier: ^7.0.3
+        version: 7.0.3
     devDependencies:
       concurrently:
         specifier: ^8.2.2
@@ -3998,7 +4002,6 @@ packages:
     hasBin: true
     dependencies:
       cross-spawn: 7.0.3
-    dev: true
 
   /cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}

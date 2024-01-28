@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, protocol, net } from 'electron';
 
 import { createMainWindow } from './app';
 import { CHANNELS } from './constant';
@@ -17,6 +17,8 @@ import {
   handleFetchCoverFromApi,
   handleReadPlaylist,
   handleWritePlaylist,
+  handleReadAlbumList,
+  handleWriteAlbumList,
 } from './ipc';
 import {
   DBDataType,
@@ -28,11 +30,19 @@ import {
 
 import type { Low } from 'lowdb';
 import type { Logger } from 'winston';
+import path from 'path';
 
 export let mainWindow: BrowserWindow = null;
 export let db: Low<DBDataType> = null;
 export let cacheDB: Low<{ tracks: Track[] }> = null;
 export let logger: Logger = null;
+
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'horen',
+    privileges: { bypassCSP: true, standard: false },
+  },
+]);
 
 app.whenReady().then(async () => {
   logger = initLogger();
@@ -42,6 +52,12 @@ app.whenReady().then(async () => {
   cacheDB = await initCacheDB();
   logger.debug('create main window');
   mainWindow = createMainWindow();
+  protocol.handle('horen', (request) => {
+    const url = 'file:///' + request.url.slice('horen:///'.length);
+    logger.debug('origin request: ' + request.url);
+    logger.debug('transform request: ' + url);
+    return net.fetch(url);
+  });
 });
 
 app.on('activate', () => {
@@ -78,8 +94,10 @@ ipcMain.handle(CHANNELS.libraries.read, handleReadLibraries);
 
 ipcMain.handle(CHANNELS.readAudioSource, handleReadAudioSource);
 ipcMain.handle(CHANNELS.readCoverSource, handleReadCoverSource);
-ipcMain.handle(CHANNELS.readDBStore, handleReadDBStore);
 ipcMain.handle(CHANNELS.fetchCoverFromApi, handleFetchCoverFromApi);
 
 ipcMain.handle(CHANNELS.playlist.read, handleReadPlaylist);
 ipcMain.handle(CHANNELS.playlist.write, handleWritePlaylist);
+
+ipcMain.handle(CHANNELS.albumList.read, handleReadAlbumList);
+ipcMain.handle(CHANNELS.albumList.write, handleWriteAlbumList);

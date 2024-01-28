@@ -142,40 +142,6 @@ export default function PlayContext({
     return includes(playList, track);
   };
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (player.currentTrack?.uid !== currentTrackRef.current?.uid) {
-        console.log('track changed');
-        setCurrentTrack((prev) => {
-          return { ...prev, ...player.currentTrack };
-        });
-        currentTrackRef.current = player.currentTrack;
-      }
-    }, 500);
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    readPlaylist().then((pls) => {
-      if (pls && pls instanceof Array) {
-        const playlist: Track[] = [];
-        for (const p of pls) {
-          (async () => {
-            const coverSource = await readCoverSource(p.album || '');
-            const sourceSource = await readAudioSource(p.src);
-            playlist.push({
-              ...p,
-              source: sourceSource,
-              cover: coverSource,
-            });
-          })();
-        }
-        setPlayList(playlist);
-        player.trackList = playlist;
-      }
-    });
-  }, []);
-
   return (
     <HorenContext.Provider
       value={{

@@ -2,12 +2,10 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import {
   openDialog,
-  writeSetting,
-  writeLibraries,
-  readSetting,
   refreshTrackList,
-  readLibraries,
   refreshTrackListMsg,
+  readDB,
+  writeDB,
 } from '../api';
 import Page, { PageProps } from './_page';
 
@@ -73,7 +71,7 @@ export default function Setting(props: SettingPageProps) {
           ...filePaths.filter((lib) => !libraries.includes(lib)),
         ];
         setLibraries(newLibs);
-        writeLibraries(newLibs);
+        writeDB('setting.libraries', newLibs);
       }
     });
   };
@@ -82,12 +80,12 @@ export default function Setting(props: SettingPageProps) {
     const newLibs = [...libraries];
     const libs = newLibs.filter((l) => l !== lib);
     setLibraries(libs);
-    writeLibraries(libs);
+    writeDB('setting.libraries', libs);
   };
 
   const handleChangeLang = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setLanguage(e.target.value);
-    writeSetting('language', e.target.value);
+    writeDB('setting.language', e.target.value);
   };
 
   const handleRefresh = () => {
@@ -95,7 +93,7 @@ export default function Setting(props: SettingPageProps) {
   };
 
   useEffect(() => {
-    readSetting('language').then((value) => setLanguage(value));
+    readDB('setting.language').then((value) => setLanguage(value));
 
     refreshTrackListMsg((evt, current, total, msg) => {
       console.log(current, total, msg);
@@ -103,7 +101,7 @@ export default function Setting(props: SettingPageProps) {
       setFreshMsg(m);
     });
 
-    readLibraries().then((libs) => {
+    readDB('setting.libraries').then((libs) => {
       if (libs instanceof Array) setLibraries(libs);
     });
   }, []);

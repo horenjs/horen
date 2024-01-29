@@ -5,7 +5,7 @@ import { IoMdAdd } from 'react-icons/io';
 import { MdOutlineDownloadDone } from 'react-icons/md';
 import styled from 'styled-components';
 
-import { readTrackList, Track } from '../api';
+import { readDB, Track } from '../api';
 import { HorenContext } from '../App';
 import Page, { PageProps } from './_page';
 import { normalizeDuration } from '../utils';
@@ -110,7 +110,7 @@ export default function TrackList(props: PlayListPageProps) {
   };
 
   useEffect(() => {
-    readTrackList().then((tracks) => {
+    readDB<Track[]>('tracks').then((tracks) => {
       trackList.set(tracks);
     });
   }, [visible]);

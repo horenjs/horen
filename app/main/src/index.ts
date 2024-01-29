@@ -1,24 +1,26 @@
-import { app, BrowserWindow, ipcMain, protocol, net } from 'electron';
+import { app, BrowserWindow, ipcMain, net, protocol } from 'electron';
+import path from 'path';
 
 import { createMainWindow } from './app';
 import { CHANNELS } from './constant';
 import {
   handleCloseMainwindow,
+  handleDBRead,
+  handleDBWrite,
+  handleFetchCoverFromApi,
   handleOpenDialog,
+  handleReadAlbumList,
+  handleReadAudioSource,
+  handleReadCoverSource,
+  handleReadLibraries,
+  handleReadPlaylist,
   handleReadSetting,
+  handleReadTrack,
   handleReadTrackList,
   handleRefreshTrackList,
-  handleWriteLibraries,
-  handleReadTrack,
-  handleReadAudioSource,
-  handleReadLibraries,
-  handleReadCoverSource,
-  handleReadDBStore,
-  handleFetchCoverFromApi,
-  handleReadPlaylist,
-  handleWritePlaylist,
-  handleReadAlbumList,
   handleWriteAlbumList,
+  handleWriteLibraries,
+  handleWritePlaylist,
 } from './ipc';
 import {
   DBDataType,
@@ -30,8 +32,6 @@ import {
 
 import type { Low } from 'lowdb';
 import type { Logger } from 'winston';
-import path from 'path';
-
 export let mainWindow: BrowserWindow = null;
 export let db: Low<DBDataType> = null;
 export let cacheDB: Low<{ tracks: Track[] }> = null;
@@ -101,3 +101,6 @@ ipcMain.handle(CHANNELS.playlist.write, handleWritePlaylist);
 
 ipcMain.handle(CHANNELS.albumList.read, handleReadAlbumList);
 ipcMain.handle(CHANNELS.albumList.write, handleWriteAlbumList);
+
+ipcMain.handle(CHANNELS.db.read, handleDBRead);
+ipcMain.handle(CHANNELS.db.write, handleDBWrite);

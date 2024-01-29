@@ -173,6 +173,7 @@ export type DBDataType = {
   albums: Album[];
   artists: Artist[];
   playlist: Track[];
+  [key: string]: any;
 };
 
 export const initDatabase = async () => {

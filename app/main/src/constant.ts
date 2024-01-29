@@ -40,6 +40,10 @@ export const CHANNELS = {
   readCoverSource: 'read-cover-source',
   fetchCoverFromApi: 'fetch-cover-from-api',
   readLyricSource: 'read-lyric-source',
+  db: {
+    read: 'db-read',
+    write: 'db-write',
+  },
 };
 
 export const AUDIO_EXTS = [

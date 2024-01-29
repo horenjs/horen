@@ -68,7 +68,7 @@ export async function handleRefreshTrackList(evt: IpcMainInvokeEvent) {
   await db.read();
   await cacheDB.read();
 
-  const libs = db.data.libraries;
+  const libs = db.data['setting.libraries'];
   const trackPathnames = await findAllAudios(libs);
   const trackList = await disposeTrackList(trackPathnames, cacheDB.data.tracks);
   const albumList = await disposeAlbumList(trackList);
@@ -228,7 +228,7 @@ export async function handleWriteLibraries(
 ) {
   if (libs instanceof Array) {
     console.log('write libs: ', libs);
-    db.data.libraries = libs;
+    db.data['setting.libraries'] = libs;
     await db.write();
   }
 }
@@ -237,7 +237,7 @@ export async function handleWriteLibraries(
 
 export async function handleReadLibraries(evt: IpcMainInvokeEvent) {
   await db.read();
-  return db.data.libraries;
+  return db.data['setting.libraries'];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -330,5 +330,21 @@ export const handleWriteAlbumList = async (
   albumList: Album[]
 ) => {
   db.data.albums = albumList;
+  await db.write();
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+export const handleDBRead = async (evt: IpcMainInvokeEvent, key: string) => {
+  await db.read();
+  return db.data[key];
+};
+
+export const handleDBWrite = async (
+  evt: IpcMainInvokeEvent,
+  key: string,
+  value: any
+) => {
+  db.data[key] = value;
   await db.write();
 };

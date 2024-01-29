@@ -4,8 +4,8 @@ import {
   Track,
   readAudioSource,
   readCoverSource,
-  readPlaylist,
-  writePlaylist,
+  readDB,
+  writeDB,
 } from '../api';
 
 interface IHorenContext {
@@ -97,7 +97,8 @@ export default function PlayContext({
           { ...track, source: audioSource, cover: coverSource },
         ]);
         // save play list
-        await writePlaylist(
+        await writeDB(
+          'playlist',
           player.trackList.map((p) => {
             p.cover = '';
             p.source = '';
@@ -121,7 +122,8 @@ export default function PlayContext({
     setPlayList((prev) => prev.filter((t) => t.uid !== track.uid));
     const pls = player.trackList.filter((t) => t.uid !== track.uid);
     player.trackList = pls;
-    writePlaylist(
+    writeDB(
+      'playlist',
       pls.map((p) => {
         p.cover = '';
         p.source = '';

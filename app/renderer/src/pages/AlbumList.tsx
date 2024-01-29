@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Page, { PageProps } from './_page';
 import styled from 'styled-components';
-import { Track, readAlbumList, fetchCoverFromApi } from '../api';
+import { Track, readDB, fetchCoverFromApi } from '../api';
 import { IoMdRefresh } from 'react-icons/io';
 import Modal from '../components/Modal';
 import { FaPlay, FaPause } from 'react-icons/fa6';
@@ -39,7 +39,7 @@ export function AlbumListPage({ visible }: AlbumListPageProps) {
 
   useEffect(() => {
     (async () => {
-      const albums: Album[] = await readAlbumList();
+      const albums: Album[] = await readDB('albums');
       setAlbumList(albums);
     })();
   }, []);

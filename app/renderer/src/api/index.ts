@@ -3,11 +3,8 @@ import { Album } from '../pages/AlbumList';
 declare global {
   interface Window {
     ipc: {
-      readSetting: (key: string) => Promise<any>;
-      writeSetting: (key: string, value: any) => Promise<void>;
       closeMainwindow: () => Promise<void>;
       openDialog: () => Promise<any>;
-      readTrackList: () => Promise<Track[]>;
       refreshTrackList: () => Promise<void>;
       refreshTrackListMsg: (
         listener: (
@@ -17,8 +14,6 @@ declare global {
           msg: string
         ) => void
       ) => void;
-      readLibraries: () => Promise<string[]>;
-      writeLibraries: (libs: string[]) => Promise<void>;
       readAudioSource: (filepath: string) => Promise<string>;
       readCoverSource: (
         albumName: string,
@@ -28,10 +23,8 @@ declare global {
         albumName: string,
         artistName?: string
       ) => Promise<void>;
-      readPlaylist: () => Promise<Track[]>;
-      writePlaylist: (playlist: Track[]) => Promise<void>;
-      readAlbumList: () => Promise<Album[]>;
-      writeAlbumList: (albumList: Album[]) => Promise<void>;
+      readDB: <T = any>(key: string) => Promise<T>;
+      writeDB: (key: string, value: any) => Promise<void>;
     };
   }
 }
@@ -55,20 +48,13 @@ export interface Track {
 }
 
 export const {
-  readSetting,
-  writeSetting,
   closeMainwindow,
   openDialog,
-  readTrackList,
   refreshTrackList,
   refreshTrackListMsg,
-  readLibraries,
-  writeLibraries,
   readAudioSource,
   readCoverSource,
   fetchCoverFromApi,
-  readPlaylist,
-  writePlaylist,
-  readAlbumList,
-  writeAlbumList,
+  readDB,
+  writeDB,
 } = window?.ipc;

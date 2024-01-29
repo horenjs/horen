@@ -67,6 +67,12 @@ const IPC_API: IPC = {
   writeAlbumList: async (albumList: any[]) => {
     return await ipcRenderer.invoke(CHANNELS.albumList.write, albumList);
   },
+  readDB: async (key: string) => {
+    return await ipcRenderer.invoke(CHANNELS.db.read, key);
+  },
+  writeDB: async (key: string, value: any) => {
+    return await ipcRenderer.invoke(CHANNELS.db.write, key, value);
+  },
 };
 
 contextBridge.exposeInMainWorld('ipc', IPC_API);

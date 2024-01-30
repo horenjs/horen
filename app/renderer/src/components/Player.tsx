@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import PlayerBar from './PlayBar';
 import { HorenContext } from '../App';
-import { readCoverSource } from '../api';
 
 const PLAYER = styled.div`
   position: fixed;
@@ -84,15 +83,6 @@ export default function Player(props: PlayerProps) {
   const handleClick = () => {
     setExpanded(!expanded);
   };
-
-  useEffect(() => {
-    if (player.currentTrack?.album) {
-      readCoverSource(
-        player.currentTrack.album,
-        player.currentTrack?.artist || ''
-      ).then(setCover);
-    }
-  }, [player.currentTrack]);
 
   return (
     <PLAYER className="player" style={{ top }}>

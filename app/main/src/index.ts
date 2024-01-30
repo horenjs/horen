@@ -1,5 +1,5 @@
 import { app, BrowserWindow, ipcMain, net, protocol } from 'electron';
-import path from 'path';
+import fs from 'fs/promises';
 
 import { createMainWindow } from './app';
 import { CHANNELS } from './constant';
@@ -23,6 +23,7 @@ import {
   handleWritePlaylist,
 } from './ipc';
 import {
+  base64toStr,
   DBDataType,
   initCacheDB,
   initDatabase,
@@ -42,6 +43,10 @@ protocol.registerSchemesAsPrivileged([
     scheme: 'horen',
     privileges: { bypassCSP: true, standard: false },
   },
+  {
+    scheme: 'audio',
+    privileges: { bypassCSP: true, standard: false, stream: true },
+  },
 ]);
 
 app.whenReady().then(async () => {
@@ -57,6 +62,12 @@ app.whenReady().then(async () => {
     logger.debug('origin request: ' + request.url);
     logger.debug('transform request: ' + url);
     return net.fetch(url);
+  });
+  protocol.handle('audio', (request) => {
+    const url = 'file:///' + request.url.slice('audio:///'.length);
+    logger.debug('origin request: ' + request.url);
+    logger.debug('transform request: ' + url);
+    return net.fetch(url, { bypassCustomProtocolHandlers: true });
   });
 });
 

@@ -1,12 +1,6 @@
 import React, { useState, createContext, useEffect, useRef } from 'react';
 import { HowlPlayer, PlayerOrder } from '../utils';
-import {
-  Track,
-  readAudioSource,
-  readCoverSource,
-  readDB,
-  writeDB,
-} from '../api';
+import { Track, readDB, writeDB } from '../api';
 
 interface IHorenContext {
   player: {
@@ -67,46 +61,9 @@ export default function PlayContext({
     if (!track || (currentTrack && track.uid === currentTrack.uid)) {
       player.playOrPause();
     } else {
-      readAudioSource(track.src).then((res) => {
-        readCoverSource(track.album || '', track.artist || '').then((cover) => {
-          player.currentTrack = { ...track, source: res, cover };
-          currentTrackRef.current = { ...track, source: res, cover };
-          setCurrentTrack({ ...track, source: res, cover });
-        });
-      });
-
-      disPosePlaylist(track);
+      player.currentTrack = track;
     }
     setIsPlaying(true);
-  };
-
-  const disPosePlaylist = (track: Track) => {
-    if (!includes(playList, track)) {
-      (async () => {
-        const audioSource = await readAudioSource(track.src);
-        const coverSource = await readCoverSource(
-          track?.album || '',
-          track.artist
-        );
-        player.trackList = [
-          ...player.trackList,
-          { ...track, source: audioSource, cover: coverSource },
-        ];
-        setPlayList((prev) => [
-          ...prev,
-          { ...track, source: audioSource, cover: coverSource },
-        ]);
-        // save play list
-        await writeDB(
-          'playlist',
-          player.trackList.map((p) => {
-            p.cover = '';
-            p.source = '';
-            return p;
-          })
-        );
-      })();
-    }
   };
 
   const pause = () => {
@@ -115,7 +72,7 @@ export default function PlayContext({
   };
 
   const add = (track: Track) => {
-    disPosePlaylist(track);
+    player.trackList = [...player.trackList, track];
   };
 
   const remove = (track: Track) => {

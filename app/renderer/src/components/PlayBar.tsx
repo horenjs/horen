@@ -7,7 +7,6 @@ import { MdSkipPrevious, MdSkipNext, MdMenuOpen } from 'react-icons/md';
 import { TfiLoop } from 'react-icons/tfi';
 import { IoIosArrowDown } from 'react-icons/io';
 import { Slider } from './Slider';
-import { readCoverSource } from '../api';
 
 const PLAYBAR = styled.div`
   width: 100%;
@@ -126,7 +125,6 @@ export type PlayBarProps = {
 function PlayBar(props: PlayBarProps) {
   const { onExpand, visible = true } = props;
   const [seek, setSeek] = useState(0);
-  const [cover, setCover] = useState('');
   const { player } = useContext(HorenContext);
   const duration = player.native?.duration || Infinity;
 
@@ -154,22 +152,14 @@ function PlayBar(props: PlayBarProps) {
     return () => clearInterval(timer);
   }, [player.native?.seek]);
 
-  useEffect(() => {
-    if (player.currentTrack?.album) {
-      readCoverSource(
-        player.currentTrack?.album,
-        player.currentTrack?.artist || ''
-      ).then((c) => {
-        setCover(c);
-      });
-    }
-  }, [player.currentTrack]);
-
   return (
     <PLAYBAR className="play-bar">
       <Cover onClick={handleClick} className="electron-no-drag">
         {visible ? (
-          cover && <img src={cover} alt={player.currentTrack?.title} />
+          <img
+            src={player.currentTrack?.cover}
+            alt={player.currentTrack?.title}
+          />
         ) : (
           <span className="arrow">
             <IoIosArrowDown size={28} />

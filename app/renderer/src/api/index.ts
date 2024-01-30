@@ -14,11 +14,6 @@ declare global {
           msg: string
         ) => void
       ) => void;
-      readAudioSource: (filepath: string) => Promise<string>;
-      readCoverSource: (
-        albumName: string,
-        artistName?: string
-      ) => Promise<string>;
       fetchCoverFromApi: (
         albumName: string,
         artistName?: string
@@ -52,8 +47,6 @@ export const {
   openDialog,
   refreshTrackList,
   refreshTrackListMsg,
-  readAudioSource,
-  readCoverSource,
   fetchCoverFromApi,
   readDB,
   writeDB,

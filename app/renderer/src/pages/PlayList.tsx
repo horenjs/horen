@@ -172,8 +172,6 @@ export function PlayListItem({
   onDel: (track: Track) => void;
   isPlaying: boolean;
 }) {
-  const [cover, setCover] = useState('');
-
   const handlePlay = () => {
     if (onPlay) onPlay(track);
   };
@@ -191,7 +189,7 @@ export function PlayListItem({
       <td>
         <div className="trackTitle">
           <div className="cover-thumbnail">
-            <img src={cover} alt={track.title} />
+            <img src={track.cover} alt={track.title} />
           </div>
           <div style={{ flexGrow: 1 }}>
             <div className="trackTitle-title">{track.title}</div>

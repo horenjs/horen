@@ -9,7 +9,7 @@ if (typeof window === 'undefined')
   );
 
 export interface HowlTrack {
-  source: string;
+  src: string;
   uid: string;
 }
 
@@ -125,7 +125,7 @@ export default class HowlPlayer<T extends HowlTrack> {
    */
   public set currentTrack(track: T) {
     this._currentTrack = track;
-    if (track.source) this._playAudioSource(track.source);
+    if (track.src) this._playAudioSource(track.src);
   }
 
   /**
@@ -311,48 +311,19 @@ export default class HowlPlayer<T extends HowlTrack> {
   protected _playAudioSource(src: string) {
     Howler.unload();
 
+    console.log('player: new a Howl');
+
     this._howler = new Howl({
-      src: [src],
+      src: ['audio:///' + src],
       format: ['flac', 'mp3'],
       html5: true,
       volume: this.volume,
     });
 
+    console.log(this._howler);
+
     if (this._autoplay) {
       this._play();
     }
-  }
-}
-
-export class SinglePlayer<T extends HowlTrack> {
-  protected _track?: T;
-  protected _source?: string;
-  protected _howler?: Howl;
-  protected _volume = 0.3;
-
-  protected _play() {
-    if (this._howler?.playing()) return;
-    this._howler?.play();
-  }
-
-  protected _playAudioSource(src: string) {
-    Howler.unload();
-
-    this._howler = new Howl({
-      src: [src],
-      format: ['flac', 'mp3'],
-      html5: true,
-      volume: this._volume,
-    });
-
-    this._play();
-  }
-
-  get track() {
-    return this._track;
-  }
-
-  play(track: T) {
-    this._playAudioSource(track.source);
   }
 }

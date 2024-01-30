@@ -4,7 +4,6 @@ import mm from 'music-metadata';
 import path from 'path';
 import winston from 'winston';
 import fse from 'fs-extra';
-import defaultCover from './static/defaultCover';
 import { logger } from './index';
 import { fetchAlbumCover } from './apis';
 
@@ -70,13 +69,13 @@ export async function readMusicMeta(trackSrc: string): Promise<Track> {
   );
 
   if (await fse.exists(albumPath)) {
-    logger.debug('read cover from file: ' + albumPath);
+    logger.debug('album cover existed: ' + albumPath);
     cover = await fs.readFile(albumPath, { encoding: 'base64url' });
   } else {
     logger.debug('no cover file, read from music meta');
     const data = meta.common?.picture ? meta.common.picture[0].data : null;
     if (data) {
-      logger.debug('read cover from music meta');
+      logger.debug('music meta cover existed');
       await fs.writeFile(albumPath, data);
       cover = arrayBufferToBase64(data);
     } else {
@@ -99,7 +98,7 @@ export async function readMusicMeta(trackSrc: string): Promise<Track> {
     duration: meta?.format?.duration,
     date: String(meta?.common?.date),
     genre: String(meta?.common?.genre),
-    cover: 'data:image/png;base64,' + cover,
+    cover: albumPath,
     //
   };
 }

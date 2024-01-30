@@ -14,7 +14,7 @@ declare global {
           msg: string
         ) => void
       ) => void;
-      fetchCoverFromApi: (
+      refreshAlbumCover: (
         albumName: string,
         artistName?: string
       ) => Promise<void>;
@@ -47,7 +47,7 @@ export const {
   openDialog,
   refreshTrackList,
   refreshTrackListMsg,
-  fetchCoverFromApi,
+  refreshAlbumCover,
   readDB,
   writeDB,
 } = window?.ipc;

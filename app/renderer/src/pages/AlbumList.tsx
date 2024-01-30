@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Page, { PageProps } from './_page';
 import styled from 'styled-components';
-import { Track, readDB, fetchCoverFromApi } from '../api';
+import { Track, readDB, refreshAlbumCover } from '../api';
 import { IoMdRefresh } from 'react-icons/io';
 import Modal from '../components/Modal';
 import { FaPlay, FaPause } from 'react-icons/fa6';
@@ -328,7 +328,7 @@ function AlbumItem({ album, onOpen }: AlbumItemProps) {
     e.stopPropagation();
     e.preventDefault();
     if (window.confirm('从网络获取专辑封面?')) {
-      await fetchCoverFromApi(album.title, album.artist.split(',')[0]);
+      await refreshAlbumCover(album.title, album.artist.split(',')[0]);
       setKey(new Date().valueOf());
     }
   };

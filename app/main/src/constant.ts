@@ -15,31 +15,11 @@ export const CHANNELS = {
     maximize: 'mainwindow-maximize',
   },
   openDialog: 'open-dialog',
-  track: {
-    read: 'track-read',
+  refresh: {
+    trackList: 'refresh-track-list',
+    trackListMsg: 'refresh-track-list-msg',
+    albumCover: 'refresh-album-cover',
   },
-  trackList: {
-    refresh: 'track-list-refresh',
-    read: 'track-list-read',
-    write: 'track-list-write',
-    refreshMsg: 'track-list-refresh-msg',
-  },
-  libraries: {
-    write: 'libraries-write',
-    read: 'libraries-read',
-  },
-  playlist: {
-    write: 'playlist-write',
-    read: 'playlist-read',
-  },
-  albumList: {
-    write: 'albumList-write',
-    read: 'albumList-read',
-  },
-  readAudioSource: 'read-audio-source',
-  readCoverSource: 'read-cover-source',
-  fetchCoverFromApi: 'fetch-cover-from-api',
-  readLyricSource: 'read-lyric-source',
   db: {
     read: 'db-read',
     write: 'db-write',

@@ -7,23 +7,11 @@ import {
   handleCloseMainwindow,
   handleDBRead,
   handleDBWrite,
-  handleFetchCoverFromApi,
   handleOpenDialog,
-  handleReadAlbumList,
-  handleReadAudioSource,
-  handleReadCoverSource,
-  handleReadLibraries,
-  handleReadPlaylist,
-  handleReadSetting,
-  handleReadTrack,
-  handleReadTrackList,
+  handleRefreshAlbumCover,
   handleRefreshTrackList,
-  handleWriteAlbumList,
-  handleWriteLibraries,
-  handleWritePlaylist,
 } from './ipc';
 import {
-  base64toStr,
   DBDataType,
   initCacheDB,
   initDatabase,
@@ -85,33 +73,14 @@ app.on('window-all-closed', () => {
   }
 });
 
-ipcMain.handle(CHANNELS.setting.read, handleReadSetting);
-// ipcMain.handle(CHANNELS.setting.write, null);
-
 ipcMain.handle(CHANNELS.mainWindow.close, handleCloseMainwindow);
 // ipcMain.handle(CHANNELS.mainWindow.minimize, null);
 // ipcMain.handle(CHANNELS.mainWindow.maximize, null);
 
 ipcMain.handle(CHANNELS.openDialog, handleOpenDialog);
 
-ipcMain.handle(CHANNELS.track.read, handleReadTrack);
-
-// ipcMain.handle(CHANNELS.trackList.write, null);
-ipcMain.handle(CHANNELS.trackList.read, handleReadTrackList);
-ipcMain.handle(CHANNELS.trackList.refresh, handleRefreshTrackList);
-
-ipcMain.handle(CHANNELS.libraries.write, handleWriteLibraries);
-ipcMain.handle(CHANNELS.libraries.read, handleReadLibraries);
-
-ipcMain.handle(CHANNELS.readAudioSource, handleReadAudioSource);
-ipcMain.handle(CHANNELS.readCoverSource, handleReadCoverSource);
-ipcMain.handle(CHANNELS.fetchCoverFromApi, handleFetchCoverFromApi);
-
-ipcMain.handle(CHANNELS.playlist.read, handleReadPlaylist);
-ipcMain.handle(CHANNELS.playlist.write, handleWritePlaylist);
-
-ipcMain.handle(CHANNELS.albumList.read, handleReadAlbumList);
-ipcMain.handle(CHANNELS.albumList.write, handleWriteAlbumList);
+ipcMain.handle(CHANNELS.refresh.trackList, handleRefreshTrackList);
+ipcMain.handle(CHANNELS.refresh.albumCover, handleRefreshAlbumCover);
 
 ipcMain.handle(CHANNELS.db.read, handleDBRead);
 ipcMain.handle(CHANNELS.db.write, handleDBWrite);

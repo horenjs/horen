@@ -1,30 +1,18 @@
-import { dialog, type IpcMainInvokeEvent } from 'electron';
-import fs from 'fs/promises';
+import { dialog, IpcMainInvokeEvent } from 'electron';
+import path from 'path';
+
+import { APP_DATA_PATH, APP_NAME, AUDIO_EXTS, CHANNELS } from './constant';
 import { cacheDB, db, logger, mainWindow } from './index';
 import {
-  walkDir,
-  readMusicMeta,
-  getExt,
-  Track,
-  strToBase64,
   Album,
   Artist,
   fetchCoverAndSave,
+  getExt,
+  readMusicMeta,
+  strToBase64,
+  Track,
+  walkDir,
 } from './utils';
-import { AUDIO_EXTS, APP_DATA_PATH, APP_NAME, CHANNELS } from './constant';
-import path from 'path';
-import defaultCover from './static/defaultCover';
-import fse from 'fs-extra';
-
-////////////////////////////////////////////////////////////////////////////////
-
-export const handleReadSetting = async (
-  evt: IpcMainInvokeEvent,
-  key: string
-) => {
-  await db.read();
-  return db.data.setting[key];
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -38,24 +26,6 @@ export const handleOpenDialog = async () => {
   return await dialog.showOpenDialog(mainWindow, {
     properties: ['openDirectory', 'multiSelections'],
   });
-};
-
-////////////////////////////////////////////////////////////////////////////////
-
-export const handleReadTrack = async (
-  evt: IpcMainInvokeEvent,
-  trackSource: string
-) => {};
-
-////////////////////////////////////////////////////////////////////////////////
-
-export const handleReadTrackList = async (
-  evt: IpcMainInvokeEvent,
-  offset = 0,
-  limit = 20
-) => {
-  await db.read();
-  return db.data.tracks.slice(offset, limit);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -121,7 +91,7 @@ const disposeTrackList = async (
   for (const p of trackPathnames) {
     const existed = includes(cacheTracks, { src: p });
     mainWindow.webContents.send(
-      CHANNELS.trackList.refreshMsg,
+      CHANNELS.refresh.trackListMsg,
       i,
       trackPathnames.length,
       p
@@ -219,118 +189,14 @@ const disposeArtistList = async (trackList: Track[]) => {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+//////////////////////////// refresh track list ////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-export async function handleWriteLibraries(
-  evt: IpcMainInvokeEvent,
-  libs: string[]
-) {
-  if (libs instanceof Array) {
-    console.log('write libs: ', libs);
-    db.data['setting.libraries'] = libs;
-    await db.write();
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-export async function handleReadLibraries(evt: IpcMainInvokeEvent) {
-  await db.read();
-  return db.data['setting.libraries'];
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-export const handleReadAudioSource = async (
-  evt: IpcMainInvokeEvent,
-  filename: string
-) => {
-  const base64 = await fs.readFile(filename, {
-    encoding: 'base64',
-  });
-  return 'data:audio/wav;base64,' + base64;
-};
-
-////////////////////////////////////////////////////////////////////////////////
-
-export const handleReadCoverSource = async (
-  evt: IpcMainInvokeEvent,
-  albumName: string,
-  artistName: string
-) => {
-  const coverPath = path.join(
-    APP_DATA_PATH,
-    APP_NAME,
-    'Cover',
-    strToBase64(albumName + artistName) + '.png'
-  );
-  let cover = defaultCover;
-  if (await fse.exists(coverPath)) {
-    cover = await fs.readFile(coverPath, { encoding: 'base64' });
-    logger.debug('read from cover file success: ' + coverPath);
-  } else {
-    logger.debug('there is no local cover, using default');
-  }
-  return 'data:image/png;base64,' + cover;
-};
-
-////////////////////////////////////////////////////////////////////////////////
-
-export const handleReadLyricSource = async () => {};
-
-////////////////////////////////////////////////////////////////////////////////
-
-export const handleReadDBStore = async (
-  evt: IpcMainInvokeEvent,
-  key: string
-) => {
-  await db.read();
-  return db.data[key];
-};
-
-////////////////////////////////////////////////////////////////////////////////
-
-export const handleFetchCoverFromApi = async (
+export const handleRefreshAlbumCover = async (
   evt: IpcMainInvokeEvent,
   albumName: string,
   artist: string
 ) => {
   await fetchCoverAndSave(albumName, artist);
-};
-
-////////////////////////////////////////////////////////////////////////////////
-
-export const handleReadPlaylist = async () => {
-  await db.read();
-  return db.data.playlist;
-};
-
-////////////////////////////////////////////////////////////////////////////////
-
-export const handleWritePlaylist = async (
-  evt: IpcMainInvokeEvent,
-  playlist: Track[]
-) => {
-  db.data.playlist = playlist;
-  await db.write();
-};
-
-////////////////////////////////////////////////////////////////////////////////
-
-export const handleReadAlbumList = async () => {
-  await db.read();
-  return db.data.albums;
-};
-
-////////////////////////////////////////////////////////////////////////////////
-
-export const handleWriteAlbumList = async (
-  evt: IpcMainInvokeEvent,
-  albumList: Album[]
-) => {
-  db.data.albums = albumList;
-  await db.write();
 };
 
 ////////////////////////////////////////////////////////////////////////////////

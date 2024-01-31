@@ -11,6 +11,7 @@ if (typeof window === 'undefined')
 export interface HowlTrack {
   src: string;
   uid: string;
+  howl?: Howl;
 }
 
 export type PlayerOrder = 'order' | 'repeat' | 'loop' | 'shuffle';
@@ -21,306 +22,97 @@ export type PlayerOrder = 'order' | 'repeat' | 'loop' | 'shuffle';
  * You can only call it on the Browser Environment.
  */
 export default class HowlPlayer<T extends HowlTrack> {
-  get autoplay(): boolean {
-    return this._autoplay;
-  }
-
-  set autoplay(value: boolean) {
-    this._autoplay = value;
-  }
-  /**
-   * track list
-   */
-  protected _trackList: T[] = [];
-  /**
-   * max history list length
-   */
-  protected _maxHistoryListLength = 10;
-  /**
-   * track history list
-   */
-  protected _historyList: T[] = [];
-  /**
-   * the track is loaded currently
-   */
-  protected _currentTrack?: T;
-  /**
-   * howler player
-   */
-  protected _howler?: Howl;
-  /**
-   * is the track playing
-   */
-  protected _playing = false;
-  /**
-   * seek the position of the track
-   */
-  protected _seek = 0;
-  /**
-   * duration shouldn't be ZERO
-   */
-  protected _duration = 1;
-  /**
-   * is player enabled
-   */
-  protected _enabled = false;
-  /**
-   * volume of the track, 0 ~ 1
-   */
+  protected _playlist: T[];
+  protected _index = 0;
   protected _volume = 0.8;
-  /**
-   * play mode
-   */
-  protected _mode: PlayerOrder = 'order';
-  /**
-   * auto play
-   */
-  private _autoplay = true;
 
-  public set trackList(list: T[]) {
-    // 歌曲不允许重复
-    this._trackList = list;
-
-    // 如果没有播放器则重新生成一个
-    /**
-     * if (!this._howler) {
-      if (this._trackList[0]) {
-        this._playAudioSource(this._trackList[0]?.source);
-        this._currentTrack = this._trackList[0];
-      }
-    }
-     */
+  constructor(playlist?: T[]) {
+    this._playlist = playlist || [];
   }
 
-  /**
-   * get the track list
-   */
-  public get trackList() {
-    return this._trackList;
+  get native() {
+    return this._playlist[this._index]?.howl || null;
   }
 
-  /**
-   * get the history list
-   */
-  public get historyList() {
-    return this._historyList;
+  get current() {
+    return this._playlist[this._index];
   }
 
-  /**
-   * set the history list
-   */
-  public set historyList(list: T[]) {
-    this._historyList = list;
+  get playlist() {
+    return this._playlist;
   }
 
-  /**
-   * get the current track
-   */
-  public get currentTrack() {
-    return this._currentTrack!;
+  public add(playlist: T[]) {
+    this._playlist = [...this._playlist, ...playlist];
   }
 
-  /**
-   * set the play status
-   */
-  public set playing(playing: boolean) {
-    this._playing = playing;
-  }
-
-  /**
-   * get the play status
-   */
-  public get playing() {
-    this._playing = this._howler?.playing() || false;
-    return this._playing;
-  }
-
-  /**
-   * get the seek of track
-   */
-  public get seek() {
-    this._seek = this._howler?.seek() || 0;
-    return this._seek;
-  }
-
-  /**
-   * set the seek of track
-   */
-  public set seek(s: number) {
-    this._howler?.seek(s);
-  }
-
-  /**
-   * get the duration of track
-   */
-  public get duration() {
-    this._duration = this._howler?.duration() || 0;
-    return this._duration;
-  }
-
-  /**
-   * get the play mode of the track list
-   */
-  public get mode() {
-    return this._mode;
-  }
-
-  /**
-   * set the play mode of the track list
-   */
-  public set mode(m: PlayerOrder) {
-    this._mode = m;
-  }
-
-  /**
-   * set the volume;
-   */
-  public set volume(vol: number) {
-    this._howler?.volume(vol);
-  }
-
-  /**
-   * get the volume;
-   */
-  public get volume() {
-    return this._howler?.volume() || this._volume;
-  }
-
-  // There are many methods below to operate the TRACK.
-  //
-  //
-  /**
-   * play the track, just for inner operation.
-   * if you want to play a track specific
-   * use [set currentTrack()]
-   * @returns null
-   */
-  protected _play() {
-    if (this._howler?.playing()) return;
-
-    this._howler?.play();
-
-    this._howler?.once('end', () => this.skip('next'));
-  }
-
-  /**
-   * pause the track
-   */
-  public pause() {
-    this._howler?.pause();
-  }
-
-  /**
-   * stop the track
-   */
-  public stop(): void {
-    this._howler?.stop();
-  }
-
-  /**
-   * skip the track in some order
-   * prev - the previous track
-   * next - the next track
-   * if the _mode is shuffle, you cannot know the which track is the next.
-   * @param order : which order the track skips to;
-   */
-  public skip(order: 'prev' | 'next') {
-    if (!this.currentTrack || !this.trackList.length) return;
-
-    const index = () => {
-      let i = 0;
-      for (const track of this._trackList) {
-        if (track.uid === this.currentTrack.uid) return i;
-        i += 1;
-      }
-
-      return 0;
-    };
-
-    this._skipTo(order, index(), this.trackList.length);
-  }
-
-  protected _skipTo(order: 'prev' | 'next', index: number, length: number) {
-    switch (this.mode) {
-      case 'loop':
-        if (order === 'next') {
-          if (index >= length - 1) this.play(this.trackList[0]);
-          else this.play(this.trackList[index + 1]);
-        } else {
-          if (index < 1) this.play(this.trackList[length - 1]);
-          else this.play(this.trackList[index - 1]);
-        }
-        break;
-      case 'repeat':
-        this.play(this.trackList[index]);
-        break;
-      case 'order':
-        if (order === 'next') {
-          if (index >= length - 1) {
-            this.stop();
-            this._currentTrack = undefined;
-          } else this.play(this.trackList[index + 1]);
-        } else {
-          if (index < 1) {
-            this.stop();
-            this._currentTrack = undefined;
-          } else this.play(this.trackList[index - 1]);
-        }
-        break;
-      case 'shuffle': {
-        // todo: memorize the tracks passed.
-        const i = randomInt(0, length - 1);
-        // 如果随机到的数与当前正在播放的相差在 1 位以内
-        // 则重新进行随机以制造出伪随机的效果
-        if (Math.abs(i - index) < 2) this._skipTo(order, index, length);
-        else this.play(this.trackList[i]);
-        break;
-      }
+  public remove(tracks: T[]) {
+    for (const track of tracks) {
+      this._playlist.filter((p) => p.uid !== track.uid);
     }
   }
 
-  /**
-   * if track is playing, pause it
-   * if track is paused, resume its status to playing
-   
-  public playOrPause(): void {
-    if (this._howler?.playing()) this._howler.pause();
-    else this._play();
-  }*/
-
-  public play(track: T): void {
-    if (track.src) this._playAudioSource(track.src);
-    this._currentTrack = track;
-  }
-
-  public resume(): void {
-    if (!this._howler?.playing() && this.currentTrack) this._play();
-  }
-
-  public mute() {
-    Howler.mute(true);
-  }
-
-  public unmute() {
-    Howler.mute(false);
-  }
-
-  /**
-   * play the audio from source given
-   * @param src : src of track;
-   */
-  protected _playAudioSource(src: string) {
+  public play(index = this._index) {
     Howler.unload();
 
-    this._howler = new Howl({
-      src: ['audio:///' + src],
-      format: ['flac', 'mp3'],
-      html5: true,
-      volume: this.volume,
-    });
+    let sound;
+    const data = this._playlist[index];
+    if (!data) return;
 
-    if (this._autoplay) {
-      this._play();
+    if (data.howl) {
+      sound = data.howl;
+    } else {
+      sound = data.howl = new Howl({
+        src: ['audio:///' + data.src],
+        format: ['flac', 'mp3'],
+        html5: true,
+        autoplay: true,
+        volume: this._volume,
+        onplay: () => {},
+        onload: () => {},
+        onend: () => {
+          this.skip('next');
+        },
+        onpause: () => {},
+        onstop: () => {},
+        onseek: () => {},
+      });
+    }
+
+    console.log(sound);
+
+    sound.play();
+    this._index = index;
+  }
+
+  public pause() {
+    const sound = this._playlist[this._index].howl;
+    sound?.pause();
+  }
+
+  public skip(str: string) {
+    if (str === 'next') {
+      this._playlist[this._index].howl?.stop();
+      this._index += 1;
+      this.play(this._index);
+    }
+  }
+
+  public volume(val: number) {
+    Howler.volume(val);
+  }
+
+  public seek(per: number) {
+    const sound = this._playlist[this._index].howl;
+    if (sound?.playing()) {
+      sound.seek(sound.duration() * per);
+    }
+  }
+
+  public step() {
+    const sound = this._playlist[this._index].howl;
+    const seek = sound?.seek() || 0;
+    if (sound?.playing()) {
     }
   }
 }

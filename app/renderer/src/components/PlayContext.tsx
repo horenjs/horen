@@ -1,6 +1,7 @@
-import React, { useState, createContext, useEffect, useRef } from 'react';
-import { HowlPlayer, PlayerOrder } from '../utils';
-import { Track, readDB, writeDB } from '../api';
+import React, { createContext, useState } from 'react';
+
+import { Track } from '../api';
+import { HowlPlayer } from '../utils';
 
 interface IHorenContext {
   player: {
@@ -14,7 +15,7 @@ interface IHorenContext {
     isPlaying: boolean;
     playList: Track[];
     currentTrack: Track | null;
-    native: HowlPlayer<Track> | null;
+    native: Howl | null;
   };
   trackList: {
     value: Track[];
@@ -62,19 +63,10 @@ export default function PlayContext({
    */
   const play = (track?: Track) => {
     console.log('click play');
-    if (track) {
-      if (currentTrack && track.uid === currentTrack.uid) {
-        console.log('already current track.');
-        player.resume();
-        setIsPlaying(true);
-      } else {
-        player.play(track);
-        setCurrentTrack(track);
-        setIsPlaying(true);
-      }
+    if (!track) {
     } else {
-      player.resume();
-      setIsPlaying(true);
+      player.add([track]);
+      player.play();
     }
   };
 
@@ -87,27 +79,26 @@ export default function PlayContext({
   const add = (track: Track) => {
     console.log('add a new track: ', track.title);
     setPlayList([...playList, track]);
-    player.trackList = [...playList, track];
+    player.add([track]);
   };
 
   const remove = (track: Track) => {
     console.log('remove a track: ', track.title);
     setPlayList((prev) => prev.filter((t) => t.uid !== track.uid));
-    const pls = player.trackList.filter((t) => t.uid !== track.uid);
-    player.trackList = pls;
+    player.remove([track]);
   };
 
   const next = () => {
     console.log('click next track');
     player.skip('next');
-    setCurrentTrack(player.currentTrack);
+    setCurrentTrack(player.current);
     setIsPlaying(true);
   };
 
   const prev = () => {
     console.log('click prev track');
     player.skip('prev');
-    setCurrentTrack(player.currentTrack);
+    setCurrentTrack(player.current);
     setIsPlaying(true);
   };
 
@@ -129,7 +120,7 @@ export default function PlayContext({
           isPlaying,
           currentTrack,
           playList,
-          native: player,
+          native: player.native,
         },
         trackList: {
           value: trackList,

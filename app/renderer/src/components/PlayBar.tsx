@@ -126,7 +126,7 @@ function PlayBar(props: PlayBarProps) {
   const { onExpand, visible = true } = props;
   const [seek, setSeek] = useState(0);
   const { player } = useContext(HorenContext);
-  const duration = player.native?.duration || Infinity;
+  const duration = player.native?.duration() || Infinity;
 
   const handleClick = () => {
     if (onExpand) onExpand();
@@ -139,7 +139,7 @@ function PlayBar(props: PlayBarProps) {
   const hanleChangeSeek = (per: number) => {
     setSeek(per * duration);
     if (player.native) {
-      player.native.seek = per * duration;
+      player.native.seek(per * duration);
     }
   };
 
@@ -150,7 +150,7 @@ function PlayBar(props: PlayBarProps) {
       }
     }, 500);
     return () => clearInterval(timer);
-  }, [player.native?.seek]);
+  }, []);
 
   return (
     <PLAYBAR className="play-bar">

@@ -32,15 +32,29 @@ export const handleOpenDialog = async () => {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-export async function handleRefreshTrackList(evt: IpcMainInvokeEvent) {
+export async function handleRefreshTrackList(
+  evt: IpcMainInvokeEvent,
+  opts = {
+    clearCache: false,
+  }
+) {
   logger.debug('to fresh track list');
+
+  if (opts.clearCache) {
+    logger.debug('clear cache: ' + opts.clearCache);
+    cacheDB.data.tracks = [];
+    await cacheDB.write();
+  }
 
   await db.read();
   await cacheDB.read();
 
   const libs = db.data['setting.libraries'];
   const trackPathnames = await findAllAudios(libs);
-  const trackList = await disposeTrackList(trackPathnames, cacheDB.data.tracks);
+  const trackList = await disposeTrackList(
+    trackPathnames,
+    opts.clearCache ? [] : cacheDB.data.tracks
+  );
   const albumList = await disposeAlbumList(trackList);
   const artistList = await disposeArtistList(trackList);
 
@@ -103,7 +117,6 @@ const disposeTrackList = async (
       logger.debug('read meta: ' + p);
       try {
         const meta = await readMusicMeta(p);
-        meta.cover = '';
         trackList.push({ ...meta, index: i });
 
         cacheDB.update(({ tracks }) => {

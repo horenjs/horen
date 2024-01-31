@@ -76,7 +76,6 @@ export type PlayerProps = {};
 
 export default function Player(props: PlayerProps) {
   const [expanded, setExpanded] = useState(false);
-  const [cover, setCover] = useState('');
   const top = !expanded ? 'calc(100vh - 64px)' : '0';
   const { player } = useContext(HorenContext);
 
@@ -93,7 +92,10 @@ export default function Player(props: PlayerProps) {
         <Cover className="player-cover">
           <div className="frame">
             <Picture>
-              <img src={cover} alt={player.currentTrack?.title} />
+              <img
+                src={'horen:///' + player.currentTrack?.cover}
+                alt={player.currentTrack?.title}
+              />
             </Picture>
           </div>
         </Cover>

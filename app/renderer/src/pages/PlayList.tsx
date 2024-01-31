@@ -189,7 +189,7 @@ export function PlayListItem({
       <td>
         <div className="trackTitle">
           <div className="cover-thumbnail">
-            <img src={track.cover} alt={track.title} />
+            <img src={'horen:///' + track.cover} alt={track.title} />
           </div>
           <div style={{ flexGrow: 1 }}>
             <div className="trackTitle-title">{track.title}</div>

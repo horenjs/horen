@@ -14,6 +14,9 @@ const SETTING = styled.div``;
 const SettingItem = styled.div`
   display: flex;
   margin-bottom: 16px;
+  .refresh-msg {
+    height: 18px;
+  }
   label {
     width: 80px;
     color: #fff;
@@ -88,8 +91,8 @@ export default function Setting(props: SettingPageProps) {
     writeDB('setting.language', e.target.value);
   };
 
-  const handleRefresh = () => {
-    refreshTrackList().then();
+  const handleRefresh = (clearCache = false) => {
+    refreshTrackList({ clearCache }).then();
   };
 
   useEffect(() => {
@@ -121,8 +124,11 @@ export default function Setting(props: SettingPageProps) {
               </div>
             ))}
           </Libraries>
-          <button onClick={handleAdd}>Add Path to Libraries</button>
-          <button onClick={handleRefresh}>Refresh Track List</button>
+          <button onClick={handleAdd}>添加至库</button>
+          <button onClick={() => handleRefresh()}>更新列表</button>
+          <button onClick={() => handleRefresh(true)}>
+            清空缓存并更新列表
+          </button>
         </Item>
         <Item label="语  言">
           <select value={language} onChange={handleChangeLang}>

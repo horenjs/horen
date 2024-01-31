@@ -16,6 +16,8 @@ const IPC_API: IPC = {
   openDialog: async () => {
     return await ipcRenderer.invoke(CHANNELS.openDialog);
   },
+  refreshTrackList: async ({ clearCache }) =>
+    await ipcRenderer.invoke(CHANNELS.refresh.trackList, { clearCache }),
   refreshTrackListMsg: async (
     listener: (
       evt: Electron.IpcRendererEvent,

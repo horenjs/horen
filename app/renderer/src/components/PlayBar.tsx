@@ -157,7 +157,7 @@ function PlayBar(props: PlayBarProps) {
       <Cover onClick={handleClick} className="electron-no-drag">
         {visible ? (
           <img
-            src={player.currentTrack?.cover}
+            src={'horen:///' + player.currentTrack?.cover}
             alt={player.currentTrack?.title}
           />
         ) : (

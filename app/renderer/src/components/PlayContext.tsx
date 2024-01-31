@@ -62,6 +62,7 @@ export default function PlayContext({
       player.playOrPause();
     } else {
       player.currentTrack = track;
+      setCurrentTrack(track);
     }
     setIsPlaying(true);
   };
@@ -73,6 +74,7 @@ export default function PlayContext({
 
   const add = (track: Track) => {
     player.trackList = [...player.trackList, track];
+    setPlayList((prev) => [...prev, track]);
   };
 
   const remove = (track: Track) => {

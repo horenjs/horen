@@ -5,7 +5,11 @@ declare global {
     ipc: {
       closeMainwindow: () => Promise<void>;
       openDialog: () => Promise<any>;
-      refreshTrackList: () => Promise<void>;
+      refreshTrackList: ({
+        clearCache,
+      }: {
+        clearCache: boolean;
+      }) => Promise<void>;
       refreshTrackListMsg: (
         listener: (
           evt: any,

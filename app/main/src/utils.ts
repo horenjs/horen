@@ -152,7 +152,11 @@ export const initLogger = () => {
   return winston.createLogger({
     transports: [
       new winston.transports.Console({ level: 'debug' }),
-      new winston.transports.File({ level: 'debug', filename: logFilePath }),
+      new winston.transports.File({
+        level: 'debug',
+        filename: logFilePath,
+        maxsize: 1024 * 1024 * 4,
+      }),
     ],
     format: winston.format.combine(
       winston.format.timestamp(),

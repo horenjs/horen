@@ -51,56 +51,68 @@ export default function PlayContext({
 }: {
   children: React.ReactNode;
 }) {
-  const currentTrackRef = useRef<Track | null>(null);
-  const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
-  const [playList, setPlayList] = useState<Track[]>([]);
   const [trackList, setTrackList] = useState<Track[]>([]);
+  const [playList, setPlayList] = useState<Track[]>([]);
+  const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  /**
+   * 播放指定 track
+   * @param track Track
+   */
   const play = (track?: Track) => {
-    if (!track || (currentTrack && track.uid === currentTrack.uid)) {
-      player.playOrPause();
+    console.log('click play');
+    if (track) {
+      if (currentTrack && track.uid === currentTrack.uid) {
+        console.log('already current track.');
+        player.resume();
+        setIsPlaying(true);
+      } else {
+        player.play(track);
+        setCurrentTrack(track);
+        setIsPlaying(true);
+      }
     } else {
-      player.currentTrack = track;
-      setCurrentTrack(track);
+      player.resume();
+      setIsPlaying(true);
     }
-    setIsPlaying(true);
   };
 
   const pause = () => {
+    console.log('click pause');
     player.pause();
     setIsPlaying(false);
   };
 
   const add = (track: Track) => {
-    player.trackList = [...player.trackList, track];
-    setPlayList((prev) => [...prev, track]);
+    console.log('add a new track: ', track.title);
+    setPlayList([...playList, track]);
+    player.trackList = [...playList, track];
   };
 
   const remove = (track: Track) => {
+    console.log('remove a track: ', track.title);
     setPlayList((prev) => prev.filter((t) => t.uid !== track.uid));
     const pls = player.trackList.filter((t) => t.uid !== track.uid);
     player.trackList = pls;
-    writeDB(
-      'playlist',
-      pls.map((p) => {
-        p.cover = '';
-        p.source = '';
-        return p;
-      })
-    ).then();
   };
 
   const next = () => {
+    console.log('click next track');
     player.skip('next');
+    setCurrentTrack(player.currentTrack);
+    setIsPlaying(true);
   };
 
   const prev = () => {
+    console.log('click prev track');
     player.skip('prev');
+    setCurrentTrack(player.currentTrack);
+    setIsPlaying(true);
   };
 
   const isAdd = (track: Track) => {
-    return includes(playList, track);
+    return indexOfTracks(playList, track) >= 0;
   };
 
   return (
@@ -130,9 +142,12 @@ export default function PlayContext({
   );
 }
 
-export const includes = (tracks: Track[], track: Track) => {
-  for (const t of tracks) {
-    if (t.uid === track.uid) return true;
+export const indexOfTracks = (tracks: Track[], track: Track | null) => {
+  if (!track) return -1;
+
+  for (let i = 0; i < tracks.length; i++) {
+    if (tracks[i].uid === track.uid) return i;
   }
-  return false;
+
+  return -1;
 };

@@ -121,14 +121,6 @@ export default class HowlPlayer<T extends HowlTrack> {
   }
 
   /**
-   * set the current track
-   */
-  public set currentTrack(track: T) {
-    this._currentTrack = track;
-    if (track.src) this._playAudioSource(track.src);
-  }
-
-  /**
    * set the play status
    */
   public set playing(playing: boolean) {
@@ -252,27 +244,27 @@ export default class HowlPlayer<T extends HowlTrack> {
     switch (this.mode) {
       case 'loop':
         if (order === 'next') {
-          if (index >= length - 1) this.currentTrack = this.trackList[0];
-          else this.currentTrack = this.trackList[index + 1];
+          if (index >= length - 1) this.play(this.trackList[0]);
+          else this.play(this.trackList[index + 1]);
         } else {
-          if (index < 1) this.currentTrack = this.trackList[length - 1];
-          else this.currentTrack = this.trackList[index - 1];
+          if (index < 1) this.play(this.trackList[length - 1]);
+          else this.play(this.trackList[index - 1]);
         }
         break;
       case 'repeat':
-        this.currentTrack = this.trackList[index];
+        this.play(this.trackList[index]);
         break;
       case 'order':
         if (order === 'next') {
           if (index >= length - 1) {
             this.stop();
             this._currentTrack = undefined;
-          } else this.currentTrack = this.trackList[index + 1];
+          } else this.play(this.trackList[index + 1]);
         } else {
           if (index < 1) {
             this.stop();
             this._currentTrack = undefined;
-          } else this.currentTrack = this.trackList[index - 1];
+          } else this.play(this.trackList[index - 1]);
         }
         break;
       case 'shuffle': {
@@ -281,7 +273,7 @@ export default class HowlPlayer<T extends HowlTrack> {
         // 如果随机到的数与当前正在播放的相差在 1 位以内
         // 则重新进行随机以制造出伪随机的效果
         if (Math.abs(i - index) < 2) this._skipTo(order, index, length);
-        else this.currentTrack = this.trackList[i];
+        else this.play(this.trackList[i]);
         break;
       }
     }
@@ -290,10 +282,19 @@ export default class HowlPlayer<T extends HowlTrack> {
   /**
    * if track is playing, pause it
    * if track is paused, resume its status to playing
-   */
+   
   public playOrPause(): void {
     if (this._howler?.playing()) this._howler.pause();
     else this._play();
+  }*/
+
+  public play(track: T): void {
+    if (track.src) this._playAudioSource(track.src);
+    this._currentTrack = track;
+  }
+
+  public resume(): void {
+    if (!this._howler?.playing() && this.currentTrack) this._play();
   }
 
   public mute() {
@@ -311,16 +312,12 @@ export default class HowlPlayer<T extends HowlTrack> {
   protected _playAudioSource(src: string) {
     Howler.unload();
 
-    console.log('player: new a Howl');
-
     this._howler = new Howl({
       src: ['audio:///' + src],
       format: ['flac', 'mp3'],
       html5: true,
       volume: this.volume,
     });
-
-    console.log(this._howler);
 
     if (this._autoplay) {
       this._play();

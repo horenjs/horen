@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { HorenContext } from '../App';
-import { IoIosPause } from 'react-icons/io';
 import { FaVolumeLow } from 'react-icons/fa6';
-import { MdSkipPrevious, MdSkipNext, MdMenuOpen } from 'react-icons/md';
+import { IoIosArrowDown, IoIosPause, IoIosPlay } from 'react-icons/io';
+import { MdMenuOpen, MdSkipNext, MdSkipPrevious } from 'react-icons/md';
 import { TfiLoop } from 'react-icons/tfi';
-import { IoIosArrowDown } from 'react-icons/io';
+import styled from 'styled-components';
+
+import { HorenContext } from '../App';
 import { Slider } from './Slider';
 
 const PLAYBAR = styled.div`
@@ -186,7 +186,11 @@ function PlayBar(props: PlayBarProps) {
               <MdSkipPrevious size={28} />
             </Prev>
             <Pause onClick={handlePlay}>
-              <IoIosPause size={28} />
+              {player.isPlaying ? (
+                <IoIosPause size={28} />
+              ) : (
+                <IoIosPlay size={28} />
+              )}
             </Pause>
             <Next onClick={() => player.next()}>
               <MdSkipNext size={28} />

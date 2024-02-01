@@ -25,13 +25,10 @@ export default class HowlPlayer<T extends HowlTrack> {
   protected _playlist: T[];
   protected _index = 0;
   protected _volume = 0.8;
+  protected _id = 0;
 
   constructor(playlist?: T[]) {
     this._playlist = playlist || [];
-  }
-
-  get native() {
-    return this._playlist[this._index]?.howl || null;
   }
 
   get current() {
@@ -43,17 +40,26 @@ export default class HowlPlayer<T extends HowlTrack> {
   }
 
   public add(playlist: T[]) {
-    this._playlist = [...this._playlist, ...playlist];
+    for (const pls of playlist) {
+      if (!this._playlist.includes(pls)) {
+        this._playlist = [...this._playlist, pls];
+      }
+    }
   }
 
   public remove(tracks: T[]) {
     for (const track of tracks) {
-      this._playlist.filter((p) => p.uid !== track.uid);
+      this._playlist = this._playlist.filter((p) => {
+        if (p.uid === track.uid) p.howl?.stop();
+        return p.uid !== track.uid;
+      });
     }
   }
 
   public play(index = this._index) {
-    Howler.unload();
+    this.playlist.forEach((p) => {
+      p.howl?.stop();
+    });
 
     let sound;
     const data = this._playlist[index];
@@ -79,9 +85,7 @@ export default class HowlPlayer<T extends HowlTrack> {
       });
     }
 
-    console.log(sound);
-
-    sound.play();
+    this._id = sound.play();
     this._index = index;
   }
 
@@ -102,10 +106,15 @@ export default class HowlPlayer<T extends HowlTrack> {
     Howler.volume(val);
   }
 
-  public seek(per: number) {
+  public seek(per?: number) {
+    if (per === undefined) {
+      return this._playlist[this._index]?.howl?.seek();
+    }
+
     const sound = this._playlist[this._index].howl;
-    if (sound?.playing()) {
-      sound.seek(sound.duration() * per);
+    if (sound?.playing(this._id)) {
+      console.log(sound.duration() * per, this._id);
+      sound.seek(sound.duration() * per, this._id);
     }
   }
 

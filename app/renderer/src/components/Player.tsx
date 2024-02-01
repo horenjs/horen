@@ -74,7 +74,7 @@ const LyricText = styled.div`
 
 export type PlayerProps = {};
 
-export default function Player(props: PlayerProps) {
+function Player(props: PlayerProps) {
   const [expanded, setExpanded] = useState(false);
   const top = !expanded ? 'calc(100vh - 64px)' : '0';
   const { player } = useContext(HorenContext);
@@ -110,3 +110,5 @@ export default function Player(props: PlayerProps) {
     </PLAYER>
   );
 }
+
+export default React.memo(Player);

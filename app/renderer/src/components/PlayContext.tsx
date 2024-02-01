@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 
 import { Track } from '../api';
 import { HowlPlayer } from '../utils';
@@ -11,11 +11,13 @@ interface IHorenContext {
     pause: () => void;
     next: () => void;
     prev: () => void;
+    seekTo: (seek: number) => void;
     isAdd: (track: Track) => boolean;
     isPlaying: boolean;
     playList: Track[];
     currentTrack: Track | null;
-    native: Howl | null;
+    duration: number;
+    seek: number;
   };
   trackList: {
     value: Track[];
@@ -23,7 +25,7 @@ interface IHorenContext {
   };
 }
 
-const player = new HowlPlayer<Track>();
+const howlPlayer = new HowlPlayer<Track>();
 
 export const HorenContext = createContext<IHorenContext>({
   player: {
@@ -33,11 +35,13 @@ export const HorenContext = createContext<IHorenContext>({
     pause: () => {},
     next: () => {},
     prev: () => {},
+    seekTo: () => {},
     isAdd: () => false,
     isPlaying: false,
     playList: [],
     currentTrack: null,
-    native: null,
+    duration: 1,
+    seek: 0,
   },
   trackList: {
     value: [],
@@ -56,6 +60,8 @@ export default function PlayContext({
   const [playList, setPlayList] = useState<Track[]>([]);
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [duration, setDuration] = useState(1);
+  const [seek, setSeek] = useState(0);
 
   /**
    * 播放指定 track
@@ -65,46 +71,50 @@ export default function PlayContext({
     console.log('click play');
     if (!track) {
     } else {
-      player.add([track]);
-      player.play();
+      howlPlayer.add([track]);
+      howlPlayer.play(howlPlayer.playlist.indexOf(track));
     }
   };
 
   const pause = () => {
     console.log('click pause');
-    player.pause();
-    setIsPlaying(false);
+    howlPlayer.pause();
   };
 
   const add = (track: Track) => {
     console.log('add a new track: ', track.title);
-    setPlayList([...playList, track]);
-    player.add([track]);
+    howlPlayer.add([track]);
   };
 
   const remove = (track: Track) => {
     console.log('remove a track: ', track.title);
-    setPlayList((prev) => prev.filter((t) => t.uid !== track.uid));
-    player.remove([track]);
+    howlPlayer.remove([track]);
   };
 
   const next = () => {
     console.log('click next track');
-    player.skip('next');
-    setCurrentTrack(player.current);
-    setIsPlaying(true);
+    howlPlayer.skip('next');
   };
 
   const prev = () => {
     console.log('click prev track');
-    player.skip('prev');
-    setCurrentTrack(player.current);
-    setIsPlaying(true);
+    howlPlayer.skip('prev');
   };
 
   const isAdd = (track: Track) => {
     return indexOfTracks(playList, track) >= 0;
   };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTrack(howlPlayer.current);
+      setPlayList(howlPlayer.playlist);
+      setIsPlaying(howlPlayer.current?.howl?.playing() || false);
+      setSeek(howlPlayer.current?.howl?.seek() || 0);
+      setDuration(howlPlayer.current?.howl?.duration() || 1);
+    }, 32);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <HorenContext.Provider
@@ -116,11 +126,13 @@ export default function PlayContext({
           remove,
           prev,
           next,
+          seekTo: (per: number) => howlPlayer.seek(per),
           isAdd,
           isPlaying,
           currentTrack,
           playList,
-          native: player.native,
+          duration,
+          seek,
         },
         trackList: {
           value: trackList,

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { FaVolumeLow } from 'react-icons/fa6';
 import { IoIosArrowDown, IoIosPause, IoIosPlay } from 'react-icons/io';
 import { MdMenuOpen, MdSkipNext, MdSkipPrevious } from 'react-icons/md';
@@ -124,9 +124,7 @@ export type PlayBarProps = {
 
 function PlayBar(props: PlayBarProps) {
   const { onExpand, visible = true } = props;
-  const [seek, setSeek] = useState(0);
   const { player } = useContext(HorenContext);
-  const duration = player.native?.duration() || Infinity;
 
   const handleClick = () => {
     if (onExpand) onExpand();
@@ -137,20 +135,8 @@ function PlayBar(props: PlayBarProps) {
   };
 
   const hanleChangeSeek = (per: number) => {
-    setSeek(per * duration);
-    if (player.native) {
-      player.native.seek(per * duration);
-    }
+    player.seekTo(per);
   };
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (player.native) {
-        setSeek(player.native?.seek);
-      }
-    }, 500);
-    return () => clearInterval(timer);
-  }, []);
 
   return (
     <PLAYBAR className="play-bar">
@@ -176,7 +162,10 @@ function PlayBar(props: PlayBarProps) {
       {visible && (
         <div style={{ flexGrow: 1, margin: '0 16px' }}>
           <Seeker>
-            <Slider value={seek / duration} onChangeEnd={hanleChangeSeek} />
+            <Slider
+              value={player.seek / player.duration}
+              onChangeEnd={hanleChangeSeek}
+            />
           </Seeker>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <Mode>

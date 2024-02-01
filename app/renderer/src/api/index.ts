@@ -44,6 +44,7 @@ export interface Track {
   date?: string;
   genre?: string;
   cover?: string;
+  howl?: Howl;
 }
 
 export const {

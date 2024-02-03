@@ -23,10 +23,29 @@ import {
 
 import type { Low } from 'lowdb';
 import type { Logger } from 'winston';
+import path from 'path';
 export let mainWindow: BrowserWindow = null;
 export let db: Low<DBDataType> = null;
 export let cacheDB: Low<{ tracks: Track[] }> = null;
 export let logger: Logger = null;
+
+if (!app.isDefaultProtocolClient('app')) {
+  app.setAsDefaultProtocolClient('app');
+}
+
+// remove so we can register each time as we run the app.
+app.removeAsDefaultProtocolClient('app');
+
+// If we are running a non-packaged version of the app && on windows
+if (process.env.NODE_ENV === 'development' && process.platform === 'win32') {
+  // Set the path of electron.exe and your app.
+  // These two additional parameters are only available on windows.
+  app.setAsDefaultProtocolClient('app', process.execPath, [
+    path.resolve(process.argv[1]),
+  ]);
+} else {
+  app.setAsDefaultProtocolClient('app');
+}
 
 protocol.registerSchemesAsPrivileged([
   {

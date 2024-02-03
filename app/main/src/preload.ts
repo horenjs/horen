@@ -28,12 +28,23 @@ const IPC_API: IPC = {
   ) => {
     ipcRenderer.on(CHANNELS.refresh.trackListMsg, listener);
   },
-  refreshAlbumCover: async (albumName: string, artistName: string) => {
-    return await ipcRenderer.invoke(
-      CHANNELS.refresh.albumCover,
+  refreshCover: async ({
+    albumName,
+    artistName,
+    songName,
+    type,
+  }: {
+    albumName?: string;
+    artistName?: string;
+    songName?: string;
+    type?: number;
+  }) => {
+    return await ipcRenderer.invoke(CHANNELS.refresh.albumCover, {
       albumName,
-      artistName
-    );
+      artistName,
+      songName,
+      type,
+    });
   },
   readDB: async (key: string) => {
     return await ipcRenderer.invoke(CHANNELS.db.read, key);

@@ -1,13 +1,27 @@
 import axios from 'axios';
 
-export const fetchAlbumCover = async (
-  albumName: string,
-  artistName: string = null
-) => {
+type Params = {
+  albumName?: string;
+  artistName?: string;
+  songName?: string;
+  type?: number;
+};
+
+export const fetchCover = async ({
+  albumName = '',
+  artistName = '',
+  songName = '',
+  type = 10,
+}: Params) => {
   await sleep(1000);
+  const kw = () => {
+    if (type === 100) return artistName;
+    if (type === 10) return albumName + ' ' + artistName;
+    if (type === 1) return songName + ' ' + artistName;
+  };
   const data = {
-    s: albumName + ' ' + artistName,
-    type: 10,
+    s: kw(),
+    type,
     offset: 0,
     total: true,
     limit: 30,
@@ -16,14 +30,28 @@ export const fetchAlbumCover = async (
   try {
     const res = await axios.get(url, { params: data });
     if (res.status === 200) {
-      const albums = res.data.result?.albums;
-      if (albums.length > 0) {
-        for (const album of albums) {
-          if (artistName && album?.artist?.name === artistName) {
-            return album.picUrl;
+      if (type === 10) {
+        const albums = res.data.result?.albums;
+        if (albums.length > 0) {
+          for (const album of albums) {
+            if (artistName && album?.artist?.name === artistName) {
+              return album.picUrl;
+            }
           }
+          return albums[0]?.picUrl;
         }
-        return albums[0].picUrl;
+      }
+
+      if (type === 100) {
+        const artists = res.data.result?.artists;
+        if (artists.length > 0) {
+          for (const artist of artists) {
+            if (artistName && artist?.name === artistName) {
+              return artist.picUrl;
+            }
+          }
+          return artists[0]?.picUrl;
+        }
       }
     }
   } catch (err) {

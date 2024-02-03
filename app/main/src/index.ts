@@ -8,7 +8,7 @@ import {
   handleDBRead,
   handleDBWrite,
   handleOpenDialog,
-  handleRefreshAlbumCover,
+  handleRefreshCover,
   handleRefreshTrackList,
 } from './ipc';
 import {
@@ -80,7 +80,7 @@ ipcMain.handle(CHANNELS.mainWindow.close, handleCloseMainwindow);
 ipcMain.handle(CHANNELS.openDialog, handleOpenDialog);
 
 ipcMain.handle(CHANNELS.refresh.trackList, handleRefreshTrackList);
-ipcMain.handle(CHANNELS.refresh.albumCover, handleRefreshAlbumCover);
+ipcMain.handle(CHANNELS.refresh.albumCover, handleRefreshCover);
 
 ipcMain.handle(CHANNELS.db.read, handleDBRead);
 ipcMain.handle(CHANNELS.db.write, handleDBWrite);

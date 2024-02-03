@@ -12,7 +12,7 @@ import Modal from '../components/Modal';
 import defaultCover from '../defaultCover';
 import Page, { PageProps } from './_page';
 
-const ALBUM = styled.ul`
+const ARTIST = styled.ul`
   margin: 0;
   padding: 0;
   display: grid;
@@ -20,54 +20,53 @@ const ALBUM = styled.ul`
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
 `;
 
-export type AlbumListPageProps = {} & PageProps;
+export type ArtistListPageProps = {} & PageProps;
 
-export type Album = {
+export type Artist = {
   index: string;
-  title: string;
-  artist: string;
+  name: string;
   tracks: string[];
   trackList: Track[];
-  cover?: string;
+  cover: string;
 };
 
-export function AlbumListPage({ visible }: AlbumListPageProps) {
-  const [albumList, setAlbumList] = useState<Album[]>([]);
-  const [pickAlbum, setPickAlbum] = useState<Album | null>(null);
+export function ArtistListPage({ visible }: ArtistListPageProps) {
+  const [artistList, setArtistList] = useState<Artist[]>([]);
+  const [pickArtist, setPickArtist] = useState<Artist | null>(null);
   const { current, playOrPause, addToPlaylist, isInPlaylist, isPlaying } =
     useContext(HorenContext);
 
-  const handleOpen = (album: Album) => {
-    setPickAlbum(album);
+  const handleOpen = (album: Artist) => {
+    setPickArtist(album);
   };
 
   useEffect(() => {
     (async () => {
-      const albums: Album[] = await readDB('albums');
-      setAlbumList(albums);
+      const artists: Artist[] = await readDB('artists');
+      setArtistList(artists);
     })();
   }, []);
 
   return (
     <Page visible={visible}>
-      <ALBUM>
-        {albumList?.map((album) => {
+      <ARTIST>
+        {artistList?.map((artist) => {
           return (
             <AlbumItem
-              album={album}
-              key={album.index + album.title}
+              artist={artist}
+              key={artist.index + artist.name}
               onOpen={handleOpen}
             />
           );
         })}
-      </ALBUM>
-      {pickAlbum && (
+      </ARTIST>
+      {pickArtist && (
         <Modal>
           <AlbumPanel
-            album={pickAlbum}
+            artist={pickArtist}
             isPlaying={isPlaying}
             currentTrack={current}
-            onClose={() => setPickAlbum(null)}
+            onClose={() => setPickArtist(null)}
             onPlay={(track) => playOrPause(track.uid)}
             onPause={(track) => playOrPause(track.uid)}
             onAdd={(track) => addToPlaylist([track.uid])}
@@ -82,7 +81,7 @@ export function AlbumListPage({ visible }: AlbumListPageProps) {
   );
 }
 
-const ALBUM_PANEL = styled.div`
+const ARTIST_PANEL = styled.div`
   max-height: 400px;
   width: 520px;
   background-color: #333;
@@ -184,7 +183,7 @@ const ALBUM_PANEL = styled.div`
 `;
 
 function AlbumPanel({
-  album,
+  artist: artist,
   onPlay,
   onPause,
   onAdd,
@@ -194,7 +193,7 @@ function AlbumPanel({
   isAdd,
   currentTrack,
 }: {
-  album: Album;
+  artist: Artist;
   onPlay?: (track: Track) => void;
   onPause?: (track: Track) => void;
   onAdd?: (track: Track) => void;
@@ -205,7 +204,7 @@ function AlbumPanel({
   currentTrack: Track | null;
 }) {
   const isAllAdded = () => {
-    for (const track of album.trackList) {
+    for (const track of artist.trackList) {
       if (!isAdd(track)) return false;
     }
     return true;
@@ -234,7 +233,7 @@ function AlbumPanel({
   };
 
   return (
-    <ALBUM_PANEL className="album-panel">
+    <ARTIST_PANEL className="album-panel">
       <div className="header">
         <div className="spring"></div>
         <span className="close-icon" onClick={handleClose}>
@@ -243,26 +242,22 @@ function AlbumPanel({
       </div>
       <div className="main">
         <div className="left">
-          <AlbumCover
-            src={'horen:///' + album.cover}
-            alt={album.title + album.artist}
-          />
-          <div className="title">{album.title}</div>
-          <div className="artist">{album.artist}</div>
+          <ArtistCover src={'horen:///' + artist.cover} />
+          <div className="artist">{artist.name}</div>
           <div className="add-all">
             <span>
               {isAllAdded() ? <MdAdded size={20} /> : <MdAdd size={20} />}
             </span>
             <span
               className="add-text"
-              onClick={() => handleAddAll(album.trackList)}
+              onClick={() => handleAddAll(artist.trackList)}
             >
               {isAllAdded() ? '已全部添加至播放列表' : '添加所有至播放列表'}
             </span>
           </div>
         </div>
         <div className="right perfect-scrollbar-thin">
-          {album.trackList?.map((track) => {
+          {artist.trackList?.map((track) => {
             const isItemPlaying = isPlaying && currentTrack?.uid === track.uid;
             const cls = 'track-item' + (isItemPlaying ? ' playing' : '');
             return (
@@ -288,7 +283,7 @@ function AlbumPanel({
           })}
         </div>
       </div>
-    </ALBUM_PANEL>
+    </ARTIST_PANEL>
   );
 }
 
@@ -341,14 +336,14 @@ const Item = styled.li`
 `;
 
 export type AlbumItemProps = {
-  album: Album;
-  onOpen?: (album: Album) => void;
+  artist: Artist;
+  onOpen?: (album: Artist) => void;
 };
 
-function AlbumItem({ album, onOpen }: AlbumItemProps) {
+function AlbumItem({ artist, onOpen }: AlbumItemProps) {
   const [key, setKey] = useState(0);
   const handleOpen = () => {
-    if (onOpen) onOpen({ ...album });
+    if (onOpen) onOpen({ ...artist });
   };
 
   const handleFresh = async (e: React.MouseEvent<HTMLSpanElement>) => {
@@ -356,32 +351,27 @@ function AlbumItem({ album, onOpen }: AlbumItemProps) {
     e.preventDefault();
     if (window.confirm('从网络获取专辑封面?')) {
       await refreshCover({
-        albumName: album.title,
-        artistName: album.artist.split(',')[0],
+        artistName: artist.name,
+        type: 100,
       });
       setKey(new Date().valueOf());
     }
   };
 
   return (
-    <Item key={album.title + album.artist}>
+    <Item key={artist.name}>
       <div className="cover" onClick={handleOpen}>
-        <AlbumCover
-          src={'horen:///' + album.cover}
-          alt={album.title + album.artist}
-          key={key}
-        />
-        <span onClick={handleFresh} className="refresh">
+        <ArtistCover src={'horen:///' + artist.cover} key={key} />
+        <span className="refresh" onClick={handleFresh}>
           <IoMdRefresh />
         </span>
       </div>
-      <div className="albumName single-line">{album.title}</div>
-      <div className="artistName">{album.artist}</div>
+      <div className="albumName single-line">{artist.name}</div>
     </Item>
   );
 }
 
-const AlbumCover = (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
+const ArtistCover = (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
   const [isError, setIsError] = useState(true);
   const handleError = (e: any) => {
     if (isError) {

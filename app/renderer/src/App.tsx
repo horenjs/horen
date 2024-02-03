@@ -6,6 +6,7 @@ import PlayList from './pages/PlayList';
 import Setting from './pages/Setting';
 import TrackList from './pages/TrackList';
 import { AlbumListPage } from './pages/AlbumList';
+import { ArtistListPage } from './pages/ArtistList';
 import styled from 'styled-components';
 import PlayContext, { HorenContext } from './components/PlayContext';
 
@@ -53,6 +54,7 @@ export default function App() {
     设置: <Setting visible={page === '设置'} />,
     全部: <TrackList visible={page === '全部'} />,
     专辑: <AlbumListPage visible={page === '专辑'} />,
+    艺术家: <ArtistListPage visible={page === '艺术家'} />,
   };
 
   return (

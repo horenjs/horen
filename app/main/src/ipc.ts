@@ -194,7 +194,13 @@ const disposeArtistList = async (trackList: Track[]) => {
   let i = 1;
   for (const key in artists) {
     const tracks = Array.from(artists[key]).join(',');
-    artistList.push({ index: i, name: key, tracks });
+    const cover = path.join(
+      APP_DATA_PATH,
+      APP_NAME,
+      'Cover',
+      strToBase64(key) + '.png'
+    );
+    artistList.push({ index: i, name: key, tracks, cover });
     i += 1;
   }
 
@@ -204,12 +210,21 @@ const disposeArtistList = async (trackList: Track[]) => {
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////////////// refresh track list ////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-export const handleRefreshAlbumCover = async (
+export const handleRefreshCover = async (
   evt: IpcMainInvokeEvent,
-  albumName: string,
-  artist: string
+  {
+    albumName = '',
+    artistName = '',
+    songName = '',
+    type = 10,
+  }: {
+    albumName?: string;
+    artistName?: string;
+    songName?: string;
+    type?: number;
+  }
 ) => {
-  await fetchCoverAndSave(albumName, artist);
+  await fetchCoverAndSave({ albumName, artistName, songName, type });
 };
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -18,10 +18,17 @@ declare global {
           msg: string
         ) => void
       ) => void;
-      refreshAlbumCover: (
-        albumName: string,
-        artistName?: string
-      ) => Promise<void>;
+      refreshCover: ({
+        albumName,
+        artistName,
+        songName,
+        type,
+      }: {
+        albumName?: string;
+        artistName?: string;
+        songName?: string;
+        type?: number;
+      }) => Promise<void>;
       readDB: <T = any>(key: string) => Promise<T>;
       writeDB: (key: string, value: any) => Promise<void>;
     };
@@ -52,7 +59,7 @@ export const {
   openDialog,
   refreshTrackList,
   refreshTrackListMsg,
-  refreshAlbumCover,
+  refreshCover,
   readDB,
   writeDB,
 } = window?.ipc;

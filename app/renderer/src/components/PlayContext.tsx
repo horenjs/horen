@@ -94,7 +94,9 @@ export default function PlayContext({
 
   const removeFromPlaylist = (uids: string[]) => {
     console.log('remove a track from playlist: ', uids);
+    const pls = [...playlist];
     for (const uid of uids) {
+      writePlaylistToDB(pls.filter((p) => p.uid !== uid));
       setPlaylist((prev) => prev.filter((p) => p.uid !== uid));
     }
   };

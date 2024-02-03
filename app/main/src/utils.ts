@@ -5,7 +5,7 @@ import path from 'path';
 import winston from 'winston';
 import fse from 'fs-extra';
 import { logger } from './index';
-import { fetchAlbumCover } from './apis';
+import { fetchCover } from './apis';
 
 import { APP_DATA_PATH, APP_NAME } from './constant';
 
@@ -44,6 +44,7 @@ export type Artist = {
   name: string;
   tracks: string;
   trackList?: Track[];
+  cover: string;
 };
 
 /**
@@ -208,18 +209,30 @@ export const initCacheDB = async () => {
   return db;
 };
 
-export const fetchCoverAndSave = async (
-  albumName: string,
-  artistName: string
-) => {
+export const fetchCoverAndSave = async ({
+  albumName,
+  artistName,
+  songName,
+  type,
+}: {
+  albumName: string;
+  artistName: string;
+  songName: string;
+  type?: number;
+}) => {
+  const name = () => {
+    if (type === 1) return songName + artistName;
+    if (type === 10) return albumName + artistName;
+    if (type === 100) return artistName;
+  };
   const coverPath = path.join(
     APP_DATA_PATH,
     APP_NAME,
     'Cover',
-    strToBase64(albumName + artistName) + '.png'
+    strToBase64(name()) + '.png'
   );
 
-  const url = await fetchAlbumCover(albumName, artistName);
+  const url = await fetchCover({ albumName, artistName, songName, type });
   if (typeof url === 'string') {
     const resp = await axios.get(url, { responseType: 'arraybuffer' });
     const data = resp?.data;

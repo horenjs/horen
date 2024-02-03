@@ -31,7 +31,8 @@ export type Album = {
 export function AlbumListPage({ visible }: AlbumListPageProps) {
   const [albumList, setAlbumList] = useState<Album[]>([]);
   const [pickAlbum, setPickAlbum] = useState<Album | null>(null);
-  const { player } = useContext(HorenContext);
+  const { current, playOrPause, addToPlaylist, isInPlaylist } =
+    useContext(HorenContext);
 
   const handleOpen = (album: Album) => {
     setPickAlbum(album);
@@ -61,18 +62,16 @@ export function AlbumListPage({ visible }: AlbumListPageProps) {
         <Modal>
           <AlbumPanel
             album={pickAlbum}
-            isPlaying={player.isPlaying}
-            currentTrack={player.currentTrack}
+            isPlaying={current?.howl?.playing()}
+            currentTrack={current}
             onClose={() => setPickAlbum(null)}
-            onPlay={(track) => player.play(track)}
-            onPause={(track) => player.pause()}
-            onAdd={(track) => player.add(track)}
-            onAddAll={(tracks) => {
-              for (const track of tracks) {
-                player.add(track);
-              }
-            }}
-            isAdd={(track) => player.isAdd(track)}
+            onPlay={(track) => playOrPause(track.uid)}
+            onPause={(track) => playOrPause(track.uid)}
+            onAdd={(track) => addToPlaylist([track.uid])}
+            onAddAll={(tracks) =>
+              addToPlaylist(tracks.map((track) => track.uid))
+            }
+            isAdd={(track) => isInPlaylist(track.uid)}
           />
         </Modal>
       )}

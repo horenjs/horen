@@ -77,7 +77,7 @@ export type PlayerProps = {};
 function Player(props: PlayerProps) {
   const [expanded, setExpanded] = useState(false);
   const top = !expanded ? 'calc(100vh - 64px)' : '0';
-  const { player } = useContext(HorenContext);
+  const { current } = useContext(HorenContext);
 
   const handleClick = () => {
     setExpanded(!expanded);
@@ -92,17 +92,14 @@ function Player(props: PlayerProps) {
         <Cover className="player-cover">
           <div className="frame">
             <Picture>
-              <img
-                src={'horen:///' + player.currentTrack?.cover}
-                alt={player.currentTrack?.title}
-              />
+              <img src={'horen:///' + current?.cover} alt={current?.title} />
             </Picture>
           </div>
         </Cover>
         <Lyric className="player-lyric">
           <TrackInfo>
-            <div className="title">{player.currentTrack?.title}</div>
-            <div className="artist">{player.currentTrack?.artist}</div>
+            <div className="title">{current?.title}</div>
+            <div className="artist">{current?.artist}</div>
           </TrackInfo>
           <LyricText />
         </Lyric>

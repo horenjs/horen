@@ -9,7 +9,7 @@ export const normalizeDuration = (d: number) => {
   const level1 = 60;
   const level2 = 60 * 60;
   if (duration < level1) {
-    return duration + '';
+    return '0:' + duration;
   }
 
   if (duration >= level1 && duration < level2) {

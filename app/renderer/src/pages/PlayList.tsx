@@ -114,18 +114,15 @@ export type PlayListPageProps = {} & PageProps;
 
 export default function PlayList(props: PlayListPageProps) {
   const { visible } = props;
-  const { player } = useContext(HorenContext);
+  const { playOrPause, playlist, isPlaying, current, removeFromPlaylist } =
+    useContext(HorenContext);
 
-  const handlePlay = (track: Track) => {
-    player.play(track);
-  };
-
-  const handlePause = () => {
-    player.pause();
+  const handlePlayOrPause = (track: Track) => {
+    playOrPause(track.uid);
   };
 
   const handleDel = (track: Track) => {
-    player.remove(track);
+    removeFromPlaylist([track.uid]);
   };
 
   return (
@@ -140,15 +137,13 @@ export default function PlayList(props: PlayListPageProps) {
             </tr>
           </thead>
           <tbody>
-            {player.playList?.map((track: Track) => (
+            {playlist?.map((track: Track) => (
               <PlayListItem
                 track={track}
-                onPlay={handlePlay}
-                onPause={handlePause}
+                onPlay={handlePlayOrPause}
+                onPause={handlePlayOrPause}
                 onDel={handleDel}
-                isPlaying={
-                  player.isPlaying && player.currentTrack?.uid === track.uid
-                }
+                isPlaying={isPlaying && current?.uid === track.uid}
                 key={track.uid}
               />
             ))}
@@ -168,7 +163,7 @@ export function PlayListItem({
 }: {
   track: Track;
   onPlay: (track: Track) => void;
-  onPause: () => void;
+  onPause: (track: Track) => void;
   onDel: (track: Track) => void;
   isPlaying: boolean;
 }) {
@@ -177,7 +172,7 @@ export function PlayListItem({
   };
 
   const handlePause = () => {
-    if (onPause) onPause();
+    if (onPause) onPause(track);
   };
 
   const handleDel = (track: Track) => {

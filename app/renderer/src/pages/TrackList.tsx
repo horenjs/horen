@@ -92,26 +92,34 @@ export type TrackItemProps = {
   index?: number;
   track: Track;
   playing?: boolean;
-  onPlay: (track: Track) => void;
-  onAdd: (track: Track) => void;
-  isAdd: (track: Track) => boolean;
+  onPlayOrPause: (uid: string) => void;
+  onAdd: (uid: string) => void;
+  isAdd: (uid: string) => boolean;
 };
 
 export default function TrackList(props: PlayListPageProps) {
   const { visible } = props;
-  const { player, trackList } = useContext(HorenContext);
+  const {
+    trackList,
+    playOrPause,
+    setToTrackList,
+    isInPlaylist,
+    current,
+    isPlaying,
+    addToPlaylist,
+  } = useContext(HorenContext);
 
-  const handlePlay = (track: Track) => {
-    player.play(track);
+  const handlePlayOrPause = (uid: string) => {
+    playOrPause(uid);
   };
 
-  const handleAdd = (track: Track) => {
-    player.add(track);
+  const handleAdd = (uid: string) => {
+    addToPlaylist([uid]);
   };
 
   useEffect(() => {
     readDB<Track[]>('tracks').then((tracks) => {
-      trackList.set(tracks);
+      setToTrackList(tracks);
     });
   }, [visible]);
 
@@ -134,15 +142,15 @@ export default function TrackList(props: PlayListPageProps) {
             </tr>
           </thead>
           <tbody>
-            {trackList.value?.map((track: Track, index: number) => (
+            {trackList?.map((track: Track, index: number) => (
               <TrackPureItem
                 index={index + 1}
                 track={track}
-                onPlay={handlePlay}
+                onPlayOrPause={handlePlayOrPause}
                 onAdd={handleAdd}
                 key={track.src}
-                isAdd={player.isAdd}
-                playing={player.currentTrack?.uid === track.uid}
+                isAdd={isInPlaylist}
+                playing={isPlaying && current?.uid === track.uid}
               />
             ))}
           </tbody>
@@ -156,18 +164,16 @@ function TrackPureItem({
   track,
   index,
   playing,
-  onPlay,
+  onPlayOrPause,
   onAdd,
   isAdd,
 }: TrackItemProps) {
-  const handlePlay = () => {
-    if (onPlay && track) onPlay(track);
+  const handlePlayOrPause = () => {
+    if (onPlayOrPause && track) onPlayOrPause(track.uid);
   };
 
-  const handlePause = () => {};
-
   const handleAdd = () => {
-    if (onAdd && track) onAdd(track);
+    if (onAdd && track) onAdd(track.uid);
   };
 
   return (
@@ -182,15 +188,15 @@ function TrackPureItem({
           <div className="title">{track?.title}</div>
           <div className="operate">
             {playing ? (
-              <div onClick={handlePause} className="play">
+              <div onClick={handlePlayOrPause} className="play">
                 <FaPause size={20} />
               </div>
             ) : (
-              <div onClick={handlePlay} className="play">
+              <div onClick={handlePlayOrPause} className="play">
                 <FaPlay />
               </div>
             )}
-            {track && !isAdd(track) ? (
+            {track && !isAdd(track.uid) ? (
               <div onClick={handleAdd} className="add">
                 <IoMdAdd size={24} />
               </div>

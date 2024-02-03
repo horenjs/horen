@@ -39,6 +39,10 @@ export default class HowlPlayer<T extends HowlTrack> {
     return this._playlist;
   }
 
+  get native() {
+    return this._playlist[this._index].howl;
+  }
+
   public add(playlist: T[]) {
     for (const pls of playlist) {
       if (!this._playlist.includes(pls)) {

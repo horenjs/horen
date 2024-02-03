@@ -124,28 +124,23 @@ export type PlayBarProps = {
 
 function PlayBar(props: PlayBarProps) {
   const { onExpand, visible = true } = props;
-  const { player } = useContext(HorenContext);
+  const { current, playOrPause, seek, duration } = useContext(HorenContext);
 
   const handleClick = () => {
     if (onExpand) onExpand();
   };
 
   const handlePlay = () => {
-    player.isPlaying ? player.pause() : player.play();
+    if (current) playOrPause(current.uid);
   };
 
-  const hanleChangeSeek = (per: number) => {
-    player.seekTo(per);
-  };
+  const hanleChangeSeek = (per: number) => {};
 
   return (
     <PLAYBAR className="play-bar">
       <Cover onClick={handleClick} className="electron-no-drag">
         {visible ? (
-          <img
-            src={'horen:///' + player.currentTrack?.cover}
-            alt={player.currentTrack?.title}
-          />
+          <img src={'horen:///' + current?.cover} alt={current?.title} />
         ) : (
           <span className="arrow">
             <IoIosArrowDown size={28} />
@@ -154,34 +149,31 @@ function PlayBar(props: PlayBarProps) {
       </Cover>
       {visible && (
         <div>
-          <Title>{player.currentTrack?.title}</Title>
-          <Singer>{player.currentTrack?.artist}</Singer>
-          <AlbumTitle>{player.currentTrack?.album}</AlbumTitle>
+          <Title>{current?.title}</Title>
+          <Singer>{current?.artist}</Singer>
+          <AlbumTitle>{current?.album}</AlbumTitle>
         </div>
       )}
       {visible && (
         <div style={{ flexGrow: 1, margin: '0 16px' }}>
           <Seeker>
-            <Slider
-              value={player.seek / player.duration}
-              onChangeEnd={hanleChangeSeek}
-            />
+            <Slider value={seek / duration} onChangeEnd={hanleChangeSeek} />
           </Seeker>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <Mode>
               <TfiLoop size={20} />
             </Mode>
-            <Prev onClick={() => player.prev()}>
+            <Prev>
               <MdSkipPrevious size={28} />
             </Prev>
             <Pause onClick={handlePlay}>
-              {player.isPlaying ? (
+              {current?.howl?.playing() ? (
                 <IoIosPause size={28} />
               ) : (
                 <IoIosPlay size={28} />
               )}
             </Pause>
-            <Next onClick={() => player.next()}>
+            <Next>
               <MdSkipNext size={28} />
             </Next>
             <Volume>

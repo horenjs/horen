@@ -67,8 +67,7 @@ export function ArtistListPage({ visible }: ArtistListPageProps) {
             isPlaying={isPlaying}
             currentTrack={current}
             onClose={() => setPickArtist(null)}
-            onPlay={(track) => playOrPause(track.uid)}
-            onPause={(track) => playOrPause(track.uid)}
+            onPlayOrPause={(track) => playOrPause(track?.uid)}
             onAdd={(track) => addToPlaylist([track.uid])}
             onAddAll={(tracks) =>
               addToPlaylist(tracks.map((track) => track.uid))
@@ -184,8 +183,7 @@ const ARTIST_PANEL = styled.div`
 
 function AlbumPanel({
   artist: artist,
-  onPlay,
-  onPause,
+  onPlayOrPause,
   onAdd,
   onClose,
   onAddAll,
@@ -194,8 +192,7 @@ function AlbumPanel({
   currentTrack,
 }: {
   artist: Artist;
-  onPlay?: (track: Track) => void;
-  onPause?: (track: Track) => void;
+  onPlayOrPause: (track: Track) => void;
   onAdd?: (track: Track) => void;
   onAddAll?: (tracks: Track[]) => void;
   onClose?: () => void;
@@ -212,14 +209,6 @@ function AlbumPanel({
 
   const handleClose = () => {
     if (onClose) onClose();
-  };
-
-  const handlePlay = (track: Track) => {
-    if (onPlay) onPlay(track);
-  };
-
-  const handlePause = (track: Track) => {
-    if (onPause) onPause(track);
   };
 
   const handleAdd = (track: Track) => {
@@ -258,7 +247,7 @@ function AlbumPanel({
         </div>
         <div className="right perfect-scrollbar-thin">
           {artist.trackList?.map((track) => {
-            const isItemPlaying = isPlaying && currentTrack?.uid === track.uid;
+            const isItemPlaying = isPlaying && currentTrack?.uid === track?.uid;
             const cls = 'track-item' + (isItemPlaying ? ' playing' : '');
             return (
               <div className={cls} key={track?.uid}>
@@ -266,12 +255,15 @@ function AlbumPanel({
                 {isItemPlaying ? (
                   <div
                     className="track-icon"
-                    onClick={() => handlePause(track)}
+                    onClick={() => onPlayOrPause(track)}
                   >
                     <FaPause size={18} />
                   </div>
                 ) : (
-                  <div className="track-icon" onClick={() => handlePlay(track)}>
+                  <div
+                    className="track-icon"
+                    onClick={() => onPlayOrPause(track)}
+                  >
                     <FaPlay />
                   </div>
                 )}

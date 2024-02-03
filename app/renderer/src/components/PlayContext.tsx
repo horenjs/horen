@@ -274,6 +274,10 @@ export default function PlayContext({
     });
   }, [trackList]);
 
+  useEffect(() => {
+    readDB('player.volume').then((val) => setVolume(val));
+  }, []);
+
   return (
     <HorenContext.Provider
       value={{
@@ -291,6 +295,7 @@ export default function PlayContext({
         setSeek: (per: number) => {
           setSeek(per * duration);
           currentRef.current?.howl?.seek(per * duration);
+          writeDB('player.seek', per * duration);
         },
         duration,
         playMode,
@@ -299,6 +304,7 @@ export default function PlayContext({
         setVolume: (val: number) => {
           setVolume(val);
           Howler.volume(val);
+          writeDB('player.volume', val);
         },
         next,
         prev,

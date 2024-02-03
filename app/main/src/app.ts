@@ -35,7 +35,7 @@ export const createMainWindow = () => {
     // 生产环境应使用相对地址
     // 打包后的根目录为 app/
     logger.debug('start production');
-    w.loadFile('./index.html').then().catch(console.error);
+    w.loadFile('dist/index.html').then().catch(console.error);
   }
 
   w.on('closed', () => {

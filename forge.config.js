@@ -12,7 +12,8 @@ module.exports = {
       /^\/\.prettierrc\.js$/,
       /^\/forge\.config\.js$/,
       /^\/pnpm-lock\.yaml$/,
-      /^\/pnpm-workspace\.yaml$/
+      /^\/pnpm-workspace\.yaml$/,
+      /^\/preview$/,
     ],
   },
   rebuildConfig: {},

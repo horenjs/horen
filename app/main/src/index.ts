@@ -46,7 +46,7 @@ app.whenReady().then(async () => {
   db = await initDatabase();
   cacheDB = await initCacheDB();
   logger.debug('create main window');
-  mainWindow = createMainWindow();
+
   protocol.handle('horen', (request) => {
     const url = 'file:///' + decodeURI(request.url.slice('horen:///'.length));
     logger.debug('origin request: ' + request.url);
@@ -59,6 +59,8 @@ app.whenReady().then(async () => {
     logger.debug('transform request: ' + url);
     return net.fetch(url, { bypassCustomProtocolHandlers: true });
   });
+
+  mainWindow = createMainWindow();
 });
 
 app.on('activate', () => {

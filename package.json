@@ -7,7 +7,8 @@
     "start": "concurrently \"pnpm start:web\" \"pnpm start:main\"",
     "start:web": "pnpm -F renderer start",
     "start:main": "pnpm -F main start",
-    "prod": "cross-env NODE_ENV=production .\\app\\main\\node_modules\\electron\\dist\\electron.exe .\\dist\\main.js"
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "repository": {
     "type": "git",
@@ -26,9 +27,17 @@
   },
   "homepage": "https://github.com/horenjs/horen#readme",
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "@electron-forge/cli": "^7.2.0",
+    "@electron-forge/maker-squirrel": "^7.2.0",
+    "concurrently": "^8.2.2",
+    "electron": "24"
   },
   "dependencies": {
     "cross-env": "^7.0.3"
+  },
+  "config": {
+    "electron": {
+      "mirror": "https://registry.npmmirror.com/-/binary/electron/"
+    }
   }
 }

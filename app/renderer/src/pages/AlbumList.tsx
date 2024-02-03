@@ -34,7 +34,7 @@ export type Album = {
 export function AlbumListPage({ visible }: AlbumListPageProps) {
   const [albumList, setAlbumList] = useState<Album[]>([]);
   const [pickAlbum, setPickAlbum] = useState<Album | null>(null);
-  const { current, playOrPause, addToPlaylist, isInPlaylist } =
+  const { current, playOrPause, addToPlaylist, isInPlaylist, isPlaying } =
     useContext(HorenContext);
 
   const handleOpen = (album: Album) => {
@@ -65,7 +65,7 @@ export function AlbumListPage({ visible }: AlbumListPageProps) {
         <Modal>
           <AlbumPanel
             album={pickAlbum}
-            isPlaying={current?.howl?.playing()}
+            isPlaying={isPlaying}
             currentTrack={current}
             onClose={() => setPickAlbum(null)}
             onPlay={(track) => playOrPause(track.uid)}
@@ -150,21 +150,26 @@ const ALBUM_PANEL = styled.div`
         position: relative;
         top: -1px;
         user-select: none;
+        font-size: 0.8rem;
       }
     }
   }
   .right {
     width: 60%;
     height: 344px;
-    padding: 0 16px 0 32px;
+    padding: 0 16px 0 16px;
     color: #c7c7c7;
     font-size: 0.9rem;
     overflow-y: auto;
     .track-item {
-      margin: 8px 0;
+      padding: 4px 0;
+      padding-left: 8px;
+      padding-right: 4px;
       display: flex;
       align-items: center;
-      height: 22px;
+      &.playing {
+        background-color: #10b45475;
+      }
     }
     .track-title {
       flex-grow: 1;
@@ -252,28 +257,35 @@ function AlbumPanel({
               className="add-text"
               onClick={() => handleAddAll(album.trackList)}
             >
-              {isAllAdded() ? '已全部添加' : '添加所有'}
+              {isAllAdded() ? '已全部添加至播放列表' : '添加所有至播放列表'}
             </span>
           </div>
         </div>
         <div className="right perfect-scrollbar-thin">
-          {album.trackList?.map((track) => (
-            <div className="track-item" key={track?.uid}>
-              <div className="track-title single-line">{track?.title}</div>
-              {isPlaying && currentTrack?.uid === track?.uid ? (
-                <div className="track-icon" onClick={() => handlePause(track)}>
-                  <FaPause size={18} />
+          {album.trackList?.map((track) => {
+            const isItemPlaying = isPlaying && currentTrack?.uid === track.uid;
+            const cls = 'track-item' + (isItemPlaying ? ' playing' : '');
+            return (
+              <div className={cls} key={track?.uid}>
+                <div className="track-title single-line">{track?.title}</div>
+                {isItemPlaying ? (
+                  <div
+                    className="track-icon"
+                    onClick={() => handlePause(track)}
+                  >
+                    <FaPause size={18} />
+                  </div>
+                ) : (
+                  <div className="track-icon" onClick={() => handlePlay(track)}>
+                    <FaPlay />
+                  </div>
+                )}
+                <div className="track-icon" onClick={() => handleAdd(track)}>
+                  {isAdd(track) ? <MdAdded size={20} /> : <MdAdd size={20} />}
                 </div>
-              ) : (
-                <div className="track-icon" onClick={() => handlePlay(track)}>
-                  <FaPlay />
-                </div>
-              )}
-              <div className="track-icon" onClick={() => handleAdd(track)}>
-                {isAdd(track) ? <MdAdded size={20} /> : <MdAdd size={20} />}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </ALBUM_PANEL>

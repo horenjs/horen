@@ -107,6 +107,9 @@ const PLAYING = styled.div`
         visibility: visible;
       }
     }
+    &.playing {
+      background-color: #10b45475;
+    }
   }
 `;
 
@@ -179,8 +182,10 @@ export function PlayListItem({
     if (onDel) onDel(track);
   };
 
+  const cls = 'play-list-item' + (isPlaying ? ' playing' : '');
+
   return (
-    <tr className="play-list-item">
+    <tr className={cls}>
       <td>
         <div className="trackTitle">
           <div className="cover-thumbnail">

@@ -42,9 +42,13 @@ const PureItem = styled.tr`
   margin: 4px 0;
   align-items: center;
   font-size: 0.9rem;
+  &.playing {
+    background-color: #10b45475 !important;
+  }
   .index {
     text-align: center;
     margin-right: 16px;
+    margin-left: 4px;
   }
   .first {
     width: 100%;
@@ -177,7 +181,7 @@ function TrackPureItem({
   };
 
   return (
-    <PureItem key={track?.src}>
+    <PureItem key={track?.src} className={playing ? 'playing' : ''}>
       <td>
         <div className="index">
           <span>{index}</span>

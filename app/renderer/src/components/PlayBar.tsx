@@ -124,7 +124,8 @@ export type PlayBarProps = {
 
 function PlayBar(props: PlayBarProps) {
   const { onExpand, visible = true } = props;
-  const { current, playOrPause, seek, duration } = useContext(HorenContext);
+  const { current, playOrPause, seek, duration, next, prev, isPlaying } =
+    useContext(HorenContext);
 
   const handleClick = () => {
     if (onExpand) onExpand();
@@ -163,17 +164,13 @@ function PlayBar(props: PlayBarProps) {
             <Mode>
               <TfiLoop size={20} />
             </Mode>
-            <Prev>
+            <Prev onClick={() => prev()}>
               <MdSkipPrevious size={28} />
             </Prev>
             <Pause onClick={handlePlay}>
-              {current?.howl?.playing() ? (
-                <IoIosPause size={28} />
-              ) : (
-                <IoIosPlay size={28} />
-              )}
+              {isPlaying ? <IoIosPause size={28} /> : <IoIosPlay size={28} />}
             </Pause>
-            <Next>
+            <Next onClick={() => next()}>
               <MdSkipNext size={28} />
             </Next>
             <Volume>

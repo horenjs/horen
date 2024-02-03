@@ -141,7 +141,7 @@ const disposeAlbumList = async (trackList: Track[]) => {
   for (const track of trackList) {
     const index = track.index;
     const album = track.album;
-    const artist = track.artist;
+    const artist = track.albumArtist || track.artist;
 
     if (!platAlbums[album]) {
       logger.debug('create album: ' + album);

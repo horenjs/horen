@@ -105,8 +105,8 @@ export default function Setting(props: SettingPageProps) {
     readDB('setting.language').then((value) => setLanguage(value));
 
     refreshTrackListMsg((evt, current, total, msg) => {
-      console.log(current, total, msg);
-      const m = current === total ? '' : `[${current}/${total}] ${msg}`;
+      const m =
+        current === total ? '' : `READDING: [${current}/${total}] ${msg}`;
       setFreshMsg(m);
     });
 

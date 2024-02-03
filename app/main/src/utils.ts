@@ -23,6 +23,7 @@ export interface Track {
   artist?: string;
   artists?: string;
   album?: string;
+  albumArtist?: string;
   //
   duration?: number;
   date?: string;
@@ -96,6 +97,7 @@ export async function readMusicMeta(trackSrc: string): Promise<Track> {
     artist: String(meta?.common?.artist),
     artists: String(meta?.common?.artists),
     album: String(meta?.common?.album),
+    albumArtist: meta?.common?.albumartist,
     //
     duration: meta?.format?.duration,
     date: String(meta?.common?.date),

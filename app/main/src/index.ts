@@ -7,6 +7,8 @@ import {
   handleCloseMainwindow,
   handleDBRead,
   handleDBWrite,
+  handleMaximizeMainwindow,
+  handleMinimizeMainwindow,
   handleOpenDialog,
   handleRefreshCover,
   handleRefreshTrackList,
@@ -74,8 +76,8 @@ app.on('window-all-closed', () => {
 });
 
 ipcMain.handle(CHANNELS.mainWindow.close, handleCloseMainwindow);
-// ipcMain.handle(CHANNELS.mainWindow.minimize, null);
-// ipcMain.handle(CHANNELS.mainWindow.maximize, null);
+ipcMain.handle(CHANNELS.mainWindow.minimize, handleMinimizeMainwindow);
+ipcMain.handle(CHANNELS.mainWindow.maximize, handleMaximizeMainwindow);
 
 ipcMain.handle(CHANNELS.openDialog, handleOpenDialog);
 

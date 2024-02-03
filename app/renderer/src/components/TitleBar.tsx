@@ -1,6 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { closeMainwindow } from '../api';
+import {
+  closeMainwindow,
+  minimizeMainwindow,
+  maximizeMainwindow,
+} from '../api';
 
 const TITLE = styled.div`
   height: 32px;
@@ -19,7 +23,23 @@ const CloseArea = styled.div`
   color: #fff;
   user-select: none;
 `;
+
 const Minimize = styled.div`
+  font-size: 24px;
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  span {
+    position: relative;
+    bottom: 11px;
+  }
+  &:hover {
+    background-color: #9e9e9e34;
+  }
+`;
+
+const Maximize = styled.div`
   font-size: 24px;
   width: 32px;
   display: flex;
@@ -30,7 +50,7 @@ const Minimize = styled.div`
     bottom: 3px;
   }
   &:hover {
-    background-color: #777;
+    background-color: #9e9e9e34;
   }
 `;
 const Close = styled.div`
@@ -44,7 +64,7 @@ const Close = styled.div`
     bottom: 2px;
   }
   &:hover {
-    background-color: red;
+    background-color: #ec1515;
   }
 `;
 
@@ -52,10 +72,11 @@ export type TitleBarProps = {
   title?: string;
   onClose?: () => void;
   onMinimize?: () => void;
+  onMaximize?: () => void;
 };
 
 export default function TitleBar(props: TitleBarProps) {
-  const { title, onClose, onMinimize } = props;
+  const { title, onClose, onMinimize, onMaximize } = props;
 
   const handleClose = () => {
     if (onClose) {
@@ -68,6 +89,14 @@ export default function TitleBar(props: TitleBarProps) {
     if (onMinimize) {
       onMinimize();
     }
+    minimizeMainwindow().then();
+  };
+
+  const handleMaximize = () => {
+    if (onMaximize) {
+      onMaximize();
+    }
+    maximizeMainwindow().then();
   };
 
   return (
@@ -77,8 +106,11 @@ export default function TitleBar(props: TitleBarProps) {
       </TitleArea>
       <CloseArea className="electron-no-drag">
         <Minimize onClick={handleMinimize}>
-          <span>□</span>
+          <span>_</span>
         </Minimize>
+        <Maximize onClick={handleMaximize}>
+          <span>□</span>
+        </Maximize>
         <Close onClick={handleClose}>
           <span>×</span>
         </Close>

@@ -20,6 +20,18 @@ export const handleCloseMainwindow = async () => {
   mainWindow.destroy();
 };
 
+export const handleMinimizeMainwindow = async () => {
+  mainWindow.minimize();
+};
+
+export const handleMaximizeMainwindow = async () => {
+  if (mainWindow.isMaximized()) {
+    mainWindow.unmaximize();
+  } else {
+    mainWindow.maximize();
+  }
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 
 export const handleOpenDialog = async () => {

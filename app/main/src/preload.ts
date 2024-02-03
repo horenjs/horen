@@ -13,6 +13,12 @@ const IPC_API: IPC = {
   closeMainwindow: async () => {
     return await ipcRenderer.invoke(CHANNELS.mainWindow.close);
   },
+  minimizeMainwindow: async () => {
+    return await ipcRenderer.invoke(CHANNELS.mainWindow.minimize);
+  },
+  maximizeMainwindow: async () => {
+    return await ipcRenderer.invoke(CHANNELS.mainWindow.maximize);
+  },
   openDialog: async () => {
     return await ipcRenderer.invoke(CHANNELS.openDialog);
   },

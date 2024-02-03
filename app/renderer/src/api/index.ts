@@ -4,6 +4,8 @@ declare global {
   interface Window {
     ipc: {
       closeMainwindow: () => Promise<void>;
+      minimizeMainwindow: () => Promise<void>;
+      maximizeMainwindow: () => Promise<void>;
       openDialog: () => Promise<any>;
       refreshTrackList: ({
         clearCache,
@@ -56,6 +58,8 @@ export interface Track {
 
 export const {
   closeMainwindow,
+  maximizeMainwindow,
+  minimizeMainwindow,
   openDialog,
   refreshTrackList,
   refreshTrackListMsg,

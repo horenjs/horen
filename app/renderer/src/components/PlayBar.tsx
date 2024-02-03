@@ -1,13 +1,12 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext } from 'react';
+import { BsRepeat1 } from 'react-icons/bs';
 import { FaVolumeLow } from 'react-icons/fa6';
 import { IoIosArrowDown, IoIosPause, IoIosPlay } from 'react-icons/io';
+import { IoReturnDownForwardOutline } from 'react-icons/io5';
 import { MdMenuOpen, MdSkipNext, MdSkipPrevious } from 'react-icons/md';
+import { PiShuffleLight } from 'react-icons/pi';
 import { TfiLoop } from 'react-icons/tfi';
 import styled from 'styled-components';
-import { PiShuffleLight } from 'react-icons/pi';
-import { BsRepeat1 } from 'react-icons/bs';
-import { IoReturnDownForwardOutline } from 'react-icons/io5';
-
 import { HorenContext } from '../App';
 import { Slider } from './Slider';
 
@@ -102,12 +101,15 @@ const Next = styled.div`
 
 const Volume = styled.div`
   height: 32px;
-  width: 64px;
   margin-left: 12px;
   color: #e6e6e6;
   display: flex;
   align-items: center;
   justify-content: start;
+  .volume-slider {
+    width: 48px;
+    margin-left: 8px;
+  }
 `;
 
 const More = styled.div`
@@ -131,12 +133,15 @@ function PlayBar(props: PlayBarProps) {
     current,
     playOrPause,
     seek,
+    setSeek,
     duration,
     next,
     prev,
     isPlaying,
     playMode,
     setPlayMode,
+    volume,
+    setVolume,
   } = useContext(HorenContext);
 
   const handleClick = () => {
@@ -147,7 +152,9 @@ function PlayBar(props: PlayBarProps) {
     if (current) playOrPause(current.uid);
   };
 
-  const hanleChangeSeek = (per: number) => {};
+  const hanleChangeSeek = (per: number) => {
+    setSeek(per);
+  };
 
   const handleChangeMode = () => {
     const modes = ['in-turn', 'loop', 'repeat', 'random'];
@@ -202,6 +209,9 @@ function PlayBar(props: PlayBarProps) {
             </Next>
             <Volume>
               <FaVolumeLow size={19} />
+              <span className="volume-slider">
+                <Slider value={volume} onChange={(val) => setVolume(val)} />
+              </span>
             </Volume>
           </div>
         </div>

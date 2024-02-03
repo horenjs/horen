@@ -15,9 +15,12 @@ interface IHorenContext {
   isInPlaylist: (uid: string) => boolean;
   isPlaying: boolean;
   seek: number;
+  setSeek: (per: number) => void;
   duration: number;
   playMode: string;
   setPlayMode: (pm: string) => void;
+  volume: number;
+  setVolume: (value: number) => void;
   next: () => void;
   prev: () => void;
 }
@@ -34,9 +37,12 @@ export const HorenContext = createContext<IHorenContext>({
   isInPlaylist: () => false,
   isPlaying: false,
   seek: 0,
+  setSeek: () => null,
   duration: 1,
   playMode: 'in-turn',
   setPlayMode: () => null,
+  volume: 0.8,
+  setVolume: () => null,
   next: () => null,
   prev: () => null,
 });
@@ -59,6 +65,7 @@ export default function PlayContext({
   const [duration, setDuration] = useState(1);
   const [endSignal, setEndSignal] = useState(0);
   const [playMode, setPlayMode] = useState('random');
+  const [volume, setVolume] = useState(0.8);
 
   const writePlaylistToDB = (lists: Track[]) => {
     writeDB('playlist', lists).then();
@@ -146,7 +153,7 @@ export default function PlayContext({
     currentRef.current.howl?.play();
   };
 
-  const createNewSound = (src: string, volume = 0.8) => {
+  const createNewSound = (src: string, vol = volume) => {
     const sound = new Howl({
       src: ['audio:///' + src],
       format: ['flac', 'mp3'],
@@ -154,7 +161,7 @@ export default function PlayContext({
       // 因为传输方式为 stream，只传播了一部分
       html5: false,
       autoplay: true,
-      volume: volume,
+      volume: vol,
       onplay: () => {},
       onload: () => {},
       onpause: () => {},
@@ -185,6 +192,9 @@ export default function PlayContext({
     if (playMode === 'in-turn') {
       if (nextIdx > len - 1) {
         Howler.unload();
+        setCurrent(null);
+        currentRef.current = null;
+        return;
       }
     }
 
@@ -215,6 +225,9 @@ export default function PlayContext({
     if (playMode === 'in-turn') {
       if (prevIdx < 0) {
         Howler.unload();
+        setCurrent(null);
+        currentRef.current = null;
+        return;
       }
     }
 
@@ -273,9 +286,18 @@ export default function PlayContext({
         isInPlaylist,
         isPlaying,
         seek,
+        setSeek: (per: number) => {
+          setSeek(per * duration);
+          currentRef.current?.howl?.seek(per * duration);
+        },
         duration,
         playMode,
         setPlayMode,
+        volume,
+        setVolume: (val: number) => {
+          setVolume(val);
+          Howler.volume(val);
+        },
         next,
         prev,
       }}

@@ -275,7 +275,8 @@ export default function PlayContext({
   }, [trackList]);
 
   useEffect(() => {
-    readDB('player.volume').then((val) => setVolume(val));
+    readDB('player.volume').then((val) => setVolume(val || 0.75));
+    readDB('player.mode').then((val) => setPlayMode(val || 'loop'));
   }, []);
 
   return (
@@ -299,7 +300,10 @@ export default function PlayContext({
         },
         duration,
         playMode,
-        setPlayMode,
+        setPlayMode: (mode: string) => {
+          setPlayMode(mode);
+          writeDB('player.mode', mode);
+        },
         volume,
         setVolume: (val: number) => {
           setVolume(val);

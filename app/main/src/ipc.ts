@@ -216,7 +216,31 @@ export const handleRefreshAlbumCover = async (
 
 export const handleDBRead = async (evt: IpcMainInvokeEvent, key: string) => {
   await db.read();
-  return db.data[key];
+  const data = db.data[key];
+
+  if (key === 'albums') {
+    logger.debug('get albums from db');
+    const albums = data as Album[];
+    const tracks = db.data['tracks'] as Track[];
+    for (const album of albums) {
+      const trs = album.tracks.split(',');
+      album.trackList = trs.map((trackIdx) => tracks[Number(trackIdx) - 1]);
+    }
+    return albums;
+  }
+
+  if (key === 'artists') {
+    logger.debug('get artists from db');
+    const artists = data as Artist[];
+    const tracks = db.data['tracks'] as Track[];
+    for (const artist of artists) {
+      const trs = artist.tracks.split(',');
+      artist.trackList = trs.map((trackIdx) => tracks[Number(trackIdx) - 1]);
+    }
+    return artists;
+  }
+
+  return data;
 };
 
 export const handleDBWrite = async (

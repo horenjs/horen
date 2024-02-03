@@ -35,12 +35,14 @@ export type Album = {
   artist: string;
   cover: string;
   tracks: string;
+  trackList?: Track[];
 };
 
 export type Artist = {
   index: number;
   name: string;
   tracks: string;
+  trackList?: Track[];
 };
 
 /**

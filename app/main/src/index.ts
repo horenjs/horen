@@ -46,13 +46,13 @@ app.whenReady().then(async () => {
   logger.debug('create main window');
   mainWindow = createMainWindow();
   protocol.handle('horen', (request) => {
-    const url = 'file:///' + request.url.slice('horen:///'.length);
+    const url = 'file:///' + decodeURI(request.url.slice('horen:///'.length));
     logger.debug('origin request: ' + request.url);
     logger.debug('transform request: ' + url);
     return net.fetch(url);
   });
   protocol.handle('audio', (request) => {
-    const url = 'file:///' + request.url.slice('audio:///'.length);
+    const url = 'file:///' + decodeURI(request.url.slice('audio:///'.length));
     logger.debug('origin request: ' + request.url);
     logger.debug('transform request: ' + url);
     return net.fetch(url, { bypassCustomProtocolHandlers: true });

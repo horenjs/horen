@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import {
   openDialog,
@@ -8,6 +8,7 @@ import {
   writeDB,
 } from '../api';
 import Page, { PageProps } from './_page';
+import { HorenContext } from '../components/PlayContext';
 
 const SETTING = styled.div``;
 
@@ -64,6 +65,7 @@ export default function Setting(props: SettingPageProps) {
   const [libraries, setLibraries] = useState<any[]>([]);
   const [language, setLanguage] = useState<string>('en');
   const [refreshMsg, setFreshMsg] = useState<string>('');
+  const { setToTrackList } = useContext(HorenContext);
 
   const handleAdd = () => {
     openDialog().then((res: any) => {
@@ -92,7 +94,11 @@ export default function Setting(props: SettingPageProps) {
   };
 
   const handleRefresh = (clearCache = false) => {
-    refreshTrackList({ clearCache }).then();
+    (async () => {
+      await refreshTrackList({ clearCache });
+      const tracks = await readDB('tracks');
+      setToTrackList(tracks);
+    })();
   };
 
   useEffect(() => {

@@ -7,8 +7,8 @@ import styled from 'styled-components';
 
 import { readDB, Track } from '../api';
 import { HorenContext } from '../App';
-import Page, { PageProps } from './_page';
 import { normalizeDuration } from '../utils';
+import Page, { PageProps } from './_page';
 
 const TRACKLIST = styled.div`
   margin: 0;

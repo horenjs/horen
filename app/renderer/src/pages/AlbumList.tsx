@@ -1,14 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
-import Page, { PageProps } from './_page';
-import styled from 'styled-components';
-import { Track, readDB, refreshAlbumCover } from '../api';
+import { FaPause, FaPlay } from 'react-icons/fa6';
 import { IoMdRefresh } from 'react-icons/io';
-import Modal from '../components/Modal';
-import { FaPlay, FaPause } from 'react-icons/fa6';
-import { MdAdd } from 'react-icons/md';
-import { HorenContext } from '../App';
 import { IoCloseSharp } from 'react-icons/io5';
+import { MdAdd } from 'react-icons/md';
+import { MdOutlineDownloadDone as MdAdded } from 'react-icons/md';
+import styled from 'styled-components';
+
+import { readDB, refreshAlbumCover, Track } from '../api';
+import { HorenContext } from '../App';
+import Modal from '../components/Modal';
 import defaultCover from '../defaultCover';
+import Page, { PageProps } from './_page';
 
 const ALBUM = styled.ul`
   margin: 0;
@@ -24,7 +26,8 @@ export type Album = {
   index: string;
   title: string;
   artist: string;
-  tracks: Track[];
+  tracks: string[];
+  trackList: Track[];
   cover?: string;
 };
 
@@ -71,7 +74,7 @@ export function AlbumListPage({ visible }: AlbumListPageProps) {
             onAddAll={(tracks) =>
               addToPlaylist(tracks.map((track) => track.uid))
             }
-            isAdd={(track) => isInPlaylist(track.uid)}
+            isAdd={(track) => isInPlaylist(track?.uid)}
           />
         </Modal>
       )}
@@ -146,6 +149,7 @@ const ALBUM_PANEL = styled.div`
       .add-text {
         position: relative;
         top: -1px;
+        user-select: none;
       }
     }
   }
@@ -195,6 +199,13 @@ function AlbumPanel({
   isAdd: (track: Track) => boolean;
   currentTrack: Track | null;
 }) {
+  const isAllAdded = () => {
+    for (const track of album.trackList) {
+      if (!isAdd(track)) return false;
+    }
+    return true;
+  };
+
   const handleClose = () => {
     if (onClose) onClose();
   };
@@ -212,7 +223,9 @@ function AlbumPanel({
   };
 
   const handleAddAll = (tracks: Track[]) => {
-    if (onAddAll) onAddAll(tracks);
+    if (!isAllAdded()) {
+      if (onAddAll) onAddAll(tracks);
+    }
   };
 
   return (
@@ -225,23 +238,26 @@ function AlbumPanel({
       </div>
       <div className="main">
         <div className="left">
-          <img src={album.cover} alt={album.title + album.artist} />
+          <img
+            src={'horen:///' + album.cover}
+            alt={album.title + album.artist}
+          />
           <div className="title">{album.title}</div>
           <div className="artist">{album.artist}</div>
           <div className="add-all">
             <span>
-              <MdAdd size={20} />
+              {isAllAdded() ? <MdAdded size={20} /> : <MdAdd size={20} />}
             </span>
             <span
               className="add-text"
-              onClick={() => handleAddAll(album.tracks)}
+              onClick={() => handleAddAll(album.trackList)}
             >
-              添加所有
+              {isAllAdded() ? '已全部添加' : '添加所有'}
             </span>
           </div>
         </div>
-        <div className="right perfect-scrollbar">
-          {album.tracks?.map((track) => (
+        <div className="right perfect-scrollbar-thin">
+          {album.trackList?.map((track) => (
             <div className="track-item" key={track?.uid}>
               <div className="track-title single-line">{track?.title}</div>
               {isPlaying && currentTrack?.uid === track?.uid ? (
@@ -254,7 +270,7 @@ function AlbumPanel({
                 </div>
               )}
               <div className="track-icon" onClick={() => handleAdd(track)}>
-                {!isAdd(track) && <MdAdd size={20} />}
+                {isAdd(track) ? <MdAdded size={20} /> : <MdAdd size={20} />}
               </div>
             </div>
           ))}
@@ -336,7 +352,7 @@ function AlbumItem({ album, onOpen }: AlbumItemProps) {
     <Item key={album.title + album.artist}>
       <div className="cover" onClick={handleOpen}>
         <AlbumCover
-          src={'horen:///' + album.cover?.replaceAll('\\\\', '\\')}
+          src={'horen:///' + album.cover}
           alt={album.title + album.artist}
           key={key}
         />

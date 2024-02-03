@@ -34,6 +34,15 @@ code {
   background: #4b4949;
 }
 
+.perfect-scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+
+.perfect-scrollbar-thin::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #4b4949;
+}
+
 .single-line {
   text-overflow: ellipsis;
   overflow: hidden;

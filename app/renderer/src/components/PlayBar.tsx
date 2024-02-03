@@ -4,6 +4,9 @@ import { IoIosArrowDown, IoIosPause, IoIosPlay } from 'react-icons/io';
 import { MdMenuOpen, MdSkipNext, MdSkipPrevious } from 'react-icons/md';
 import { TfiLoop } from 'react-icons/tfi';
 import styled from 'styled-components';
+import { PiShuffleLight } from 'react-icons/pi';
+import { BsRepeat1 } from 'react-icons/bs';
+import { IoReturnDownForwardOutline } from 'react-icons/io5';
 
 import { HorenContext } from '../App';
 import { Slider } from './Slider';
@@ -124,8 +127,17 @@ export type PlayBarProps = {
 
 function PlayBar(props: PlayBarProps) {
   const { onExpand, visible = true } = props;
-  const { current, playOrPause, seek, duration, next, prev, isPlaying } =
-    useContext(HorenContext);
+  const {
+    current,
+    playOrPause,
+    seek,
+    duration,
+    next,
+    prev,
+    isPlaying,
+    playMode,
+    setPlayMode,
+  } = useContext(HorenContext);
 
   const handleClick = () => {
     if (onExpand) onExpand();
@@ -136,6 +148,23 @@ function PlayBar(props: PlayBarProps) {
   };
 
   const hanleChangeSeek = (per: number) => {};
+
+  const handleChangeMode = () => {
+    const modes = ['in-turn', 'loop', 'repeat', 'random'];
+    const idx = modes.indexOf(playMode);
+    let nextIdx = idx + 1;
+    if (nextIdx > modes.length - 1) {
+      nextIdx = 0;
+    }
+    setPlayMode(modes[nextIdx]);
+  };
+
+  const MODES: Record<string, any> = {
+    'in-turn': <IoReturnDownForwardOutline size={20} />,
+    loop: <TfiLoop size={20} />,
+    repeat: <BsRepeat1 size={20} />,
+    random: <PiShuffleLight size={20} />,
+  };
 
   return (
     <PLAYBAR className="play-bar">
@@ -161,9 +190,7 @@ function PlayBar(props: PlayBarProps) {
             <Slider value={seek / duration} onChangeEnd={hanleChangeSeek} />
           </Seeker>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Mode>
-              <TfiLoop size={20} />
-            </Mode>
+            <Mode onClick={handleChangeMode}>{MODES[playMode]}</Mode>
             <Prev onClick={() => prev()}>
               <MdSkipPrevious size={28} />
             </Prev>

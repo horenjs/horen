@@ -16,6 +16,8 @@ interface IHorenContext {
   isPlaying: boolean;
   seek: number;
   duration: number;
+  playMode: string;
+  setPlayMode: (pm: string) => void;
   next: () => void;
   prev: () => void;
 }
@@ -33,6 +35,8 @@ export const HorenContext = createContext<IHorenContext>({
   isPlaying: false,
   seek: 0,
   duration: 1,
+  playMode: 'in-turn',
+  setPlayMode: () => null,
   next: () => null,
   prev: () => null,
 });
@@ -270,6 +274,8 @@ export default function PlayContext({
         isPlaying,
         seek,
         duration,
+        playMode,
+        setPlayMode,
         next,
         prev,
       }}

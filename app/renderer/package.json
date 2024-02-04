@@ -13,7 +13,8 @@
   },
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack serve -c ./config/webpack.config.js",
-    "build": "cross-env NODE_ENV=production webpack -c ./config/webpack.config.js"
+    "build": "cross-env NODE_ENV=production webpack -c ./config/webpack.config.js",
+    "lint": "eslint "
   },
   "browserslist": {
     "production": [
@@ -35,6 +36,8 @@
     "@babel/runtime": "^7.23.9",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.11",
     "@types/howler": "^2.2.11",
+    "@types/react": "^18.2.52",
+    "@types/react-dom": "^18.2.18",
     "@types/underscore": "^1.11.15",
     "@typescript-eslint/eslint-plugin": "^6.20.0",
     "babel-loader": "^9.1.3",

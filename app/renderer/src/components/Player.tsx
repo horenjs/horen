@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import PlayerBar from './PlayBar';
 import { HorenContext } from '../App';
@@ -9,7 +9,12 @@ const PLAYER = styled.div`
   bottom: 0;
   width: 100%;
   height: 100%;
-  background-color: #555;
+  background: #232526; /* fallback for old browsers */
+  background: linear-gradient(
+    to top,
+    #292b2c,
+    #232526
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   transition: top 0.25s ease-in-out;
   z-index: 999;
 `;
@@ -72,9 +77,7 @@ const LyricText = styled.div`
   width: 100%;
 `;
 
-export type PlayerProps = {};
-
-function Player(props: PlayerProps) {
+function Player() {
   const [expanded, setExpanded] = useState(false);
   const top = !expanded ? 'calc(100vh - 64px)' : '0';
   const { current } = useContext(HorenContext);

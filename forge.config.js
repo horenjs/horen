@@ -15,6 +15,7 @@ module.exports = {
       /^\/pnpm-workspace\.yaml$/,
       /^\/preview$/,
     ],
+    icon: './preview/horen.ico',
   },
   rebuildConfig: {},
   makers: [

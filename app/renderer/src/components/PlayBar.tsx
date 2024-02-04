@@ -167,7 +167,7 @@ function PlayBar(props: PlayBarProps) {
     setPlayMode(modes[nextIdx]);
   };
 
-  const MODES: Record<string, any> = {
+  const MODES: Record<string, React.ReactNode> = {
     'in-turn': <IoReturnDownForwardOutline size={20} />,
     loop: <TfiLoop size={20} />,
     repeat: <BsRepeat1 size={20} />,

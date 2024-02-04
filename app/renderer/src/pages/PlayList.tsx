@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import { FaPause, FaPlay } from 'react-icons/fa';
 import { GrLinkTop } from 'react-icons/gr';
 import { IoCloseSharp } from 'react-icons/io5';
@@ -37,10 +37,10 @@ const PLAYING = styled.div`
     color: #7e7e7e;
   }
   tr:nth-child(2n) {
-    background-color: #3b3b3b;
+    background-color: #2c2c2c;
   }
   tr:hover {
-    background-color: #494949;
+    background-color: #3a3a3ab9;
   }
   td {
     margin: 0;
@@ -113,7 +113,7 @@ const PLAYING = styled.div`
   }
 `;
 
-export type PlayListPageProps = {} & PageProps;
+export type PlayListPageProps = PageProps;
 
 export default function PlayList(props: PlayListPageProps) {
   const { visible } = props;

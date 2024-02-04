@@ -12,6 +12,7 @@ interface useMoveHandlers {
   onScrubEnd?(): void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useMove<T extends HTMLElement = any>(
   onChange: (p: MovePosition) => void,
   handlers?: useMoveHandlers,

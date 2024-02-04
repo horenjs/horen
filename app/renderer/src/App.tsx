@@ -28,7 +28,6 @@ const Main = styled.div`
   padding-right: 8px;
   margin-top: 72px;
   width: 100%;
-  background-color: #333;
   min-width: 800px;
 `;
 

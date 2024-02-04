@@ -1,6 +1,5 @@
 import path from 'path';
 import { BrowserWindow } from 'electron';
-import { PORT } from './constant';
 import { logger } from './index';
 
 export const createMainWindow = () => {

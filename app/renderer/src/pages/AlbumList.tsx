@@ -20,7 +20,7 @@ const ALBUM = styled.ul`
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
 `;
 
-export type AlbumListPageProps = {} & PageProps;
+export type AlbumListPageProps = PageProps;
 
 export type Album = {
   index: string;
@@ -383,7 +383,7 @@ function AlbumItem({ album, onOpen }: AlbumItemProps) {
 
 const AlbumCover = (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
   const [isError, setIsError] = useState(true);
-  const handleError = (e: any) => {
+  const handleError = (e: React.SyntheticEvent) => {
     if (isError) {
       setIsError(false);
       (e.target as HTMLImageElement).src =

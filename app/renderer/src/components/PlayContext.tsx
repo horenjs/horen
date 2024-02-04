@@ -115,12 +115,12 @@ export default function PlayContext({
         const track = currentRef.current;
         track?.howl?.pause();
         console.log('pause seek: ', track.howl?.seek());
-        setIsPlaying((prev) => false);
+        setIsPlaying(() => false);
         currentRef.current = track;
       } else {
         console.log('pasued, resume to play it.');
         console.log('resume from seek: ', currentRef.current?.howl?.seek());
-        setIsPlaying((prev) => true);
+        setIsPlaying(() => true);
         currentRef.current?.howl?.play();
       }
       return;
@@ -139,7 +139,6 @@ export default function PlayContext({
     } else {
       // 如果提供的 uid 在播放列表内，同样创建新的 Track
       console.log('existed in playlist, create sound and play it.');
-      const track = findTrack(playlist, uid);
       createNewTrackAndPlay(uid);
       return;
     }

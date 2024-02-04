@@ -53,7 +53,7 @@ const Libraries = styled.div`
   }
 `;
 
-export type SettingPageProps = {} & PageProps;
+export type SettingPageProps = PageProps;
 
 export type SettingItemProps = {
   label: string;
@@ -62,12 +62,13 @@ export type SettingItemProps = {
 
 export default function Setting(props: SettingPageProps) {
   const { visible } = props;
-  const [libraries, setLibraries] = useState<any[]>([]);
+  const [libraries, setLibraries] = useState<string[]>([]);
   const [language, setLanguage] = useState<string>('en');
   const [refreshMsg, setFreshMsg] = useState<string>('');
   const { setToTrackList } = useContext(HorenContext);
 
   const handleAdd = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     openDialog().then((res: any) => {
       if (!res.canceled) {
         const filePaths: string[] = res.filePaths;

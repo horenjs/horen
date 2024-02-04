@@ -1,6 +1,4 @@
 import { Howl, Howler } from 'howler';
-import { randomInt } from './index';
-import _ from 'underscore';
 
 // 判断是否为浏览器环境
 if (typeof window === 'undefined')
@@ -119,13 +117,6 @@ export default class HowlPlayer<T extends HowlTrack> {
     if (sound?.playing(this._id)) {
       console.log(sound.duration() * per, this._id);
       sound.seek(sound.duration() * per, this._id);
-    }
-  }
-
-  public step() {
-    const sound = this._playlist[this._index].howl;
-    const seek = sound?.seek() || 0;
-    if (sound?.playing()) {
     }
   }
 }

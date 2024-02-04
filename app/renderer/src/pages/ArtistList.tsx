@@ -20,7 +20,7 @@ const ARTIST = styled.ul`
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
 `;
 
-export type ArtistListPageProps = {} & PageProps;
+export type ArtistListPageProps = PageProps;
 
 export type Artist = {
   index: string;
@@ -365,7 +365,7 @@ function AlbumItem({ artist, onOpen }: AlbumItemProps) {
 
 const ArtistCover = (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
   const [isError, setIsError] = useState(true);
-  const handleError = (e: any) => {
+  const handleError = (e: React.SyntheticEvent) => {
     if (isError) {
       setIsError(false);
       (e.target as HTMLImageElement).src =

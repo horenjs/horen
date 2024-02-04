@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable no-undef */
 const path = require('path');
-const packageJson = require('../package.json');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-// const ESLintPlugin = require('eslint-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 const ReactRefreshPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -13,9 +14,7 @@ const isProd = process.env.NODE_ENV === 'production';
 
 const currentProjectPath = path.resolve(__dirname, '..');
 
-const distPath = process.env.EE_DIST_PATH
-  ? path.join(process.env.EE_DIST_PATH, packageJson.name)
-  : path.join(currentProjectPath, 'dist');
+const distPath = path.join(currentProjectPath, '../../dist');
 const srcPath = path.join(currentProjectPath, 'src');
 const publicPath = path.join(currentProjectPath, 'public');
 
@@ -73,12 +72,10 @@ const plugins = () => {
       template: `${publicPath}/index.html`,
       publicPath: './',
     }),
-    /**
-     * new ESLintPlugin({
+    new ESLintPlugin({
       context: srcPath,
       extensions: ['tsx', 'ts'],
     }),
-     */
   ];
 
   if (isProd) {

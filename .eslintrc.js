@@ -17,10 +17,10 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['react', '@typescript-eslint'],
-  ignorePatterns: ['.eslintrc.js'],
+  ignorePatterns: ['.eslintrc.js', 'dist', 'out', 'node_modules'],
   rules: {
     indent: ['error', 2],
     // "linebreak-style": ["error", "unix"],
-    // quotes: ["error", "double"],
+    // quotes: ["error", "double"]
   },
 };

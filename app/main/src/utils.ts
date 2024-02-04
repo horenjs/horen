@@ -9,7 +9,6 @@ import { fetchCover } from './apis';
 
 import { APP_DATA_PATH, APP_NAME } from './constant';
 
-import type { IAudioMetadata } from 'music-metadata';
 import axios from 'axios';
 
 export interface Track {
@@ -55,12 +54,9 @@ export type Artist = {
 export async function readMusicMeta(trackSrc: string): Promise<Track> {
   const buffer = await fs.readFile(trackSrc);
   const stats = await fs.stat(trackSrc);
-  let meta: IAudioMetadata;
 
-  meta = await mm.parseBuffer(buffer);
+  const meta = await mm.parseBuffer(buffer);
   if (!meta) return;
-
-  let cover: string;
 
   const albumName = meta.common?.album || 'unknown';
   const artistName = meta.common?.artist || 'unknown';
@@ -74,14 +70,12 @@ export async function readMusicMeta(trackSrc: string): Promise<Track> {
 
   if (await fse.exists(albumPath)) {
     logger.debug('album cover existed: ' + albumPath);
-    cover = await fs.readFile(albumPath, { encoding: 'base64url' });
   } else {
     logger.debug('no cover file, read from music meta');
     const data = meta.common?.picture ? meta.common.picture[0].data : null;
     if (data) {
       logger.debug('music meta cover existed');
       await fs.writeFile(albumPath, data);
-      cover = arrayBufferToBase64(data);
     } else {
       logger.debug('cannot read cover from meta');
     }
@@ -110,9 +104,9 @@ export async function readMusicMeta(trackSrc: string): Promise<Track> {
 
 export function arrayBufferToBase64(u8Arr: Buffer | null) {
   if (!u8Arr) return '';
-  let chunk = 0x8000;
+  const chunk = 0x8000;
   let index = 0;
-  let length = u8Arr.length;
+  const length = u8Arr.length;
   let result = '';
   let slice;
   while (index < length) {
@@ -181,7 +175,12 @@ export type DBDataType = {
   albums: Album[];
   artists: Artist[];
   playlist: Track[];
-  [key: string]: any;
+  [key: string]:
+    | string
+    | number
+    | boolean
+    | object
+    | Array<string | number | boolean | object>;
 };
 
 export const initDatabase = async () => {

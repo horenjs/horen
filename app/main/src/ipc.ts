@@ -61,7 +61,8 @@ export async function handleRefreshTrackList(
   await db.read();
   await cacheDB.read();
 
-  const libs = db.data['setting.libraries'];
+  const libs = db.data['setting.libraries'] as string[];
+
   const trackPathnames = await findAllAudios(libs);
   const trackList = await disposeTrackList(
     trackPathnames,
@@ -273,7 +274,7 @@ export const handleDBRead = async (evt: IpcMainInvokeEvent, key: string) => {
 export const handleDBWrite = async (
   evt: IpcMainInvokeEvent,
   key: string,
-  value: any
+  value: string | number | boolean | object
 ) => {
   db.data[key] = value;
   await db.write();

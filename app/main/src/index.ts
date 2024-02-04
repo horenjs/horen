@@ -1,5 +1,4 @@
 import { app, BrowserWindow, ipcMain, net, protocol } from 'electron';
-import fs from 'fs/promises';
 
 import { createMainWindow } from './app';
 import { CHANNELS } from './constant';

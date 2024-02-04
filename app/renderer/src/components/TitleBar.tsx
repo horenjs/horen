@@ -8,7 +8,6 @@ import {
 
 const TITLE = styled.div`
   height: 32px;
-  background-color: #333;
   display: flex;
   align-items: center;
 `;

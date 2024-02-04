@@ -1,15 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { CHANNELS } from './constant';
 
-export type IPC = {};
-
-const IPC_API: IPC = {
-  readSetting: async (key: string) => {
-    return await ipcRenderer.invoke(CHANNELS.setting.read, key);
-  },
-  writeSetting: async (key: string, value: any) => {
-    return await ipcRenderer.invoke(CHANNELS.setting.write, key, value);
-  },
+const IPC_API = {
   closeMainwindow: async () => {
     return await ipcRenderer.invoke(CHANNELS.mainWindow.close);
   },
@@ -55,7 +47,7 @@ const IPC_API: IPC = {
   readDB: async (key: string) => {
     return await ipcRenderer.invoke(CHANNELS.db.read, key);
   },
-  writeDB: async (key: string, value: any) => {
+  writeDB: async (key: string, value: string | number | boolean | object) => {
     return await ipcRenderer.invoke(CHANNELS.db.write, key, value);
   },
 };

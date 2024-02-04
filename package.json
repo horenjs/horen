@@ -1,12 +1,13 @@
 {
-  "name": "electron-example",
+  "name": "horen",
   "version": "0.0.1",
-  "description": "electron example",
+  "description": "a music player by Electron.",
   "main": "./dist/main.js",
   "scripts": {
     "start": "concurrently \"pnpm start:web\" \"pnpm start:main\"",
     "start:web": "pnpm -F renderer start",
     "start:main": "pnpm -F main start",
+    "build": "pnpm -F main build && pnpm -F renderer build",
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
@@ -28,9 +29,13 @@
   "homepage": "https://github.com/horenjs/horen#readme",
   "devDependencies": {
     "@electron-forge/cli": "^7.2.0",
+    "@electron-forge/maker-deb": "^7.2.0",
+    "@electron-forge/maker-rpm": "^7.2.0",
     "@electron-forge/maker-squirrel": "^7.2.0",
+    "@electron-forge/maker-zip": "^7.2.0",
     "concurrently": "^8.2.2",
-    "electron": "24"
+    "electron": "latest",
+    "eslint": "^8.56.0"
   },
   "dependencies": {
     "cross-env": "^7.0.3"

@@ -29,10 +29,10 @@ const TRACKLIST = styled.div`
   }
   tr {
     &:nth-child(2n) {
-      background-color: #3c3c3c;
+      background-color: #2c2c2c;
     }
     &:hover {
-      background-color: #595959e1;
+      background-color: #3a3a3ab9;
     }
   }
 `;
@@ -90,7 +90,7 @@ const PureItem = styled.tr`
   }
 `;
 
-export type PlayListPageProps = {} & PageProps;
+export type PlayListPageProps = PageProps;
 
 export type TrackItemProps = {
   index?: number;

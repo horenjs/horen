@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 const MENU = styled.div`
-  background-color: #333;
   width: 100%;
   user-select: none;
   padding: 0 32px;

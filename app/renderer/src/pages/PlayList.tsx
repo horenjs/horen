@@ -8,6 +8,7 @@ import { Track } from '../api';
 import { HorenContext } from '../App';
 import { normalizeDuration } from '../utils';
 import Page, { PageProps } from './_page';
+import { AlbumCover } from '../components/Cover';
 
 const PLAYING = styled.div`
   .song {
@@ -189,7 +190,7 @@ export function PlayListItem({
       <td>
         <div className="trackTitle">
           <div className="cover-thumbnail">
-            <img src={'horen:///' + track.cover} alt={track.title} />
+            <AlbumCover src={'horen:///' + track.cover} alt={track.title} />
           </div>
           <div style={{ flexGrow: 1 }}>
             <div className="trackTitle-title">{track.title}</div>

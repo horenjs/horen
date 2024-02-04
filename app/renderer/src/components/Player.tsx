@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import PlayerBar from './PlayBar';
 import { HorenContext } from '../App';
+import { AlbumCover } from './Cover';
 
 const PLAYER = styled.div`
   position: fixed;
@@ -95,7 +96,10 @@ function Player() {
         <Cover className="player-cover">
           <div className="frame">
             <Picture>
-              <img src={'horen:///' + current?.cover} alt={current?.title} />
+              <AlbumCover
+                src={'horen:///' + current?.cover}
+                alt={current?.title}
+              />
             </Picture>
           </div>
         </Cover>

@@ -9,8 +9,8 @@ import styled from 'styled-components';
 import { readDB, refreshCover, Track } from '../api';
 import { HorenContext } from '../App';
 import Modal from '../components/Modal';
-import defaultCover from '../defaultCover';
 import Page, { PageProps } from './_page';
+import { AlbumCover } from '../components/Cover';
 
 const ARTIST = styled.ul`
   margin: 0;
@@ -248,7 +248,7 @@ function AlbumPanel({
     <ARTIST_PANEL className="album-panel">
       <div className="background-mask"></div>
       <div className="background">
-        <ArtistCover src={'horen:///' + artist.cover} alt="artist-background" />
+        <AlbumCover src={'horen:///' + artist.cover} alt="artist-background" />
       </div>
       <div className="header">
         <div className="spring"></div>
@@ -258,7 +258,7 @@ function AlbumPanel({
       </div>
       <div className="main">
         <div className="left">
-          <ArtistCover src={'horen:///' + artist.cover} />
+          <AlbumCover src={'horen:///' + artist.cover} />
           <div className="artist">{artist.name}</div>
           <div className="add-all">
             <span>
@@ -380,7 +380,7 @@ function AlbumItem({ artist, onOpen }: AlbumItemProps) {
   return (
     <Item key={artist.name}>
       <div className="cover" onClick={handleOpen}>
-        <ArtistCover src={'horen:///' + artist.cover} key={key} />
+        <AlbumCover src={'horen:///' + artist.cover} key={key} />
         <span className="refresh" onClick={handleFresh}>
           <IoMdRefresh />
         </span>
@@ -389,15 +389,3 @@ function AlbumItem({ artist, onOpen }: AlbumItemProps) {
     </Item>
   );
 }
-
-const ArtistCover = (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
-  const [isError, setIsError] = useState(true);
-  const handleError = (e: React.SyntheticEvent) => {
-    if (isError) {
-      setIsError(false);
-      (e.target as HTMLImageElement).src =
-        'data:image/png;base64,' + defaultCover;
-    }
-  };
-  return <img onError={handleError} {...props} />;
-};

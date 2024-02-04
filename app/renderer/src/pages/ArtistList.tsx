@@ -83,12 +83,35 @@ export function ArtistListPage({ visible }: ArtistListPageProps) {
 const ARTIST_PANEL = styled.div`
   max-height: 400px;
   width: 520px;
-  background-color: #333;
   padding: 0 16px 16px 16px;
+  position: relative;
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+  .background {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.3;
+    z-index: -1;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  .background-mask {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    background-color: #333;
   }
   .header {
     padding: 4px 0;
@@ -223,6 +246,10 @@ function AlbumPanel({
 
   return (
     <ARTIST_PANEL className="album-panel">
+      <div className="background-mask"></div>
+      <div className="background">
+        <ArtistCover src={'horen:///' + artist.cover} alt="artist-background" />
+      </div>
       <div className="header">
         <div className="spring"></div>
         <span className="close-icon" onClick={handleClose}>

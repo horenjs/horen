@@ -9,7 +9,7 @@ import { TfiLoop } from 'react-icons/tfi';
 import styled from 'styled-components';
 import { HorenContext } from '../App';
 import { Slider } from './Slider';
-import defaultCover from '../defaultCover';
+import { AlbumCover } from './Cover';
 
 const PLAYBAR = styled.div`
   width: 100%;
@@ -174,16 +174,11 @@ function PlayBar(props: PlayBarProps) {
     random: <PiShuffleLight size={20} />,
   };
 
-  const cover =
-    current?.cover === '' || current?.cover === undefined
-      ? 'data:image/png;base64,' + defaultCover
-      : 'horen:///' + current?.cover;
-
   return (
     <PLAYBAR className="play-bar">
       <Cover onClick={handleClick} className="electron-no-drag">
         {visible ? (
-          <img src={cover} alt={current?.title} />
+          <AlbumCover src={'horen:///' + current?.cover} alt={current?.title} />
         ) : (
           <span className="arrow">
             <IoIosArrowDown size={28} />

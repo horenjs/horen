@@ -9,7 +9,7 @@ export type ModalProps = {
 const MODAL = styled.div`
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.85);
+  background-color: rgba(0, 0, 0, 0.9);
   z-index: 999;
   display: flex;
   align-items: center;

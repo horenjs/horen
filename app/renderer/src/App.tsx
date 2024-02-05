@@ -37,10 +37,9 @@ const Bottom = styled.div`
 `;
 
 const PageContainer = styled.div`
-  padding: 8px 32px 8px 48px;
+  padding: 8px 4px 8px 48px;
   height: calc(100vh - 140px);
   width: 100%;
-  overflow-y: auto;
 `;
 
 export type PageName = 'playing' | 'setting';

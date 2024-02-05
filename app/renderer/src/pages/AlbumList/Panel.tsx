@@ -1,86 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import { FaPause, FaPlay } from 'react-icons/fa6';
-import { IoMdRefresh } from 'react-icons/io';
 import { IoCloseSharp } from 'react-icons/io5';
-import { MdAdd } from 'react-icons/md';
-import { MdOutlineDownloadDone as MdAdded } from 'react-icons/md';
+import { MdAdd, MdOutlineDownloadDone as MdAdded } from 'react-icons/md';
 import styled from 'styled-components';
 
-import { readDB, refreshCover, Track } from '../api';
-import { HorenContext } from '../App';
-import Modal from '../components/Modal';
-import Page, { PageProps } from './_page';
-import { AlbumCover } from '../components/Cover';
-
-const ALBUM = styled.ul`
-  margin: 0;
-  padding: 0;
-  display: grid;
-  padding-bottom: 88px;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-`;
-
-export type AlbumListPageProps = PageProps;
-
-export type Album = {
-  index: string;
-  title: string;
-  artist: string;
-  tracks: string[];
-  trackList: Track[];
-  cover?: string;
-};
-
-export function AlbumListPage({ visible }: AlbumListPageProps) {
-  const [albumList, setAlbumList] = useState<Album[]>([]);
-  const [pickAlbum, setPickAlbum] = useState<Album | null>(null);
-  const { current, playOrPause, addToPlaylist, isInPlaylist, isPlaying } =
-    useContext(HorenContext);
-
-  const handleOpen = (album: Album) => {
-    setPickAlbum(album);
-  };
-
-  useEffect(() => {
-    (async () => {
-      const albums: Album[] = await readDB('albums');
-      setAlbumList(albums);
-    })();
-  }, []);
-
-  return (
-    <Page visible={visible}>
-      <ALBUM>
-        {albumList?.map((album) => {
-          return (
-            <AlbumItem
-              album={album}
-              key={album.index + album.title}
-              onOpen={handleOpen}
-            />
-          );
-        })}
-      </ALBUM>
-      {pickAlbum && (
-        <Modal>
-          <AlbumPanel
-            album={pickAlbum}
-            isPlaying={isPlaying}
-            currentTrack={current}
-            onClose={() => setPickAlbum(null)}
-            onPlay={(track) => playOrPause(track.uid)}
-            onPause={(track) => playOrPause(track.uid)}
-            onAdd={(track) => addToPlaylist([track.uid])}
-            onAddAll={(tracks) =>
-              addToPlaylist(tracks.map((track) => track.uid))
-            }
-            isAdd={(track) => isInPlaylist(track?.uid)}
-          />
-        </Modal>
-      )}
-    </Page>
-  );
-}
+import { Track } from '../../api';
+import { AlbumCover } from '../../components/Cover';
+import { Album } from './';
 
 const ALBUM_PANEL = styled.div`
   max-height: 400px;
@@ -207,7 +133,7 @@ const ALBUM_PANEL = styled.div`
   }
 `;
 
-function AlbumPanel({
+export default function AlbumPanel({
   album,
   onPlay,
   onPause,
@@ -317,94 +243,5 @@ function AlbumPanel({
         </div>
       </div>
     </ALBUM_PANEL>
-  );
-}
-
-const Item = styled.li`
-  height: 188px;
-  margin: 8px;
-  list-style: none;
-  cursor: pointer;
-  img {
-    width: 100%;
-    height: 132px;
-    margin-bottom: 4px;
-    object-fit: cover;
-  }
-  .albumName {
-    padding: 0 4px;
-    font-size: 0.9rem;
-    color: #f1f1f1;
-    width: 100%;
-    height: 20px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-  }
-  .artistName {
-    padding: 0 4px;
-    margin-top: 4px;
-    height: 18px;
-    overflow: hidden;
-    font-size: 0.8rem;
-    font-weight: 300;
-    color: #969696;
-  }
-  .cover {
-    position: relative;
-    &:hover {
-      .refresh {
-        visibility: visible;
-      }
-    }
-  }
-  .refresh {
-    position: absolute;
-    left: 4px;
-    bottom: 8px;
-    color: #8b8b8b;
-    visibility: hidden;
-    cursor: pointer;
-  }
-`;
-
-export type AlbumItemProps = {
-  album: Album;
-  onOpen?: (album: Album) => void;
-};
-
-function AlbumItem({ album, onOpen }: AlbumItemProps) {
-  const [key, setKey] = useState(0);
-  const handleOpen = () => {
-    if (onOpen) onOpen({ ...album });
-  };
-
-  const handleFresh = async (e: React.MouseEvent<HTMLSpanElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    if (window.confirm('从网络获取专辑封面?')) {
-      await refreshCover({
-        albumName: album.title,
-        artistName: album.artist.split(',')[0],
-      });
-      setKey(new Date().valueOf());
-    }
-  };
-
-  return (
-    <Item key={album.title + album.artist}>
-      <div className="cover" onClick={handleOpen}>
-        <AlbumCover
-          src={'horen:///' + album.cover}
-          alt={album.title + album.artist}
-          key={key}
-        />
-        <span onClick={handleFresh} className="refresh">
-          <IoMdRefresh />
-        </span>
-      </div>
-      <div className="albumName single-line">{album.title}</div>
-      <div className="artistName">{album.artist}</div>
-    </Item>
   );
 }

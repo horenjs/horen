@@ -1,16 +1,32 @@
 ## Preview
 
-![preview-main](./preview/preview0.jpg)
+### Track List
 
-![preview-album1](./preview/preview1-0.jpg)
+![preview-tracklist](./preview/track-list.jpg)
 
-![preview-album2](./preview/preview1-1.jpg)
+### Playlist
 
-![preview-playlist](./preview/preview2.jpg)
+![preview-playlist](./preview/playlist.jpg)
 
-![preview-setting](./preview/preview3.jpg)
+### Album List
 
-![preview-playing](./preview/preview4.jpg)
+![preview-albumlist](./preview/album-list.jpg)
+
+![preview-albumlist-detail](./preview/album-list-detail.jpg)
+
+### Artist List
+
+![preview-artistlist](./preview/artist-list.jpg)
+
+![preview-artistlist-detail](./preview/artist-list-detail.jpg)
+
+### Setting
+
+![preview-setting](./preview/setting.jpg)
+
+### Playing
+
+![preview-playing](./preview/playing.jpg)
 
 ## Develop
 
@@ -24,4 +40,8 @@ pnpm i
 
 # start the app
 pnpm start
+
+# package
+pnpm package
+
 ```

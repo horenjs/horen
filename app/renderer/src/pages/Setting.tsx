@@ -10,34 +10,77 @@ import {
 import Page, { PageProps } from './_page';
 import { HorenContext } from '../components/PlayContext';
 
-const SETTING = styled.div``;
+const SETTING = styled.div`
+  padding-right: 48px;
+`;
+
+const MsgModal = styled.div`
+  width: 80%;
+  max-width: 80%;
+  height: 26px;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 80px;
+  background-color: #3a3a3a;
+  padding: 4px 8px;
+  overflow: hidden;
+  .refresh-msg {
+    font-size: 0.7rem;
+    overflow: hidden;
+    color: #fff;
+    font-weight: 300;
+    max-width: 100%;
+  }
+`;
 
 const SettingItem = styled.div`
   display: flex;
   margin-bottom: 16px;
-  .refresh-msg {
-    height: 18px;
+  button {
+    background-color: #444;
+    border: none;
+    color: #cdcdcd;
+    padding: 4px 8px;
+    margin: 0 4px 0 0;
+    &:hover {
+      background-color: #636363;
+    }
   }
+  select {
+    background-color: #444;
+    border: none;
+    padding: 4px 8px;
+    color: #cdcdcd;
+    outline: none;
+    &:hover {
+      background-color: #636363;
+    }
+  }
+`;
+
+const ItemLabel = styled.div`
+  width: 80px;
+  margin-right: 8px;
   label {
-    width: 80px;
-    color: #fff;
-    margin-right: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: right;
-  }
-  .refresh-msg {
-    font-size: 0.8rem;
-    margin-bottom: 8px;
-    max-width: 100%;
-    overflow: hidden;
-    color: #fff;
-    font-weight: 300;
+    color: #b1b1b1;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    font-weight: 500;
   }
 `;
 
 const ItemChild = styled.div`
   flex-grow: 1;
+  .desc {
+    display: inline-block;
+    font-size: 0.7rem;
+    line-height: 0.8rem;
+    margin-top: 8px;
+    color: #6b6b6b;
+    font-weight: 300;
+  }
 `;
 
 const Libraries = styled.div`
@@ -46,6 +89,7 @@ const Libraries = styled.div`
   color: #fff;
   padding: 4px 8px;
   font-size: 0.8rem;
+  margin-bottom: 8px;
   .delete {
     color: #e31d1d;
     margin-left: 8px;
@@ -57,6 +101,7 @@ export type SettingPageProps = PageProps;
 
 export type SettingItemProps = {
   label: string;
+  desc?: string;
   children: React.ReactNode;
 };
 
@@ -107,7 +152,7 @@ export default function Setting(props: SettingPageProps) {
 
     refreshTrackListMsg((evt, current, total, msg) => {
       const m =
-        current === total ? '' : `READDING: [${current}/${total}] ${msg}`;
+        current === total ? '' : `Loading: [ ${current}/${total} ] ${msg}`;
       setFreshMsg(m);
     });
 
@@ -118,9 +163,8 @@ export default function Setting(props: SettingPageProps) {
 
   return (
     <Page visible={visible}>
-      <SETTING style={{ display: visible ? 'block' : 'none' }}>
-        <Item label="曲  库">
-          <div className="refresh-msg">{refreshMsg}</div>
+      <SETTING>
+        <Item label="曲  库" desc="重复的文件将不会被添加">
           <Libraries>
             {libraries?.map((lib) => (
               <div key={lib}>
@@ -131,28 +175,38 @@ export default function Setting(props: SettingPageProps) {
               </div>
             ))}
           </Libraries>
-          <button onClick={handleAdd}>添加至库</button>
-          <button onClick={() => handleRefresh()}>更新列表</button>
+          <button onClick={handleAdd}>添加至曲库</button>
+          <button onClick={() => handleRefresh()}>更新曲库</button>
           <button onClick={() => handleRefresh(true)}>
-            清空缓存并更新列表
+            更新曲库（清空缓存）
           </button>
         </Item>
-        <Item label="语  言">
+        <Item label="语  言" desc="设置界面语言">
           <select value={language} onChange={handleChangeLang}>
             <option value="cn">Chinese</option>
             <option value="en">English</option>
           </select>
         </Item>
       </SETTING>
+      {refreshMsg && (
+        <MsgModal>
+          <div className="refresh-msg single-line">{refreshMsg}</div>
+        </MsgModal>
+      )}
     </Page>
   );
 }
 
-function Item({ label, children }: SettingItemProps) {
+function Item({ label, desc, children }: SettingItemProps) {
   return (
     <SettingItem>
-      <label>{label}</label>
-      <ItemChild>{children}</ItemChild>
+      <ItemLabel>
+        <label>{label}</label>
+      </ItemLabel>
+      <ItemChild>
+        <div>{children}</div>
+        <div className="desc">{desc}</div>
+      </ItemChild>
     </SettingItem>
   );
 }

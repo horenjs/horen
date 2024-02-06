@@ -4,6 +4,7 @@ import { FaPause } from 'react-icons/fa6';
 import { IoMdAdd } from 'react-icons/io';
 import { MdOutlineDownloadDone } from 'react-icons/md';
 import styled from 'styled-components';
+
 import { useVirtualizer } from '@tanstack/react-virtual';
 
 import { readDB, Track } from '../api';
@@ -61,6 +62,7 @@ const PureItem = styled.div`
     text-align: center;
     margin-right: 16px;
     margin-left: 4px;
+    width: 44px;
   }
   .first {
     display: flex;
@@ -115,6 +117,22 @@ const PureItem = styled.div`
   }
 `;
 
+const PromptText = styled.div`
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #686868;
+  div {
+    display: flex;
+    align-items: center;
+  }
+  span {
+    font-size: 1.5rem;
+    margin-left: 16px;
+  }
+`;
+
 export type PlayListPageProps = PageProps;
 
 export type TrackItemProps = {
@@ -155,6 +173,52 @@ export default function TrackList(props: PlayListPageProps) {
     addToPlaylist([uid]);
   };
 
+  const TrackListContainer = () => (
+    <div
+      className="track-list-container perfect-scrollbar"
+      ref={parentRef}
+      style={{ overflow: 'auto', display: 'block' }}
+    >
+      <div
+        style={{
+          height: `${rowVirtualizer.getTotalSize()}px`,
+          width: '100%',
+          position: 'relative',
+        }}
+      >
+        {rowVirtualizer.getVirtualItems().map((virtualItem) => {
+          const track = trackList[virtualItem.index];
+          return (
+            <TrackPureItem
+              key={track.src}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: `${virtualItem.size}px`,
+                transform: `translateY(${virtualItem.start}px)`,
+                display: 'flex',
+              }}
+              index={virtualItem.index + 1}
+              track={track}
+              onPlayOrPause={handlePlayOrPause}
+              onAdd={handleAdd}
+              isAdd={isInPlaylist}
+              playing={isPlaying && current?.uid === track.uid}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+
+  const Prompt = () => (
+    <PromptText>
+      <span>请在设置页面设置音乐库</span>
+    </PromptText>
+  );
+
   useEffect(() => {
     readDB<Track[]>('tracks').then((tracks) => {
       setToTrackList(tracks);
@@ -163,47 +227,8 @@ export default function TrackList(props: PlayListPageProps) {
 
   return (
     <Page visible={visible}>
-      <TRACKLIST
-        className="track-list"
-        style={{ display: visible ? 'block' : 'none' }}
-      >
-        <div
-          className="track-list-container perfect-scrollbar"
-          ref={parentRef}
-          style={{ overflow: 'auto', display: 'block' }}
-        >
-          <div
-            style={{
-              height: `${rowVirtualizer.getTotalSize()}px`,
-              width: '100%',
-              position: 'relative',
-            }}
-          >
-            {rowVirtualizer.getVirtualItems().map((virtualItem) => {
-              const track = trackList[virtualItem.index];
-              return (
-                <TrackPureItem
-                  key={track.src}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: `${virtualItem.size}px`,
-                    transform: `translateY(${virtualItem.start}px)`,
-                    display: 'flex',
-                  }}
-                  index={virtualItem.index + 1}
-                  track={track}
-                  onPlayOrPause={handlePlayOrPause}
-                  onAdd={handleAdd}
-                  isAdd={isInPlaylist}
-                  playing={isPlaying && current?.uid === track.uid}
-                />
-              );
-            })}
-          </div>
-        </div>
+      <TRACKLIST className="track-list">
+        {trackList.length ? <TrackListContainer /> : <Prompt />}
       </TRACKLIST>
     </Page>
   );

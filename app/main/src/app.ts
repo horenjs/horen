@@ -7,7 +7,7 @@ export const createMainWindow = () => {
 
   logger.debug('new a BrowerWindow.');
   const w = new BrowserWindow({
-    width: 1000,
+    width: 832,
     height: 600,
     // resizable: true,
     movable: true,

@@ -1,4 +1,9 @@
 import React from 'react';
+import styled from 'styled-components';
+
+const PageBody = styled.div`
+  height: 100%;
+`;
 
 export type PageProps = {
   visible: boolean;
@@ -6,5 +11,12 @@ export type PageProps = {
 };
 
 export default function Page({ visible, children }: PageProps) {
-  return <div style={{ display: visible ? 'block' : 'none' }}>{children}</div>;
+  return (
+    <PageBody
+      style={{ display: visible ? 'block' : 'none' }}
+      className="page-body"
+    >
+      {children}
+    </PageBody>
+  );
 }

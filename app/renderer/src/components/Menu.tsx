@@ -11,7 +11,7 @@ const MENU = styled.div`
 `;
 
 const Item = styled.div`
-  color: #fff;
+  color: #bbbbbb;
   display: flex;
   align-items: center;
   justify-content: center;

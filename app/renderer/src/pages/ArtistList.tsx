@@ -15,9 +15,12 @@ import { AlbumCover } from '../components/Cover';
 const ARTIST = styled.ul`
   margin: 0;
   padding: 0;
+  padding-right: 16px;
+  height: 100%;
   display: grid;
   padding-bottom: 88px;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  overflow: auto;
 `;
 
 export type ArtistListPageProps = PageProps;
@@ -49,7 +52,7 @@ export function ArtistListPage({ visible }: ArtistListPageProps) {
 
   return (
     <Page visible={visible}>
-      <ARTIST>
+      <ARTIST className="perfect-scrollbar">
         {artistList?.map((artist) => {
           return (
             <AlbumItem
@@ -307,7 +310,7 @@ function AlbumPanel({
 }
 
 const Item = styled.li`
-  height: 188px;
+  height: 168px;
   margin: 8px;
   list-style: none;
   cursor: pointer;
@@ -320,7 +323,7 @@ const Item = styled.li`
   .albumName {
     padding: 0 4px;
     font-size: 0.9rem;
-    color: #f1f1f1;
+    color: #b2b2b2;
     width: 100%;
     height: 20px;
     overflow: hidden;

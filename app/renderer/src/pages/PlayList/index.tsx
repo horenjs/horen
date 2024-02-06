@@ -58,45 +58,6 @@ export default function PlayList(props: PlayListPageProps) {
     removeFromPlaylist([track.uid]);
   };
 
-  const PlayLister = () => (
-    <VirtualParent
-      className="perfect-scrollbar"
-      ref={parentRef}
-      style={{ overflow: 'auto', display: 'block' }}
-    >
-      <VirtualContainer
-        style={{
-          height: `${rowVirtualizer.getTotalSize()}px`,
-          width: '100%',
-          position: 'relative',
-        }}
-      >
-        {rowVirtualizer.getVirtualItems().map((virtualItem) => {
-          const track = playlist[virtualItem.index];
-          return (
-            <PlayListItem
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: `${virtualItem.size}px`,
-                transform: `translateY(${virtualItem.start}px)`,
-                display: 'flex',
-              }}
-              track={track}
-              onPlay={handlePlayOrPause}
-              onPause={handlePlayOrPause}
-              onDel={handleDel}
-              isPlaying={isPlaying && current?.uid === track.uid}
-              key={track.uid}
-            />
-          );
-        })}
-      </VirtualContainer>
-    </VirtualParent>
-  );
-
   const Prompt = () => (
     <PromptText>
       <span>请添加歌曲</span>
@@ -105,7 +66,45 @@ export default function PlayList(props: PlayListPageProps) {
 
   return (
     <Page visible={visible}>
-      <Container>{playlist.length ? <PlayLister /> : <Prompt />}</Container>
+      <Container>
+        {!playlist.length && <Prompt />}
+        <VirtualParent
+          className="perfect-scrollbar"
+          ref={parentRef}
+          style={{ overflow: 'auto', display: 'block' }}
+        >
+          <VirtualContainer
+            style={{
+              height: `${rowVirtualizer.getTotalSize()}px`,
+              width: '100%',
+              position: 'relative',
+            }}
+          >
+            {rowVirtualizer.getVirtualItems().map((virtualItem) => {
+              const track = playlist[virtualItem.index];
+              return (
+                <PlayListItem
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: `${virtualItem.size}px`,
+                    transform: `translateY(${virtualItem.start}px)`,
+                    display: 'flex',
+                  }}
+                  track={track}
+                  onPlay={handlePlayOrPause}
+                  onPause={handlePlayOrPause}
+                  onDel={handleDel}
+                  isPlaying={isPlaying && current?.uid === track.uid}
+                  key={track.uid}
+                />
+              );
+            })}
+          </VirtualContainer>
+        </VirtualParent>
+      </Container>
     </Page>
   );
 }

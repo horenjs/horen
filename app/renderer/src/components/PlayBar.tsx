@@ -3,13 +3,15 @@ import { BsRepeat1 } from 'react-icons/bs';
 import { FaVolumeLow } from 'react-icons/fa6';
 import { IoIosArrowDown, IoIosPause, IoIosPlay } from 'react-icons/io';
 import { IoReturnDownForwardOutline } from 'react-icons/io5';
-import { MdMenuOpen, MdSkipNext, MdSkipPrevious } from 'react-icons/md';
+import { MdSkipNext, MdSkipPrevious } from 'react-icons/md';
 import { PiShuffleLight } from 'react-icons/pi';
+import { SlEqualizer } from 'react-icons/sl';
 import { TfiLoop } from 'react-icons/tfi';
 import styled from 'styled-components';
+
 import { HorenContext } from '../App';
-import { Slider } from './Slider';
 import { AlbumCover } from './Cover';
+import { Slider } from './Slider';
 
 const PLAYBAR = styled.div`
   width: 100%;
@@ -117,7 +119,7 @@ const More = styled.div`
   width: 108px;
   height: 32px;
   padding-right: 12px;
-  color: #e6e6e6;
+  color: #b0b0b0;
   display: flex;
   align-items: center;
   justify-content: end;
@@ -220,7 +222,7 @@ function PlayBar(props: PlayBarProps) {
       {visible && (
         <div>
           <More>
-            <MdMenuOpen size={28} />
+            <SlEqualizer size={16} />
           </More>
         </div>
       )}

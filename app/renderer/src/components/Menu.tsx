@@ -22,84 +22,49 @@ const Item = styled.div`
   font-weight: 500;
   transition: all 0.15s ease-in-out;
   cursor: pointer;
+  &.selected {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #f1f1f1;
+  }
 `;
 
 export type MenuProps = {
   onClick?: (value: string) => void;
 };
 
+export type MenuItemProps = {
+  onClick: (value: string) => void;
+  label: string;
+  selected: string;
+};
+
 export default function Menu(props: MenuProps) {
   const { onClick } = props;
   const [selected, setSelected] = useState('全部');
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLDivElement;
-    setSelected(target.innerText);
-    if (onClick) onClick(target.innerText.toLowerCase());
+  const handleClick = (text: string) => {
+    setSelected(text);
+    if (onClick) onClick(text);
   };
 
   return (
-    <MENU onClick={handleClick}>
-      <Item
-        onClick={handleClick}
-        style={{
-          fontSize: selected === '全部' ? '1.4rem' : '1.2rem',
-          fontWeight: selected === '全部' ? 600 : 500,
-        }}
-        className="electron-no-drag"
-      >
-        全部
-      </Item>
-      <Item
-        onClick={handleClick}
-        style={{
-          fontSize: selected === '播放列表' ? '1.4rem' : '1.2rem',
-          fontWeight: selected === '播放列表' ? 600 : 500,
-        }}
-        className="electron-no-drag"
-      >
-        播放列表
-      </Item>
-      <Item
-        onClick={handleClick}
-        style={{
-          fontSize: selected === '专辑' ? '1.4rem' : '1.2rem',
-          fontWeight: selected === '专辑' ? 600 : 500,
-        }}
-        className="electron-no-drag"
-      >
-        专辑
-      </Item>
-      <Item
-        onClick={handleClick}
-        style={{
-          fontSize: selected === '艺术家' ? '1.4rem' : '1.2rem',
-          fontWeight: selected === '艺术家' ? 600 : 500,
-        }}
-        className="electron-no-drag"
-      >
-        艺术家
-      </Item>
-      <Item
-        onClick={handleClick}
-        style={{
-          fontSize: selected === '收藏' ? '1.4rem' : '1.2rem',
-          fontWeight: selected === '收藏' ? 600 : 500,
-        }}
-        className="electron-no-drag"
-      >
-        收藏
-      </Item>
-      <Item
-        onClick={handleClick}
-        style={{
-          fontSize: selected === '设置' ? '1.4rem' : '1.2rem',
-          fontWeight: selected === '设置' ? 600 : 500,
-        }}
-        className="electron-no-drag"
-      >
-        设置
-      </Item>
+    <MENU>
+      <MenuItem onClick={handleClick} selected={selected} label="全部" />
+      <MenuItem onClick={handleClick} selected={selected} label="播放列表" />
+      <MenuItem onClick={handleClick} selected={selected} label="专辑" />
+      <MenuItem onClick={handleClick} selected={selected} label="艺术家" />
+      <MenuItem onClick={handleClick} selected={selected} label="收藏" />
+      <MenuItem onClick={handleClick} selected={selected} label="设置" />
     </MENU>
+  );
+}
+
+export function MenuItem({ label, onClick, selected }: MenuItemProps) {
+  const cls = `electron-no-drag ` + (selected === label && 'selected');
+  return (
+    <Item onClick={() => onClick(label)} className={cls}>
+      {label}
+    </Item>
   );
 }

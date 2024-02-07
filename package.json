@@ -1,6 +1,6 @@
 {
   "name": "horen",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "a music player by Electron.",
   "main": "./dist/main.js",
   "scripts": {

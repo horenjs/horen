@@ -12,6 +12,7 @@ import PlayContext, { HorenContext } from './components/PlayContext';
 
 const APP = styled.div`
   min-width: 800px;
+  overflow: hidden;
 `;
 
 const Top = styled.div`
@@ -37,7 +38,7 @@ const Bottom = styled.div`
 `;
 
 const PageContainer = styled.div`
-  padding: 8px 4px 8px 48px;
+  padding: 8px 4px 8px 40px;
   height: calc(100vh - 140px);
   width: 100%;
 `;

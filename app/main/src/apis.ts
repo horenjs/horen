@@ -14,13 +14,13 @@ export const fetchCover = async ({
   type = 10,
 }: Params) => {
   await sleep(1000);
-  const kw = () => {
-    if (type === 100) return artistName;
-    if (type === 10) return albumName + ' ' + artistName;
-    if (type === 1) return songName + ' ' + artistName;
+  const kws = {
+    100: artistName,
+    10: albumName + ' ' + artistName,
+    1: songName + ' ' + artistName,
   };
   const data = {
-    s: kw(),
+    s: kws[type],
     type,
     offset: 0,
     total: true,

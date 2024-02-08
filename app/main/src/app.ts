@@ -27,7 +27,7 @@ export const createMainWindow = () => {
 
   if (isDev) {
     logger.debug('start development');
-    w.loadURL(`http://localhost:3000`).then().catch(console.error);
+    w.loadURL(`http://localhost:9988`).then().catch(console.error);
     // open the chrome dev tools when in development mode.
     // w.webContents.openDevTools();
   } else {

@@ -1,5 +1,6 @@
 import { dialog, IpcMainInvokeEvent } from 'electron';
 import path from 'path';
+import fse, { ensureDir } from 'fs-extra';
 
 import { APP_DATA_PATH, APP_NAME, AUDIO_EXTS, CHANNELS } from './constant';
 import { cacheDB, db, logger, mainWindow } from './index';
@@ -13,7 +14,7 @@ import {
   Track,
   walkDir,
 } from './utils';
-import { fetchCover } from './apis';
+import { fetchCover, fetchLyric } from './apis';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -247,6 +248,35 @@ export const hanldeWriteCoverToFile = async (
   pathname: string
 ) => {
   await saveCover(url, pathname);
+};
+
+export const handleGetLyric = async (
+  evt: IpcMainInvokeEvent,
+  songName: string,
+  save: boolean = true,
+  sameDir: boolean = true
+) => {
+  const lyricPath = path.join(APP_DATA_PATH, APP_NAME, 'Lyric');
+  await ensureDir(lyricPath);
+
+  const finalPath = path.join(lyricPath, strToBase64(songName) + '.lrc');
+
+  if (fse.existsSync(finalPath)) {
+    return await fse.readFile(finalPath);
+  }
+
+  const lyric = await fetchLyric(songName);
+
+  if (!lyric) {
+    logger.debug('cannot find lyric from internet');
+    return;
+  }
+
+  if (save && sameDir) {
+    await fse.writeFile(finalPath, lyric);
+  }
+
+  return lyric;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

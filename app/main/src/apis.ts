@@ -56,6 +56,31 @@ export const fetchCover = async ({
   }
 };
 
+export const fetchLyric = async (songName: string) => {
+  const res = await fetchCover({ songName, type: 1 });
+  if (res) {
+    const song = res[0];
+    const id = song.id;
+    const result = await findLyric(id);
+    if (result) {
+      const lyric = result.lrc.lyric;
+      return lyric;
+    }
+  }
+};
+
+const findLyric = async (id: number) => {
+  const url = 'https://music.163.com/api/song/lyric';
+  const res = await axios.get(url, { params: { id, lv: -1 } });
+  if (res.status === 200) {
+    if (typeof res.data === 'string') {
+      return JSON.parse(res.data);
+    } else {
+      return res.data;
+    }
+  }
+};
+
 function sleep(time = 1000) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }

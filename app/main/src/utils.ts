@@ -5,7 +5,6 @@ import path from 'path';
 import winston from 'winston';
 import fse from 'fs-extra';
 import { logger } from './index';
-import { fetchCover } from './apis';
 
 import { APP_DATA_PATH, APP_NAME } from './constant';
 

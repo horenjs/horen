@@ -12,6 +12,7 @@ import {
   handleRefreshTrackList,
   handleFetchCoverFromInternet,
   hanldeWriteCoverToFile,
+  handleGetLyric,
 } from './ipc';
 import {
   DBDataType,
@@ -23,7 +24,6 @@ import {
 
 import type { Low } from 'lowdb';
 import type { Logger } from 'winston';
-import path from 'path';
 export let mainWindow: BrowserWindow = null;
 export let db: Low<DBDataType> = null;
 export let cacheDB: Low<{ tracks: Track[] }> = null;
@@ -99,3 +99,5 @@ ipcMain.handle(CHANNELS.db.write, handleDBWrite);
 
 ipcMain.handle(CHANNELS.cover.fetchFromInternet, handleFetchCoverFromInternet);
 ipcMain.handle(CHANNELS.cover.writeToFile, hanldeWriteCoverToFile);
+
+ipcMain.handle(CHANNELS.lyric.get, handleGetLyric);

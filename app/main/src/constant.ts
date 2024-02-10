@@ -23,6 +23,9 @@ export const CHANNELS = {
     fetchFromInternet: 'fetch-cover-from-internet',
     writeToFile: 'write-cover-to-file',
   },
+  lyric: {
+    get: 'get-lyric',
+  },
   db: {
     read: 'db-read',
     write: 'db-write',

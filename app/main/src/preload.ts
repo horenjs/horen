@@ -47,6 +47,9 @@ const IPC_API = {
   writeCoverToFile: async (url: string, pathname: string) => {
     return await ipcRenderer.invoke(CHANNELS.cover.writeToFile, url, pathname);
   },
+  getLyric: async (songName: string) => {
+    return await ipcRenderer.invoke(CHANNELS.lyric.get, songName);
+  },
   readDB: async (key: string) => {
     return await ipcRenderer.invoke(CHANNELS.db.read, key);
   },

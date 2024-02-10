@@ -1,8 +1,10 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import PlayerBar from './PlayBar';
 import { HorenContext } from '../App';
 import { AlbumCover } from './Cover';
+import { getLyric } from '../api';
+import { lyricParser, LyricParser } from '../utils';
 
 const PLAYER = styled.div`
   position: fixed;
@@ -62,7 +64,7 @@ const Lyric = styled.div`
 
 const TrackInfo = styled.div`
   width: 100%;
-  padding: 0 4px;
+  padding: 0;
   .title {
     font-size: 1.2rem;
     color: #e0e0e0;
@@ -70,22 +72,33 @@ const TrackInfo = styled.div`
   .artist {
     font-size: 0.8rem;
     color: #aeaeae;
+    margin-top: 4px;
   }
 `;
 
-const LyricText = styled.div`
+const LyricArea = styled.div`
   height: calc(100% - 64px);
   width: 100%;
+  overflow: auto;
 `;
 
 function Player() {
   const [expanded, setExpanded] = useState(false);
+  const [lyric, setLyric] = useState<LyricParser>();
   const top = !expanded ? 'calc(100vh - 64px)' : '0';
-  const { current } = useContext(HorenContext);
+  const { current, seek } = useContext(HorenContext);
 
   const handleClick = () => {
     setExpanded(!expanded);
   };
+
+  useEffect(() => {
+    getLyric(current?.title || '').then((lrc) => {
+      if (lrc) {
+        setLyric(lyricParser(lrc));
+      }
+    });
+  }, [current]);
 
   return (
     <PLAYER className="player" style={{ top }}>
@@ -108,10 +121,46 @@ function Player() {
             <div className="title">{current?.title}</div>
             <div className="artist">{current?.artist}</div>
           </TrackInfo>
-          <LyricText />
+          <LyricArea className="perfect-scrollbar">
+            <LyricPanel lyric={lyric} seek={seek} />
+          </LyricArea>
         </Lyric>
       </div>
     </PLAYER>
+  );
+}
+
+const LyricPanelStyled = styled.div`
+  color: #a4a4a4;
+`;
+
+const LyricTextLine = styled.div`
+  padding: 4px 0;
+  transition: all 0.25s ease-in-out;
+  &.now-playing {
+    font-size: 1.2rem;
+    color: #10b45475;
+  }
+`;
+
+function LyricPanel({
+  lyric,
+  seek = 0,
+}: {
+  lyric?: LyricParser;
+  seek?: number;
+}) {
+  return (
+    <LyricPanelStyled>
+      {lyric?.scripts.map((scp) => {
+        const cls = scp.start < seek && scp.end > seek ? 'now-playing' : '';
+        return (
+          <LyricTextLine key={scp.start + '=>' + scp.end} className={cls}>
+            {scp.text}
+          </LyricTextLine>
+        );
+      })}
+    </LyricPanelStyled>
   );
 }
 

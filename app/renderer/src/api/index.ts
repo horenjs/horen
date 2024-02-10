@@ -34,6 +34,8 @@ declare global {
       }) => Promise<any>;
       writeCoverToFile: (url: string, pathname: string) => Promise<string>;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      getLyric: (songName: string) => Promise<string>;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       readDB: <T = any>(key: string) => Promise<T>;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       writeDB: (key: string, value: any) => Promise<void>;
@@ -69,6 +71,7 @@ export const {
   refreshTrackListMsg,
   fetchCoverFromInternet,
   writeCoverToFile,
+  getLyric,
   readDB,
   writeDB,
   // eslint-disable-next-line no-unsafe-optional-chaining

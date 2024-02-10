@@ -1,4 +1,5 @@
 export { default as HowlPlayer, type PlayerOrder } from './player';
+export { default as lyricParser, type LyricParser } from './lyric';
 
 export const randomInt = (m: number, n: number) =>
   Math.floor(Math.random() * (m - n + 1)) + n;

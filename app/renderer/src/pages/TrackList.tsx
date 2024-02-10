@@ -52,11 +52,11 @@ const PureItem = styled.div`
   align-items: center;
   font-size: 0.9rem;
   height: 100%;
-  &:hover {
-    background-color: #10b45425;
-  }
   &:nth-child(2n) {
     background-color: #3a3a3a6d;
+  }
+  &:hover {
+    background-color: #10b45425;
   }
   &.playing {
     background-color: #10b45475 !important;

@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { Album } from '.';
-import { refreshCover } from '../../api';
+
 import { AlbumCover } from '../../components/Cover';
-import { IoMdRefresh } from 'react-icons/io';
+import { Album } from './';
 
 const Item = styled.div`
   height: 188px;
@@ -23,8 +22,6 @@ const Item = styled.div`
     width: 100%;
     height: 20px;
     overflow: hidden;
-    display: flex;
-    align-items: center;
   }
   .artistName {
     padding: 0 4px;
@@ -57,39 +54,31 @@ export type AlbumItemProps = {
   album: Album;
   onOpen?: (album: Album) => void;
   style?: React.CSSProperties;
+  coverKey: string | number;
 };
 
-export default function AlbumItem({ album, onOpen, style }: AlbumItemProps) {
-  const [key, setKey] = useState(0);
+export default function AlbumItem({
+  album,
+  onOpen,
+  style,
+  coverKey,
+}: AlbumItemProps) {
   const handleOpen = () => {
     if (onOpen) onOpen({ ...album });
-  };
-
-  const handleFresh = async (e: React.MouseEvent<HTMLSpanElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    if (window.confirm('从网络获取专辑封面?')) {
-      await refreshCover({
-        albumName: album.title,
-        artistName: album.artist.split(',')[0],
-      });
-      setKey(new Date().valueOf());
-    }
   };
 
   return (
     <Item key={album.title + album.artist} style={style}>
       <div className="cover" onClick={handleOpen}>
         <AlbumCover
-          src={'horen:///' + album.cover}
+          src={'horen:///' + album.cover + `?timestamp=${coverKey}`}
           alt={album.title + album.artist}
-          key={key}
+          key={coverKey}
         />
-        <span onClick={handleFresh} className="refresh">
-          <IoMdRefresh />
-        </span>
       </div>
-      <div className="albumName single-line">{album.title}</div>
+      <div className="albumName single-line" title={album.title}>
+        {album.title}
+      </div>
       <div className="artistName">{album.artist}</div>
     </Item>
   );

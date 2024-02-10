@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaPause, FaPlay } from 'react-icons/fa6';
 import { IoCloseSharp } from 'react-icons/io5';
 import { MdAdd, MdOutlineDownloadDone as MdAdded } from 'react-icons/md';
 import styled from 'styled-components';
+import { TiDeleteOutline } from 'react-icons/ti';
 
-import { Track } from '../../api';
+import { Track, fetchCoverFromInternet, writeCoverToFile } from '../../api';
 import { AlbumCover } from '../../components/Cover';
 import { Album } from './';
+import Modal from '../../components/Modal';
 
 const ALBUM_PANEL = styled.div`
   max-height: 400px;
@@ -70,6 +72,24 @@ const ALBUM_PANEL = styled.div`
   .left {
     width: 40%;
     padding-left: 16px;
+    .cover {
+      position: relative;
+      .refresh-cover {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 8px;
+        overflow: hidden;
+        button {
+          background-color: #1d1c1cc0;
+          border: none;
+          color: #a7a7a7;
+          &:hover {
+            background-color: #141414ea;
+          }
+        }
+      }
+    }
     .title {
       color: #d6d6d6;
       padding: 4px;
@@ -117,8 +137,11 @@ const ALBUM_PANEL = styled.div`
       padding-right: 4px;
       display: flex;
       align-items: center;
+      &:hover {
+        background-color: #10b45425;
+      }
       &.playing {
-        background-color: #10b45475;
+        background-color: #10b454;
       }
     }
     .track-title {
@@ -143,6 +166,7 @@ export default function AlbumPanel({
   isPlaying,
   isAdd,
   currentTrack,
+  onRefresh,
 }: {
   album: Album;
   onPlay?: (track: Track) => void;
@@ -153,7 +177,10 @@ export default function AlbumPanel({
   isPlaying?: boolean;
   isAdd: (track: Track) => boolean;
   currentTrack: Track | null;
+  onRefresh?: () => void;
 }) {
+  const [coverKey, setCoverKey] = useState(0);
+
   const isAllAdded = () => {
     for (const track of album.trackList) {
       if (!isAdd(track)) return false;
@@ -183,11 +210,19 @@ export default function AlbumPanel({
     }
   };
 
+  const handleFinish = () => {
+    setCoverKey(new Date().valueOf());
+    if (onRefresh) onRefresh();
+  };
+
   return (
     <ALBUM_PANEL className="album-panel">
       <div className="background-mask"></div>
       <div className="background">
-        <AlbumCover src={'horen:///' + album.cover} alt="album-background" />
+        <AlbumCover
+          src={'horen:///' + album.cover + `?timestamp=${coverKey}`}
+          alt="album-background"
+        />
       </div>
       <div className="header">
         <div className="spring"></div>
@@ -197,10 +232,7 @@ export default function AlbumPanel({
       </div>
       <div className="main">
         <div className="left">
-          <AlbumCover
-            src={'horen:///' + album.cover}
-            alt={album.title + album.artist}
-          />
+          <CoverArea album={album} onFinish={handleFinish} />
           <div className="title">{album.title}</div>
           <div className="artist">{album.artist}</div>
           <div className="add-all">
@@ -243,5 +275,111 @@ export default function AlbumPanel({
         </div>
       </div>
     </ALBUM_PANEL>
+  );
+}
+
+const CoverSelect = styled.div`
+  width: 440px;
+  height: 300px;
+  padding: 16px;
+  background-color: #202020;
+  overflow: auto;
+  .cover-item {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 4px;
+    cursor: pointer;
+  }
+  img {
+    width: 92px;
+    height: 92px;
+    &:hover {
+      opacity: 0.55;
+    }
+  }
+  .no-cover {
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    color: #b7b7b7;
+  }
+`;
+
+const CloseIcon = styled.div`
+  color: #7c7c7c;
+  text-align: center;
+  margin-top: 8px;
+`;
+
+function CoverArea({
+  album,
+  onFinish,
+}: {
+  album: Album;
+  onFinish?: () => void;
+}) {
+  const [covers, setCovers] = useState<string[] | null>();
+  const [albumCoverKey, setAlbumCoverKey] = useState(new Date().valueOf());
+
+  const handleRefresh = async () => {
+    setCovers([]);
+    const result = await fetchCoverFromInternet({
+      albumName: album.title,
+      artistName: album.artist,
+      type: 10,
+    });
+    if (result instanceof Array && result.length > 0) {
+      const s = result.map((res) => res.picUrl);
+      setCovers(s);
+    }
+  };
+
+  const handleSelectCover = async (url: string) => {
+    if (window.confirm('选择当前作为专辑封面?')) {
+      setCovers(null);
+      await writeCoverToFile(url, album.title + album.artist);
+      setAlbumCoverKey(new Date().valueOf());
+    }
+
+    if (onFinish) onFinish();
+  };
+
+  const handleClose = () => {
+    setCovers(null);
+  };
+
+  return (
+    <div className="cover">
+      <AlbumCover
+        src={'horen:///' + album.cover + `?timestamp=${albumCoverKey}`}
+        alt={album.title + album.artist}
+        key={albumCoverKey}
+      />
+      <div className="refresh-cover">
+        <button onClick={handleRefresh}>更换封面</button>
+      </div>
+      {covers && (
+        <Modal>
+          <CoverSelect className="perfect-scrollbar">
+            {covers.length > 0 ? (
+              covers.map((cover) => (
+                <div
+                  key={cover}
+                  className="cover-item"
+                  onClick={() => handleSelectCover(cover)}
+                >
+                  <img alt={cover} src={cover} />
+                </div>
+              ))
+            ) : (
+              <div className="no-cover">无法获取该专辑封面</div>
+            )}
+          </CoverSelect>
+          <CloseIcon onClick={handleClose}>
+            <TiDeleteOutline size={32} />
+          </CloseIcon>
+        </Modal>
+      )}
+    </div>
   );
 }

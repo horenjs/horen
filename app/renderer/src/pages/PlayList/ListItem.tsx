@@ -12,8 +12,12 @@ const Item = styled.div`
   display: flex;
   align-items: center;
   padding: 0 16px 0 0;
+
   &:nth-child(2n) {
     background-color: #3a3a3a6d;
+  }
+  &:hover {
+    background-color: #10b45425;
   }
   &:hover {
     .to-top {

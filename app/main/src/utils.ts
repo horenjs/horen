@@ -208,39 +208,22 @@ export const initCacheDB = async () => {
   return db;
 };
 
-export const fetchCoverAndSave = async ({
-  albumName,
-  artistName,
-  songName,
-  type,
-}: {
-  albumName: string;
-  artistName: string;
-  songName: string;
-  type?: number;
-}) => {
-  const name = () => {
-    if (type === 1) return songName + artistName;
-    if (type === 10) return albumName + artistName;
-    if (type === 100) return artistName;
-  };
+export async function saveCover(url: string, name: string) {
+  logger.debug('get cover from url: ' + url);
+  const resp = await axios.get(url, { responseType: 'arraybuffer' });
+  const data = resp?.data;
+
   const coverPath = path.join(
     APP_DATA_PATH,
     APP_NAME,
     'Cover',
-    strToBase64(name()) + '.png'
+    strToBase64(name) + '.png'
   );
 
-  const url = await fetchCover({ albumName, artistName, songName, type });
-  if (typeof url === 'string') {
-    const resp = await axios.get(url, { responseType: 'arraybuffer' });
-    const data = resp?.data;
-    if (data) {
-      logger.debug('fetch cover from api success');
-      await fse.writeFile(coverPath, data);
-      return arrayBufferToBase64(data);
-    }
-  } else {
-    logger.debug('cannot save cover from url.');
+  if (data) {
+    logger.debug('get cover from network success');
+    logger.debug('write cover to: ' + coverPath);
+    await fse.writeFile(coverPath, data);
+    return arrayBufferToBase64(data);
   }
-};
+}

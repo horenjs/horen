@@ -52,6 +52,9 @@ const PureItem = styled.div`
   align-items: center;
   font-size: 0.9rem;
   height: 100%;
+  &:hover {
+    background-color: #10b45425;
+  }
   &:nth-child(2n) {
     background-color: #3a3a3a6d;
   }
@@ -99,21 +102,24 @@ const PureItem = styled.div`
   }
   .album {
     font-weight: 300;
-    width: 160px;
+    width: 280px;
     padding: 0 8px;
     text-align: left;
   }
   .duration {
     text-align: center;
     width: 40px;
+    min-width: 40px;
   }
   .date {
     text-align: center;
-    width: 60px;
+    width: 64px;
+    min-width: 64px;
   }
   .genre {
     text-align: center;
-    width: 80px;
+    width: 64px;
+    min-width: 64px;
   }
 `;
 
@@ -284,9 +290,11 @@ function TrackPureItem({
         {track?.duration !== undefined && normalizeDuration(track?.duration)}
       </div>
       <div className="date">
-        {track?.date !== 'undefined' ? track?.date?.slice(0, 4) : '未知'}
+        {track?.date !== 'undefined' ? track?.date?.slice(0, 4) : '未知日期'}
       </div>
-      <div className="genre">{track?.genre}</div>
+      <div className="genre">
+        {track.genre !== 'undefined' ? track?.genre : '未知流派'}
+      </div>
     </PureItem>
   );
 }

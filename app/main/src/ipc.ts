@@ -6,13 +6,14 @@ import { cacheDB, db, logger, mainWindow } from './index';
 import {
   Album,
   Artist,
-  fetchCoverAndSave,
   getExt,
   readMusicMeta,
+  saveCover,
   strToBase64,
   Track,
   walkDir,
 } from './utils';
+import { fetchCover } from './apis';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -223,7 +224,7 @@ const disposeArtistList = async (trackList: Track[]) => {
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////////////// refresh track list ////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-export const handleRefreshCover = async (
+export const handleFetchCoverFromInternet = async (
   evt: IpcMainInvokeEvent,
   {
     albumName = '',
@@ -237,7 +238,15 @@ export const handleRefreshCover = async (
     type?: number;
   }
 ) => {
-  await fetchCoverAndSave({ albumName, artistName, songName, type });
+  return await fetchCover({ albumName, artistName, songName, type });
+};
+
+export const hanldeWriteCoverToFile = async (
+  evt: IpcMainInvokeEvent,
+  url: string,
+  pathname: string
+) => {
+  await saveCover(url, pathname);
 };
 
 ////////////////////////////////////////////////////////////////////////////////

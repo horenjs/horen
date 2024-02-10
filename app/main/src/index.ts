@@ -9,8 +9,9 @@ import {
   handleMaximizeMainwindow,
   handleMinimizeMainwindow,
   handleOpenDialog,
-  handleRefreshCover,
   handleRefreshTrackList,
+  handleFetchCoverFromInternet,
+  hanldeWriteCoverToFile,
 } from './ipc';
 import {
   DBDataType,
@@ -27,24 +28,6 @@ export let mainWindow: BrowserWindow = null;
 export let db: Low<DBDataType> = null;
 export let cacheDB: Low<{ tracks: Track[] }> = null;
 export let logger: Logger = null;
-
-if (!app.isDefaultProtocolClient('app')) {
-  app.setAsDefaultProtocolClient('app');
-}
-
-// remove so we can register each time as we run the app.
-app.removeAsDefaultProtocolClient('app');
-
-// If we are running a non-packaged version of the app && on windows
-if (process.env.NODE_ENV === 'development' && process.platform === 'win32') {
-  // Set the path of electron.exe and your app.
-  // These two additional parameters are only available on windows.
-  app.setAsDefaultProtocolClient('app', process.execPath, [
-    path.resolve(process.argv[1]),
-  ]);
-} else {
-  app.setAsDefaultProtocolClient('app');
-}
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -69,13 +52,21 @@ app.whenReady().then(async () => {
     const url = 'file:///' + decodeURI(request.url.slice('horen:///'.length));
     logger.debug('origin request: ' + request.url);
     logger.debug('transform request: ' + url);
-    return net.fetch(url);
+    try {
+      return net.fetch(url);
+    } catch (err) {
+      logger.debug(err);
+    }
   });
   protocol.handle('audio', (request) => {
     const url = 'file:///' + decodeURI(request.url.slice('audio:///'.length));
     logger.debug('origin request: ' + request.url);
     logger.debug('transform request: ' + url);
-    return net.fetch(url, { bypassCustomProtocolHandlers: true });
+    try {
+      return net.fetch(url, { bypassCustomProtocolHandlers: true });
+    } catch (err) {
+      logger.debug(err);
+    }
   });
 
   mainWindow = createMainWindow();
@@ -102,7 +93,9 @@ ipcMain.handle(CHANNELS.mainWindow.maximize, handleMaximizeMainwindow);
 ipcMain.handle(CHANNELS.openDialog, handleOpenDialog);
 
 ipcMain.handle(CHANNELS.refresh.trackList, handleRefreshTrackList);
-ipcMain.handle(CHANNELS.refresh.albumCover, handleRefreshCover);
 
 ipcMain.handle(CHANNELS.db.read, handleDBRead);
 ipcMain.handle(CHANNELS.db.write, handleDBWrite);
+
+ipcMain.handle(CHANNELS.cover.fetchFromInternet, handleFetchCoverFromInternet);
+ipcMain.handle(CHANNELS.cover.writeToFile, hanldeWriteCoverToFile);

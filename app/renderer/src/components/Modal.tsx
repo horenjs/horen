@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 export type ModalProps = {
   children?: React.ReactNode;
+  alpha?: number;
 };
 
 const MODAL = styled.div`
@@ -16,9 +17,9 @@ const MODAL = styled.div`
   justify-content: center;
 `;
 
-export default function Modal({ children }: ModalProps) {
+export default function Modal({ children, alpha = 1 }: ModalProps) {
   return ReactDOM.createPortal(
-    <MODAL>
+    <MODAL style={{ backgroundColor: `rgba(0,0,0,${alpha})` }}>
       <div className="modal-container">{children}</div>
     </MODAL>,
     document.body

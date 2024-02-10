@@ -6,7 +6,7 @@ import { MdAdd } from 'react-icons/md';
 import { MdOutlineDownloadDone as MdAdded } from 'react-icons/md';
 import styled from 'styled-components';
 
-import { readDB, refreshCover, Track } from '../api';
+import { readDB, Track } from '../api';
 import { HorenContext } from '../App';
 import Modal from '../components/Modal';
 import Page, { PageProps } from './_page';
@@ -372,10 +372,6 @@ function AlbumItem({ artist, onOpen }: AlbumItemProps) {
     e.stopPropagation();
     e.preventDefault();
     if (window.confirm('从网络获取专辑封面?')) {
-      await refreshCover({
-        artistName: artist.name,
-        type: 100,
-      });
       setKey(new Date().valueOf());
     }
   };

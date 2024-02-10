@@ -35,6 +35,10 @@ code {
 
 .perfect-scrollbar::-webkit-scrollbar-thumb {
   border-radius: 10px;
+  background: transparent;
+}
+
+.perfect-scrollbar:hover::-webkit-scrollbar-thumb {
   background: #4b4949;
 }
 
@@ -44,7 +48,7 @@ code {
 
 .perfect-scrollbar-thin::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background: #4b4949;
+  background: #2b2a2a;
 }
 
 .single-line {

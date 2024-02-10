@@ -18,7 +18,10 @@ export const CHANNELS = {
   refresh: {
     trackList: 'refresh-track-list',
     trackListMsg: 'refresh-track-list-msg',
-    albumCover: 'refresh-album-cover',
+  },
+  cover: {
+    fetchFromInternet: 'fetch-cover-from-internet',
+    writeToFile: 'write-cover-to-file',
   },
   db: {
     read: 'db-read',

@@ -20,7 +20,7 @@ declare global {
           msg: string
         ) => void
       ) => void;
-      refreshCover: ({
+      fetchCoverFromInternet: ({
         albumName,
         artistName,
         songName,
@@ -30,7 +30,9 @@ declare global {
         artistName?: string;
         songName?: string;
         type?: number;
-      }) => Promise<void>;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      }) => Promise<any>;
+      writeCoverToFile: (url: string, pathname: string) => Promise<string>;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       readDB: <T = any>(key: string) => Promise<T>;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -65,7 +67,8 @@ export const {
   openDialog,
   refreshTrackList,
   refreshTrackListMsg,
-  refreshCover,
+  fetchCoverFromInternet,
+  writeCoverToFile,
   readDB,
   writeDB,
   // eslint-disable-next-line no-unsafe-optional-chaining

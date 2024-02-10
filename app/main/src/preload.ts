@@ -26,7 +26,7 @@ const IPC_API = {
   ) => {
     ipcRenderer.on(CHANNELS.refresh.trackListMsg, listener);
   },
-  refreshCover: async ({
+  fetchCoverFromInternet: async ({
     albumName,
     artistName,
     songName,
@@ -37,12 +37,15 @@ const IPC_API = {
     songName?: string;
     type?: number;
   }) => {
-    return await ipcRenderer.invoke(CHANNELS.refresh.albumCover, {
+    return await ipcRenderer.invoke(CHANNELS.cover.fetchFromInternet, {
       albumName,
       artistName,
       songName,
       type,
     });
+  },
+  writeCoverToFile: async (url: string, pathname: string) => {
+    return await ipcRenderer.invoke(CHANNELS.cover.writeToFile, url, pathname);
   },
   readDB: async (key: string) => {
     return await ipcRenderer.invoke(CHANNELS.db.read, key);

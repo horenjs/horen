@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const EOL = '\n';
 
 export interface LyricParser {
@@ -19,11 +20,11 @@ function lrcParser(data: string) {
   // split a long string into lines by system's end-of-line marker line
   // \r\n on Windows
   // \n   on POSIX
-  let originLines = [];
+  let originLines: any[] = [];
   try {
     originLines = data.split(EOL);
   } catch (err) {
-    throw new Error('cannot split the lyric: ' + String(data));
+    console.error('cannot split the lyric: ' + data);
   }
 
   const scripts: LyricScript[] = [];

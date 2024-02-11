@@ -262,18 +262,18 @@ export const handleGetLyric = async (
   const finalPath = path.join(lyricPath, strToBase64(songName) + '.lrc');
 
   if (fse.existsSync(finalPath)) {
-    return await fse.readFile(finalPath);
+    return await fse.readFile(finalPath, { encoding: 'utf-8' });
   }
 
   const lyric = await fetchLyric(songName);
 
   if (!lyric) {
     logger.debug('cannot find lyric from internet');
-    return;
+    return '';
   }
 
   if (save && sameDir) {
-    await fse.writeFile(finalPath, lyric);
+    await fse.writeFile(finalPath, lyric, { encoding: 'utf-8' });
   }
 
   return lyric;

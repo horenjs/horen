@@ -255,7 +255,7 @@ export default function PlayContext({
         setSeek(currentRef.current?.howl.seek());
         // console.log(currentRef.current?.howl.seek());
       }
-    }, 500);
+    }, 16);
     return () => clearInterval(timer);
   }, [currentRef.current]);
 

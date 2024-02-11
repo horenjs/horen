@@ -146,7 +146,9 @@ export const getExt = (filename: string) => {
 };
 
 export const initLogger = () => {
-  const logFilePath = path.join(APP_DATA_PATH, APP_NAME, 'logs', 'horen.log');
+  const logsPath = path.join(APP_DATA_PATH, APP_NAME, 'logs');
+  fse.ensureDir(logsPath);
+  const logFilePath = path.join(logsPath, 'horen.log');
   return winston.createLogger({
     transports: [
       new winston.transports.Console({ level: 'debug' }),

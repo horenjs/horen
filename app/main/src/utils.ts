@@ -145,9 +145,9 @@ export const getExt = (filename: string) => {
   return filename.split('.').pop();
 };
 
-export const initLogger = () => {
+export const initLogger = async () => {
   const logsPath = path.join(APP_DATA_PATH, APP_NAME, 'logs');
-  fse.ensureDir(logsPath);
+  await fse.ensureDir(logsPath);
   const logFilePath = path.join(logsPath, 'horen.log');
   return winston.createLogger({
     transports: [

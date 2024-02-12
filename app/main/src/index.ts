@@ -41,7 +41,7 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 app.whenReady().then(async () => {
-  logger = initLogger();
+  logger = await initLogger();
   logger.debug('app is ready');
   logger.debug('init the database');
   db = await initDatabase();

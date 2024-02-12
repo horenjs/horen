@@ -158,7 +158,7 @@ const LyricTextLine = styled.div`
   font-weight: 600;
   font-size: 1.6rem;
   max-width: 100%;
-  opacity: 0.25;
+  opacity: 0.1;
   &.now-playing {
     color: #10b45475;
     opacity: 1;

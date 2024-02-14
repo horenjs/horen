@@ -1,69 +1,47 @@
-# Horen
+## Preview
 
-Horen 是一个用 React 和 electron 打造的本地音乐播放器，正在不断开发中
+### Track List
 
-There is another lite edition, you will like it! https://github.com/horenjs/horen-lite
+![preview-tracklist](./preview/track-list.jpg)
 
-![preview-gif](./screen-shoots/preview-gif.gif)
+### Playlist
 
-## 预览图
+![preview-playlist](./preview/playlist.jpg)
 
-### 曲库界面
+### Album List
 
-![preview-library](./screen-shoots/preview-library.jpg)
+![preview-albumlist](./preview/album-list.jpg)
 
-### 设置界面
+![preview-albumlist-detail](./preview/album-list-detail.jpg)
 
-![preview-setting](./screen-shoots/preview-setting.jpg)
+### Artist List
 
-### 专辑预览
+![preview-artistlist](./preview/artist-list.jpg)
 
-![preview-album](./screen-shoots/preview-album.jpg)
+![preview-artistlist-detail](./preview/artist-list-detail.jpg)
 
-### 播放列表
+### Setting
 
-![preview-queue](./screen-shoots/preview-queue.jpg)
+![preview-setting](./preview/setting.jpg)
 
-### 正在播放（歌词显示）
+### Playing
 
-![preview-play-show](./screen-shoots/preview-play-show.jpg)
+![preview-playing](./preview/playing.jpg)
 
-## 功能进度
+## Develop
 
-- [x] 主体界面
-- [x] 当前播放
-- [x] 播放队列
-- [x] 控制播放进度
-- [x] 设置界面
-- [x] 控制音量
-- [X] 歌词显示
-- [ ] 调音器
-- [x] 播放主界面
-
-## 优化
-
-- [x] 不一次性读取所有音频 避免内存占用过高
-
-## 开发
-
-```bash
+```
 git clone https://github.com/kevinjobs/Horen.git
 
 cd Horen
 
 # then
-npm install
+pnpm i
 
 # start the app
-npm run start
-
-# build the app
-npm run build
+pnpm start
 
 # package
-npm run dist
+pnpm package
+
 ```
-
-## LICENSE
-
-Apache License Version 2.0

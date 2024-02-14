@@ -1,30 +1,26 @@
-/*
- * @Author       : Kevin Jobs
- * @Date         : 2022-01-21 09:47:41
- * @LastEditTime : 2022-01-21 20:07:29
- * @lastEditors  : Kevin Jobs
- * @FilePath     : \Horen\.eslintrc.js
- * @Description  :
- */
-// eslint-disable-next-line no-undef
 module.exports = {
-  root: true,
+  env: {
+    browser: true,
+    es2021: true,
+  },
   extends: [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended"
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended',
   ],
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint'],
   parserOptions: {
-    project: [
-      './tsconfig.eslint.json',
-      './src/**/*/tsconfig.json',
-    ]
+    ecmaFeatures: {
+      jsx: true,
+    },
+    ecmaVersion: 'latest',
+    sourceType: 'module',
   },
-  rules: {},
-  env: {},
-  ignorePatterns: [
-    "*/dist/**/*",
-    "*/node_modules/**/*",
-  ]
+  plugins: ['react', '@typescript-eslint'],
+  ignorePatterns: ['.eslintrc.js', 'dist', 'out', 'node_modules'],
+  rules: {
+    indent: ['error', 2],
+    // "linebreak-style": ["error", "unix"],
+    // quotes: ["error", "double"]
+  },
 };

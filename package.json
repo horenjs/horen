@@ -1,122 +1,48 @@
 {
   "name": "horen",
-  "version": "0.1.1",
-  "description": "horen is a Music Player powered by Electron and React",
-  "author": "Kevin Jobs",
-  "license": "ISC",
-  "homepage": "https://kevinjobs.github.io/horenjs/horen",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kevinjobs/horen"
-  },
-  "keywords": [
-    "react",
-    "player",
-    "typescript",
-    "electron",
-    "howl"
-  ],
+  "version": "0.9.1",
+  "description": "a music player by Electron.",
   "main": "./dist/main.js",
   "scripts": {
-    "lint": "eslint -c .eslintrc.js --ext .ts",
-    "start:main": "wait-on tcp:8080 && npm run build:main && electron ./dist/main.js",
-    "start:renderer": "webpack serve --config ./src/renderer/webpack/config.dev.js",
-    "build:main": "webpack --config ./src/main/webpack.config.js --stats-error-details",
-    "build:renderer": "webpack --config ./src/renderer/webpack/config.js --stats-error-details",
-    "start": "cross-env NODE_ENV=development DEBUG='horen:*' concurrently \"npm run start:renderer\" \"npm run start:main\"",
-    "build": "cross-env NODE_ENV=production DEBUG='horen:*' rimraf ./dist && concurrently \"npm run build:renderer\" \"npm run build:main\"",
-    "run:test": ".\\node_modules\\electron\\dist\\electron.exe .\\dist\\main.js",
-    "dist": "rimraf ./build && electron-builder --win --x64"
+    "start": "concurrently \"pnpm start:web\" \"pnpm start:main\"",
+    "start:web": "pnpm -F renderer start",
+    "start:main": "pnpm -F main start",
+    "build": "pnpm -F main build && pnpm -F renderer build",
+    "package": "pnpm build && electron-forge package",
+    "make": "electron-forge make"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/horenjs/horen"
+  },
+  "keywords": [
+    "template",
+    "react",
+    "electron",
+    "typescript"
+  ],
+  "author": "Kevin Jobs <me@kevinjobs.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/horenjs/horen/issues"
+  },
+  "homepage": "https://github.com/horenjs/horen#readme",
+  "devDependencies": {
+    "@electron-forge/cli": "^7.2.0",
+    "@electron-forge/maker-deb": "^7.2.0",
+    "@electron-forge/maker-rpm": "^7.2.0",
+    "@electron-forge/maker-squirrel": "^7.2.0",
+    "@electron-forge/maker-zip": "^7.2.0",
+    "concurrently": "^8.2.2",
+    "electron": "latest",
+    "eslint": "^8.56.0"
   },
   "dependencies": {
-    "chalk": "^4.0.0",
-    "debug": "^4.3.3",
-    "howler": "^2.2.3",
-    "mintin-util": "1.3.0",
-    "music-metadata": "^7.11.7",
-    "pg-hstore": "^2.3.4",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-icons": "^4.3.1",
-    "react-router-dom": "^6.2.1",
-    "recoil": "^0.5.2",
-    "request": "^2.88.2",
-    "sequelize": "^6.14.1",
-    "sqlite3": "^5.0.0",
-    "styled-components": "^5.3.3",
-    "underscore": "^1.13.2"
+    "cross-env": "^7.0.3"
   },
-  "devDependencies": {
-    "@babel/core": "^7.16.10",
-    "@babel/plugin-transform-runtime": "^7.16.10",
-    "@babel/preset-env": "^7.16.11",
-    "@babel/preset-react": "^7.16.7",
-    "@babel/preset-typescript": "^7.16.7",
-    "@babel/runtime": "^7.17.2",
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.4",
-    "@types/howler": "^2.2.4",
-    "@types/node": "^17.0.10",
-    "@types/react": "^17.0.38",
-    "@types/react-dom": "^17.0.11",
-    "@types/request": "^2.48.8",
-    "@types/styled-components": "^5.1.20",
-    "@types/underscore": "^1.11.4",
-    "@typescript-eslint/eslint-plugin": "^5.11.0",
-    "@typescript-eslint/parser": "^5.11.0",
-    "axios": "^0.25.0",
-    "babel-loader": "^8.2.3",
-    "concurrently": "^7.0.0",
-    "copy-webpack-plugin": "^10.2.1",
-    "cross-env": "^7.0.3",
-    "css-loader": "^6.5.1",
-    "electron": "16.0.0",
-    "electron-builder": "^22.14.13",
-    "electron-rebuild": "^3.2.7",
-    "eslint": "^8.9.0",
-    "file-loader": "^6.2.0",
-    "html-webpack-plugin": "^5.5.0",
-    "path-browserify": "^1.0.1",
-    "react-fresh": "^0.1.4",
-    "react-is": "^17.0.2",
-    "react-refresh": "^0.10.0",
-    "rimraf": "^3.0.2",
-    "style-loader": "^3.3.1",
-    "ts-loader": "^9.2.6",
-    "ts-node": "^10.5.0",
-    "tslib": "^2.3.1",
-    "typescript": "^4.5.5",
-    "wait-on": "^6.0.0",
-    "webpack": "^5.66.0",
-    "webpack-cli": "^4.9.1",
-    "webpack-dev-server": "^4.7.3",
-    "webpack-node-externals": "^3.0.0"
-  },
-  "peerDependencies": {
-    "@babel/runtime": "^7.17.2",
-    "@types/node": "^17.0.10",
-    "eslint": "^8.9.0",
-    "pg-hstore": "^2.3.4",
-    "react-is": "^17.0.2",
-    "react-refresh": "^0.10.0",
-    "tslib": "^2.3.1",
-    "typescript": "^4.5.5",
-    "webpack": "^5.66.0"
-  },
-  "build": {
-    "appId": "com.kevinjobs.horen",
-    "asar": true,
-    "directories": {
-      "output": "build"
-    },
-    "files": [
-      "dist/",
-      "node_modules/",
-      "package.json"
-    ],
-    "win": {
-      "target": [
-        "zip"
-      ]
+  "config": {
+    "electron": {
+      "mirror": "https://registry.npmmirror.com/-/binary/electron/"
     }
   }
 }

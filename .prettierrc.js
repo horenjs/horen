@@ -1,11 +1,3 @@
-/*
- * @Author       : Kevin Jobs
- * @Date         : 2022-01-15 19:14:15
- * @LastEditTime : 2022-01-23 18:39:52
- * @lastEditors  : Kevin Jobs
- * @FilePath     : \horen\.prettierrc.js
- * @Description  :
- */
 module.exports = {
   printWidth: 80,                         // 每行字符数
   tabWidth: 2,                            // tab 的宽度
@@ -16,7 +8,7 @@ module.exports = {
   jsxSingleQuote: false,                  // jsx 使用单引号
   trailingComma: 'es5',                   // 
   bracketSpacing: true,                   // 大括号里面加一个空格
-  bracketLine: true,                     // 大括号跨行
+  bracketLine: true,                      // 大括号跨行
   arrowParens: 'always',                  // 箭头函数的参数是否用括号括起来
   rangeStart: 0,                          // 对文件的作用开始处
   rangeEnd: Infinity,                     // 对文件的作用结束处

@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { readDB, Track } from '../../api';
+import { Track } from '../../api';
 import { HorenContext } from '../../App';
 import Modal from '../../components/Modal';
 import Page, { PageProps } from '../_page';
@@ -38,10 +38,16 @@ export type Album = {
 
 export function AlbumListPage({ visible }: AlbumListPageProps) {
   const [albumItemKey, setAlbumItemKey] = useState(0);
-  const [albumList, setAlbumList] = useState<Album[]>([]);
+
   const [pickAlbum, setPickAlbum] = useState<Album | null>(null);
-  const { current, playOrPause, addToPlaylist, isInPlaylist, isPlaying } =
-    useContext(HorenContext);
+  const {
+    current,
+    playOrPause,
+    addToPlaylist,
+    isInPlaylist,
+    isPlaying,
+    albumList,
+  } = useContext(HorenContext);
 
   const parentRef = useRef<HTMLTableElement | null>(null);
   const LANES = 5;
@@ -57,13 +63,6 @@ export function AlbumListPage({ visible }: AlbumListPageProps) {
   const handleOpen = (album: Album) => {
     setPickAlbum(album);
   };
-
-  useEffect(() => {
-    (async () => {
-      const albums: Album[] = await readDB('albums');
-      setAlbumList(albums);
-    })();
-  }, []);
 
   return (
     <Page visible={visible}>

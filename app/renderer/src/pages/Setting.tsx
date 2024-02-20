@@ -12,6 +12,7 @@ import { HorenContext } from '../components/PlayContext';
 
 const SETTING = styled.div`
   padding-right: 48px;
+  padding-top: 16px;
 `;
 
 const MsgModal = styled.div`
@@ -60,14 +61,16 @@ const SettingItem = styled.div`
 `;
 
 const ItemLabel = styled.div`
-  width: 80px;
-  margin-right: 8px;
+  width: 56px;
+  margin-right: 24px;
   label {
     color: #b1b1b1;
     display: inline-block;
-    width: 100%;
-    text-align: center;
+    width: inherit;
+    text-align: justify;
+    text-align-last: justify;
     font-weight: 500;
+    font-size: 0.9rem;
   }
 `;
 
@@ -181,11 +184,20 @@ export default function Setting(props: SettingPageProps) {
             更新曲库（清空缓存）
           </button>
         </Item>
+        <Item label="主题色" desc="设置界面主题色">
+          <select>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </Item>
         <Item label="语  言" desc="设置界面语言">
           <select value={language} onChange={handleChangeLang}>
             <option value="cn">Chinese</option>
             <option value="en">English</option>
           </select>
+        </Item>
+        <Item label="日志" desc="查看本地日志">
+          <button>打开日志文件</button>
         </Item>
       </SETTING>
       {refreshMsg && (

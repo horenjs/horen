@@ -2,9 +2,11 @@ import React, { createContext, useEffect, useRef, useState } from 'react';
 
 import { Track, readDB, writeDB } from '../api';
 import { randomInt } from '../utils';
+import { Album } from '../pages/AlbumList';
 
 interface IHorenContext {
   trackList: Track[];
+  albumList: Album[];
   setToTrackList: (tracks: Track[]) => void;
   addToTrackList: (tracks: Track[]) => void;
   playlist: Track[];
@@ -27,6 +29,7 @@ interface IHorenContext {
 
 export const HorenContext = createContext<IHorenContext>({
   trackList: [],
+  albumList: [],
   setToTrackList: () => null,
   addToTrackList: () => null,
   playlist: [],
@@ -58,6 +61,7 @@ export default function PlayContext({
   const endSignalRef = useRef(0);
 
   const [trackList, setTrackList] = useState<Track[]>([]);
+  const [albumList, setAlbumList] = useState<Album[]>([]);
   const [playlist, setPlaylist] = useState<Track[]>([]);
   const [current, setCurrent] = useState<Track | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -276,12 +280,14 @@ export default function PlayContext({
   useEffect(() => {
     readDB('player.volume').then((val) => setVolume(val || 0.75));
     readDB('player.mode').then((val) => setPlayMode(val || 'loop'));
+    readDB('albums').then((albums) => setAlbumList(albums));
   }, []);
 
   return (
     <HorenContext.Provider
       value={{
         trackList,
+        albumList,
         addToTrackList,
         setToTrackList: setTrackList,
         playlist,

@@ -6,6 +6,7 @@ import { Album } from './';
 
 const Item = styled.div`
   height: 188px;
+  width: 132px;
   margin: 8px;
   list-style: none;
   cursor: pointer;

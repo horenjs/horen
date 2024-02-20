@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 
 import { Track } from '../../api';
@@ -7,22 +7,16 @@ import Modal from '../../components/Modal';
 import Page, { PageProps } from '../_page';
 import AlbumPanel from './Panel';
 import AlbumItem from './Item';
-import { useVirtualizer } from '@tanstack/react-virtual';
 
 const ALBUM = styled.div`
   margin: 0;
   padding: 0;
-`;
-
-const ListParent = styled.div`
-  width: calc(100vw - 52px);
-  height: calc(100vh - 152px);
-  padding-right: 16px;
-`;
-
-const ListContainer = styled.div`
-  display: flex;
-  padding-right: 8px;
+  .list-container {
+    height: calc(100vh - 160px);
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: auto;
+  }
 `;
 
 export type AlbumListPageProps = PageProps;
@@ -49,17 +43,6 @@ export function AlbumListPage({ visible }: AlbumListPageProps) {
     albumList,
   } = useContext(HorenContext);
 
-  const parentRef = useRef<HTMLTableElement | null>(null);
-  const LANES = 5;
-
-  const rowVirtualizer = useVirtualizer({
-    count: albumList.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 196,
-    overscan: LANES + 1,
-    lanes: 5,
-  });
-
   const handleOpen = (album: Album) => {
     setPickAlbum(album);
   };
@@ -67,49 +50,16 @@ export function AlbumListPage({ visible }: AlbumListPageProps) {
   return (
     <Page visible={visible}>
       <ALBUM>
-        <ListParent
-          className="perfect-scrollbar"
-          ref={parentRef}
-          style={{ overflowY: 'auto', overflowX: 'hidden', display: 'block' }}
-        >
-          <ListContainer
-            style={{
-              height: `${rowVirtualizer.getTotalSize()}px`,
-              width: `100%`,
-              position: 'relative',
-            }}
-          >
-            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-              const isEven =
-                (Math.floor(virtualRow.index / LANES) + 1) % 2 === 0;
-              const left = isEven
-                ? `${(4 - virtualRow.lane) * (100 / LANES)}%`
-                : `${virtualRow.lane * (100 / LANES)}%`;
-              return (
-                <div
-                  key={virtualRow.index}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left,
-                    width: `${100 / LANES}%`,
-                    height: virtualRow.size,
-                    transform: `translateY(${virtualRow.start}px)`,
-                  }}
-                  data-index={virtualRow.index}
-                  data-lane={virtualRow.lane}
-                  data-left={virtualRow.lane * (100 / LANES)}
-                >
-                  <AlbumItem
-                    album={albumList[virtualRow.index]}
-                    onOpen={handleOpen}
-                    coverKey={albumItemKey}
-                  />
-                </div>
-              );
-            })}
-          </ListContainer>
-        </ListParent>
+        <div className="list-container perfect-scrollbar">
+          {albumList?.map((album) => (
+            <AlbumItem
+              key={album.title}
+              album={album}
+              onOpen={handleOpen}
+              coverKey={albumItemKey}
+            />
+          ))}
+        </div>
       </ALBUM>
       {pickAlbum && (
         <Modal alpha={0.9}>

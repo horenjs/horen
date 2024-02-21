@@ -50,22 +50,23 @@ app.whenReady().then(async () => {
 
   protocol.handle('horen', (request) => {
     const url = 'file:///' + decodeURI(request.url.slice('horen:///'.length));
-    logger.debug('origin request: ' + request.url);
-    logger.debug('transform request: ' + url);
+    // logger.debug('origin request: ' + request.url);
+    // logger.debug('transform request: ' + url);
     try {
       return net.fetch(url);
     } catch (err) {
-      logger.debug(err);
+      logger.debug('cannot get the resource: ' + url);
     }
   });
+
   protocol.handle('audio', (request) => {
     const url = 'file:///' + decodeURI(request.url.slice('audio:///'.length));
-    logger.debug('origin request: ' + request.url);
-    logger.debug('transform request: ' + url);
+    // logger.debug('origin request: ' + request.url);
+    // logger.debug('transform request: ' + url);
     try {
       return net.fetch(url, { bypassCustomProtocolHandlers: true });
     } catch (err) {
-      logger.debug(err);
+      logger.debug('cannot get the resource: ' + url);
     }
   });
 

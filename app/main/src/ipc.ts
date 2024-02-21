@@ -19,17 +19,21 @@ import { fetchCover, fetchLyric } from './apis';
 ////////////////////////////////////////////////////////////////////////////////
 
 export const handleCloseMainwindow = async () => {
+  logger.debug('destory the main window');
   mainWindow.destroy();
 };
 
 export const handleMinimizeMainwindow = async () => {
+  logger.debug('minimize the main window');
   mainWindow.minimize();
 };
 
 export const handleMaximizeMainwindow = async () => {
   if (mainWindow.isMaximized()) {
+    logger.debug('main window is maximized, unmaximize it.');
     mainWindow.unmaximize();
   } else {
+    logger.debug('maximize the main window');
     mainWindow.maximize();
   }
 };
@@ -37,6 +41,7 @@ export const handleMaximizeMainwindow = async () => {
 ////////////////////////////////////////////////////////////////////////////////
 
 export const handleOpenDialog = async () => {
+  logger.debug('open a dialog');
   return await dialog.showOpenDialog(mainWindow, {
     properties: ['openDirectory', 'multiSelections'],
   });
@@ -239,6 +244,7 @@ export const handleFetchCoverFromInternet = async (
     type?: number;
   }
 ) => {
+  logger.debug('fetch cover from Internet Api.');
   return await fetchCover({ albumName, artistName, songName, type });
 };
 
@@ -247,6 +253,7 @@ export const hanldeWriteCoverToFile = async (
   url: string,
   pathname: string
 ) => {
+  logger.debug('write cover to file: ' + pathname);
   await saveCover(url, pathname);
 };
 
@@ -256,6 +263,7 @@ export const handleGetLyric = async (
   save: boolean = true,
   sameDir: boolean = true
 ) => {
+  logger.debug('get lyric.');
   const lyricPath = path.join(APP_DATA_PATH, APP_NAME, 'Lyric');
   await ensureDir(lyricPath);
 
@@ -315,6 +323,7 @@ export const handleDBWrite = async (
   key: string,
   value: string | number | boolean | object
 ) => {
+  logger.debug(`write to db: key:${key}, value:${value}`);
   db.data[key] = value;
   await db.write();
 };

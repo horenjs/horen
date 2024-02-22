@@ -19,17 +19,31 @@ const PLAYER = styled.div`
   bottom: 0;
   width: 100%;
   height: 100%;
-  background: #232526; /* fallback for old browsers */
-  background: linear-gradient(
-    to top,
-    #292b2c,
-    #232526
-  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: transparent;
   transition: top 0.25s ease-in-out;
   z-index: 999;
   .playing {
     position: relative;
   }
+`;
+
+const ImageBackground = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
+
+const BlurBackground = styled.div`
+  position: absolute;
+  inset: 0;
+  background-color: #333333c9;
+  backdrop-filter: blur(10px);
+  z-index: -1;
 `;
 
 const PlayBar = styled.div`
@@ -156,9 +170,13 @@ function Player() {
 
   return (
     <PLAYER className="player" style={{ top }}>
-      <PlayBar>
+      <PlayBar style={{ background: expanded ? 'transparent' : '#232223' }}>
         <PlayerBar onExpand={handleClick} visible={!expanded} />
       </PlayBar>
+      <ImageBackground>
+        <img src={'horen:///' + current?.cover} alt="image-background" />
+      </ImageBackground>
+      <BlurBackground />
       <div
         style={{ display: 'flex', padding: '0 32px', top: expanded ? -8 : 0 }}
         className="playing"
@@ -208,20 +226,19 @@ const LyricTextLine = styled.div`
   width: 100%;
   cursor: pointer;
   border-radius: 8px;
-  color: #353535;
+  color: #727272;
   min-height: 3.2rem;
   .start {
     visibility: hidden;
   }
   &:hover {
     background-color: #3c3c3c5f;
-    color: #565656;
     .start {
       visibility: visible;
     }
   }
   &.now-playing {
-    color: #10b45475;
+    color: #079f47b4;
     opacity: 1;
   }
 `;

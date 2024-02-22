@@ -32,9 +32,9 @@ const PlayBar = styled.div`
 
 const Cover = styled.div`
   display: flex;
-  width: 50%;
+  width: 48%;
   height: calc(100vh - 64px);
-  padding: 16px 16px 32px 32px;
+  padding: 16px 32px 32px 16px;
   padding-top: 0;
   justify-content: center;
   align-items: center;
@@ -55,9 +55,9 @@ const Picture = styled.div`
 
 const Lyric = styled.div`
   display: flex;
-  width: 50%;
+  width: 52%;
   height: calc(100vh - 64px);
-  padding: 16px 32px 64px 16px;
+  padding: 16px 32px 64px 0px;
   padding-top: 0;
   justify-content: center;
   align-items: center;
@@ -66,8 +66,8 @@ const Lyric = styled.div`
 
 const TrackInfo = styled.div`
   width: 100%;
-  padding: 0;
-  margin-bottom: 8px;
+  padding: 0 16px;
+  margin-bottom: 16px;
   .title {
     font-size: 1.2rem;
     color: #e0e0e0;
@@ -85,11 +85,12 @@ const LyricArea = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
+  padding-right: 16px;
 `;
 
 const LyricScroll = styled.div`
   position: absolute;
-  transition: all 0.15s ease-in-out;
+  transition: all 0.55s ease-in-out;
   max-width: 100%;
   transform: translateY(-200px);
 `;
@@ -138,7 +139,7 @@ function Player() {
             <div className="title">{current?.title}</div>
             <div className="artist">{current?.artist}</div>
           </TrackInfo>
-          <LyricArea className="perfect-scrollbar">
+          <LyricArea className="no-scrollbar">
             <LyricScroll style={{ transform: `translateY(${toTop}px)` }}>
               <LyricPanel lyric={lyric} seek={seek} onScroll={handleScroll} />
             </LyricScroll>
@@ -154,11 +155,17 @@ const LyricPanelStyled = styled.div`
 `;
 
 const LyricTextLine = styled.div`
-  padding: 8px 0;
+  padding: 8px 16px;
   font-weight: 600;
   font-size: 1.6rem;
   max-width: 100%;
-  opacity: 0.1;
+  cursor: pointer;
+  border-radius: 8px;
+  color: #353535;
+  &:hover {
+    background-color: #3c3c3c5f;
+    color: #565656;
+  }
   &.now-playing {
     color: #10b45475;
     opacity: 1;
@@ -182,7 +189,7 @@ function LyricPanel({
         const target = child as HTMLDivElement;
         const playing = target.dataset['playing'] === 'true';
         if (playing) {
-          if (onScroll) onScroll(-target.offsetTop + 180);
+          if (onScroll) onScroll(-target.offsetTop + 120);
         }
       }
     }

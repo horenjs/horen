@@ -29,6 +29,10 @@ code {
   -webkit-app-region: no-drag;
 }
 
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 .perfect-scrollbar::-webkit-scrollbar {
   width: 8px;
 }

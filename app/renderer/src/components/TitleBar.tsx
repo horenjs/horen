@@ -1,6 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import {
+  MdOutlineCheckBoxOutlineBlank,
+  MdHorizontalRule,
+} from 'react-icons/md';
+import { IoCloseSharp } from 'react-icons/io5';
+import {
   closeMainwindow,
   minimizeMainwindow,
   maximizeMainwindow,
@@ -24,44 +29,32 @@ const CloseArea = styled.div`
 `;
 
 const Minimize = styled.div`
-  font-size: 24px;
   width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  span {
-    position: relative;
-    bottom: 11px;
-  }
   &:hover {
     background-color: #9e9e9e34;
   }
 `;
 
 const Maximize = styled.div`
-  font-size: 24px;
   width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  span {
-    position: relative;
-    bottom: 3px;
-  }
   &:hover {
     background-color: #9e9e9e34;
   }
 `;
 const Close = styled.div`
-  font-size: 24px;
   width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  span {
-    position: relative;
-    bottom: 2px;
-  }
   &:hover {
     background-color: #ec1515;
   }
@@ -105,13 +98,19 @@ export default function TitleBar(props: TitleBarProps) {
       </TitleArea>
       <CloseArea className="electron-no-drag">
         <Minimize onClick={handleMinimize}>
-          <span>_</span>
+          <span>
+            <MdHorizontalRule size={20} />
+          </span>
         </Minimize>
         <Maximize onClick={handleMaximize}>
-          <span>□</span>
+          <span>
+            <MdOutlineCheckBoxOutlineBlank size={18} />
+          </span>
         </Maximize>
         <Close onClick={handleClose}>
-          <span>×</span>
+          <span>
+            <IoCloseSharp size={20} />
+          </span>
         </Close>
       </CloseArea>
     </TITLE>

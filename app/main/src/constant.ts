@@ -1,6 +1,8 @@
+import { app } from 'electron';
+
 export const PORT = 19527;
 
-export const APP_DATA_PATH = process.env.APPDATA;
+export const APP_DATA_PATH = process.env.APPDATA || app?.getPath('appData');
 
 export const APP_NAME = 'horen';
 

@@ -12,7 +12,7 @@ import {
 } from '../api';
 
 const TITLE = styled.div`
-  height: 32px;
+  height: 28px;
   display: flex;
   align-items: center;
 `;
@@ -29,8 +29,8 @@ const CloseArea = styled.div`
 `;
 
 const Minimize = styled.div`
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,8 +40,8 @@ const Minimize = styled.div`
 `;
 
 const Maximize = styled.div`
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,8 +50,8 @@ const Maximize = styled.div`
   }
 `;
 const Close = styled.div`
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -98,19 +98,13 @@ export default function TitleBar(props: TitleBarProps) {
       </TitleArea>
       <CloseArea className="electron-no-drag">
         <Minimize onClick={handleMinimize}>
-          <span>
-            <MdHorizontalRule size={20} />
-          </span>
+          <MdHorizontalRule size={20} />
         </Minimize>
         <Maximize onClick={handleMaximize}>
-          <span>
-            <MdOutlineCheckBoxOutlineBlank size={18} />
-          </span>
+          <MdOutlineCheckBoxOutlineBlank size={16} />
         </Maximize>
         <Close onClick={handleClose}>
-          <span>
-            <IoCloseSharp size={20} />
-          </span>
+          <IoCloseSharp size={20} />
         </Close>
       </CloseArea>
     </TITLE>
